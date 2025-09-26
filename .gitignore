@@ -4,8 +4,8 @@
 ### C ###
 # Prerequisites
 *.d
-build/
-.cache/
+build/*
+.cache/*
 # Object files
 *.o
 *.ko
