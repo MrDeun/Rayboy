@@ -7,8 +7,8 @@
 
 uint8_t Emulator_ScreenScale = 1;
 
-#define BASE_SCREEN_HEIGHT 144 * Emulator_ScreenScale
-#define BASE_SCREEN_WIDTH 160 * Emulator_ScreenScale
+#define BASE_SCREEN_HEIGHT 144 
+#define BASE_SCREEN_WIDTH 160
 
 void RescaleEmulatorScreen(void) {
     // We want to rotate between scales 1 - 2
