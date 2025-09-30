@@ -21,6 +21,11 @@ pub fn build(b: *std.Build) void {
     exe.addCSourceFiles(.{
         .files = &[_][]const u8{
             "src/main.c",
+            "src/lib/cpu.c",
+            "src/lib/ppu.c",
+            "src/lib/timer.c",
+            "src/lib/cart.c",
+            "src/lib/bus.c",
         },
         .flags = &[_][]const u8{
             "-std=c99",
