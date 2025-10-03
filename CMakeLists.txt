@@ -1,16 +1,11 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(Rayboy VERSION 0.1.0 LANGUAGES C CXX)
-
-set(RAYLIB_VERSION 5.5)
-
 include(FetchContent)
 
 # =============== 
 # ==== IMGUI ==== 
 # =============== 
 # Tries to find the library locally and if it doesn't find it, get it from Github
-find_package(imgui 1.91.3 QUIET)
-if (NOT imgui_FOUND)
   message(STATUS "Getting Dear ImGui from Github")
   FetchContent_Declare(
     ImGui
@@ -29,15 +24,10 @@ if (NOT imgui_FOUND)
   )
   # Set it's include directory
   target_include_directories(imgui INTERFACE ${imgui_SOURCE_DIR})
-else()
-  message(STATUS "Using Local Dear ImGui library")
-endif()
 
 # ================ 
 # ==== RAYLIB ==== 
 # ================ 
-find_package(raylib 5.0 QUIET)
-if (NOT raylib_FOUND)
   message(STATUS "Getting raylib from Github")
   FetchContent_Declare(
     raylib
@@ -45,15 +35,10 @@ if (NOT raylib_FOUND)
     GIT_TAG 5.0
   )
   FetchContent_MakeAvailable(raylib)
-else()
-  message(STATUS "Using Local raylib library")
-endif()
 
 # ==================== 
 # ==== RAYLIB_CPP ==== 
 # ==================== 
-find_package(raylib_cpp 5.0.2 QUIET)
-if (NOT raylib_cpp_FOUND)
   message(STATUS "Getting raylib-cpp from Github")
   FetchContent_Declare(
     raylib_cpp
@@ -61,15 +46,10 @@ if (NOT raylib_cpp_FOUND)
     GIT_TAG v5.0.2
   )
   FetchContent_MakeAvailable(raylib_cpp)
-else()
-  message(STATUS "Using Local raylib-cpp library")
-endif()
 
 # ================= 
 # ==== RLIMGUI ==== 
 # ================= 
-find_package(rlimgui QUIET)
-if (NOT rlimgui_FOUND)
   message(STATUS "Getting rlImGui from Github")
   FetchContent_Declare(
      rlImGui
@@ -83,9 +63,7 @@ if (NOT rlimgui_FOUND)
   target_include_directories(rlimgui INTERFACE ${rlimgui_SOURCE_DIR})
   # Tells the compiler that one library depends on other
   target_link_libraries(rlimgui PRIVATE imgui raylib)
-else()
-  message(STATUS "Using Local rlimgui library")
-endif()
 
-add_executable(Rayboy main.cpp)
+add_executable(Rayboy src/main.cpp)
+target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp)
 

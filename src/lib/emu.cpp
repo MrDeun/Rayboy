@@ -1,15 +1,11 @@
 #include "../include/emu.hpp"
-#include "../include/raylib.hpp"
 #include "../include/cart.hpp"
 #include <cstdio>
 static emu_context ctx;
 emu_context *emu_get_context() {
     return &ctx;
 }
-
-void delay(uint32_t ms){
-    WaitTime(ms/1000.0);
-}
+void delay(uint32_t ms);
 
 int emu_run(int argc, char **argv) {
     if (argc < 2){
