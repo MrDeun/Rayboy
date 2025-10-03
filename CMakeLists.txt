@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.17.0)
 project(Rayboy VERSION 0.1.0 LANGUAGES C CXX)
 include(FetchContent)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # =============== 
 # ==== IMGUI ==== 
 # =============== 
@@ -64,6 +65,16 @@ include(FetchContent)
   # Tells the compiler that one library depends on other
   target_link_libraries(rlimgui PRIVATE imgui raylib)
 
+
+  message(STATUS "Fetching fmt from Github")
+FetchContent_Declare(
+  fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt
+  GIT_TAG        e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
+FetchContent_MakeAvailable(fmt)
+
+
+  add_definitions(-DSOME_DEFINITION)
 add_executable(Rayboy src/main.cpp)
-target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp)
+target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)
 

@@ -1,3 +1,4 @@
+#include <fmt/core.h>
 #include <imgui.h>
 #include <raylib-cpp.hpp>
 #include <raylib.h>
@@ -6,16 +7,39 @@
 #include <cstdint>
 
 uint8_t Emulator_Scale = 1;
-void RotateEmulatorScale() {
-  Emulator_Scale += 1;
-  if (Emulator_Scale > 3)
-    Emulator_Scale = 1;
+
+void MainMenu(void) {
+  if (ImGui::BeginMainMenuBar()) {
+    if (ImGui::BeginMenu("File")) {
+      if (ImGui::MenuItem("Open", "Ctrl+O")) {
+        fmt::println("TEMP_DEBUG: Open File");
+      }
+      ImGui::EndMenu();
+    }
+    if(ImGui::BeginMenu("Rescale")){
+      if (ImGui::MenuItem("1x")) {
+        Emulator_Scale = 1;
+      }
+      if (ImGui::MenuItem("2x")) {
+        Emulator_Scale = 2;
+      }
+      if (ImGui::MenuItem("3x")) {
+        Emulator_Scale = 3;
+      }
+      if (ImGui::MenuItem("4x")) {
+        Emulator_Scale = 4;
+      }
+      ImGui::EndMenu();
+    }
+
+    ImGui::EndMainMenuBar();
+  }
 }
 
 int main() {
 
   SetConfigFlags(FLAG_MSAA_4X_HINT);
-  raylib::Window window(1600, 1200);
+  raylib::Window window(1280, 960);
   SetTargetFPS(60);
 
   rlImGuiSetup(true);
@@ -25,16 +49,10 @@ int main() {
     BeginDrawing();
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());
-    ImGui::ShowDemoWindow();    
 
     DrawRectangle(0, 0, 160 * Emulator_Scale, 140 * Emulator_Scale, DARKBROWN);
 
-    ImGui::Begin("Rayboy");
-    if (ImGui::Button("Rescale")) {
-      RotateEmulatorScale();
-    }
-    ImGui::End();
-
+    MainMenu();
 
     rlImGuiEnd();
     EndDrawing();
