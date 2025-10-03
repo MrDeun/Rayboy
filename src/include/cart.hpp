@@ -1,5 +1,6 @@
-#include "../include/common.h"
-#include <stdint.h>
+#include "../include/common.hpp"
+#include <cstdint>
+#include <string>
 
 typedef struct {
     uint8_t entry[4];
@@ -18,4 +19,4 @@ typedef struct {
     uint16_t global_checksum;
 } rom_header;
 
-bool cart_load(char* card);
+bool cart_load(const std::string& card);

@@ -1,7 +1,7 @@
-#include "../include/emu.h"
-#include "../include/raylib.h"
-#include "../include/cart.h"
-#include <stdio.h>
+#include "../include/emu.hpp"
+#include "../include/raylib.hpp"
+#include "../include/cart.hpp"
+#include <cstdio>
 static emu_context ctx;
 emu_context *emu_get_context() {
     return &ctx;
