@@ -1,3 +1,4 @@
+#include "Color.hpp"
 #include <fmt/core.h>
 #include <imgui.h>
 #include <raylib-cpp.hpp>
@@ -12,6 +13,7 @@ void MainMenu(void) {
   if (ImGui::BeginMainMenuBar()) {
     if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("Open", "Ctrl+O")) {
+        // TODO: Loading a GameBoy cartridge
         fmt::println("TEMP_DEBUG: Open File");
       }
       ImGui::EndMenu();
@@ -50,7 +52,7 @@ int main() {
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());
 
-    DrawRectangle(0, 0, 160 * Emulator_Scale, 140 * Emulator_Scale, DARKBROWN);
+    DrawRectangle(0, 0, 160 * Emulator_Scale, 140 * Emulator_Scale, raylib::Color::DarkBrown());
 
     MainMenu();
 
