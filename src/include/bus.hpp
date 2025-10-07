@@ -1,6 +1,5 @@
-
-
 #pragma once
-#include "common.h"
-uint8_t read_bus(uint16_t address);
-void write_bus(uint16_t address, uint8_t val);
+
+#include "cart.hpp"
+uint8_t bus_read(uint16_t address);
+void bus_write(uint16_t address, uint8_t value);

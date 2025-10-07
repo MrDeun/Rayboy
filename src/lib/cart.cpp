@@ -6,8 +6,8 @@
 
 struct cart_context {
   char filename[1024];
-  u32 rom_size;
-  u8 *rom_data;
+  uint32_t rom_size;
+  uint8_t *rom_data;
   rom_header *header;
 };
 
@@ -220,7 +220,7 @@ bool cart_load(const std::string &card_name) {
   if (ctx.rom_data) {
     delete[] ctx.rom_data;
   }
-  ctx.rom_data = new u8[ctx.rom_size];
+  ctx.rom_data = new uint8_t[ctx.rom_size];
   file.read((char*)ctx.rom_data, ctx.rom_size);
 
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
@@ -233,10 +233,10 @@ bool cart_load(const std::string &card_name) {
   fmt::println("\t RAM Size : {0:x}", ctx.header->ram_size);
   fmt::println("\t LIC Code : {0:x} ({1})", ctx.header->license_code,
                getCartLicenseName());
-  fmt::println("\t ROM Vers : %2.2X", ctx.header->version);
+  fmt::println("\t ROM Vers : {0:x}", ctx.header->version);
 
-  u16 x = 0;
-  for (u16 i = 0x0134; i <= 0x014C; i++) {
+  uint16_t x = 0;
+  for (uint16_t i = 0x0134; i <= 0x014C; i++) {
     x = x - ctx.rom_data[i] - 1;
   }
 
@@ -244,4 +244,13 @@ bool cart_load(const std::string &card_name) {
                (x & 0xFF) ? "PASSED" : "FAILED");
 
   return true;
+}
+
+uint8_t cart_read(uint16_t address){
+  // ROM ONLY
+  return ctx.rom_data[address];
+}
+void cart_write(uint16_t address, uint8_t value){
+
+  NO_IMPL
 }

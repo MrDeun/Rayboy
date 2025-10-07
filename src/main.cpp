@@ -7,7 +7,6 @@
 
 #include "include/cart.hpp"
 
-
 uint8_t Emulator_Scale = 1;
 
 void MainMenu(void) {
@@ -17,9 +16,23 @@ void MainMenu(void) {
         // TODO: Loading a GameBoy cartridge
         fmt::println("TEMP_DEBUG: Open File");
       }
+
+      if (ImGui::MenuItem("Check Zelda")) {
+        cart_load("Zelda.gb");
+      }
+      if (ImGui::MenuItem("Check Tetris")) {
+        cart_load("Tetris.gb");
+      }
+      if (ImGui::MenuItem("Check Mario")) {
+        cart_load("Mario.gb");
+      }
+      if (ImGui::MenuItem("Check Pokemon")) {
+        cart_load("Pokemon.gb");
+      }
+
       ImGui::EndMenu();
     }
-    if(ImGui::BeginMenu("Rescale")){
+    if (ImGui::BeginMenu("Rescale")) {
       if (ImGui::MenuItem("1x")) {
         Emulator_Scale = 1;
       }
@@ -47,15 +60,14 @@ int main() {
 
   rlImGuiSetup(true);
 
-  cart_load("SuperMarioLand.gb");
-
   while (WindowShouldClose() == false) {
 
     BeginDrawing();
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());
 
-    DrawRectangle(0, 0, 160 * Emulator_Scale, 140 * Emulator_Scale, raylib::Color::DarkBrown());
+    DrawRectangle(0, 0, 160 * Emulator_Scale, 140 * Emulator_Scale,
+                  raylib::Color::DarkBrown());
 
     MainMenu();
 
