@@ -1,11 +1,12 @@
-#include "Color.hpp"
+#include <cstdint>
 #include <fmt/core.h>
 #include <imgui.h>
 #include <raylib-cpp.hpp>
 #include <raylib.h>
 #include <rlImGui.h>
 
-#include <cstdint>
+#include "include/cart.hpp"
+
 
 uint8_t Emulator_Scale = 1;
 
@@ -41,10 +42,12 @@ void MainMenu(void) {
 int main() {
 
   SetConfigFlags(FLAG_MSAA_4X_HINT);
-  raylib::Window window(1280, 960);
+  raylib::Window window(1280, 720);
   SetTargetFPS(60);
 
   rlImGuiSetup(true);
+
+  cart_load("SuperMarioLand.gb");
 
   while (WindowShouldClose() == false) {
 

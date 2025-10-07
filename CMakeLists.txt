@@ -75,6 +75,6 @@ FetchContent_MakeAvailable(fmt)
 
 
 add_definitions(-DSOME_DEFINITION)
-add_executable(Rayboy src/main.cpp)
+add_executable(Rayboy src/main.cpp src/lib/cart.cpp)
 target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)
 

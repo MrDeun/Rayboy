@@ -1,5 +1,4 @@
 #include "../include/common.hpp"
-#include <cstdint>
 #include <string>
 
 typedef struct {
