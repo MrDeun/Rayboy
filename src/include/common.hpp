@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <fmt/core.h>
+#include <string_view>
 
 typedef union {
   uint16_t u16;
@@ -15,4 +16,6 @@ typedef union {
 
 #define NO_IMPL {fmt::println("NO IMPLEMENTION - REVIEW CODE");exit(-5);}
 
+
+const std::string NOT_FOUND_STR = "Not found";
 void delay(uint32_t ms);

@@ -1,6 +1,7 @@
 #include "../include/cart.hpp"
 #include "fmt/core.h"
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <map>
 
@@ -12,6 +13,7 @@ struct cart_context {
 };
 
 static cart_context ctx;
+
 const std::map<uint8_t, const std::string> ROM_TYPES = {
     {0x00, "ROM ONLY"},
     {0x01, "MBC1"},
@@ -193,8 +195,10 @@ const std::map<const uint8_t, const std::string> LICENSE_CODES = {
     {0xFF, "LJN"},
 };
 
+
+
 const std::string getCartLicenseName() {
-  std::string res = "Not found";
+  std::string res = NOT_FOUND_STR;
   if (ctx.header->license_code != 0x33) {
     res = LICENSE_CODES.at(ctx.header->license_code);
   }
