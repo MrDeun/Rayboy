@@ -1,7 +1,6 @@
 #include "../include/cart.hpp"
 #include "fmt/core.h"
 #include <cstdint>
-#include <filesystem>
 #include <fstream>
 #include <map>
 
@@ -210,7 +209,7 @@ const std::string getROMType() { return ROM_TYPES.at(ctx.header->type); }
 bool cart_load(const std::string &card_name) {
   std::ifstream file(card_name, std::ifstream::binary);
 
-  if (file.bad()) {
+  if (!file.is_open()) {
     fmt::println("Failure to open a file");
     return false;
   }
