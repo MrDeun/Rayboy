@@ -3,9 +3,9 @@ project(Rayboy VERSION 0.1.0 LANGUAGES C CXX)
 include(FetchContent)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# =============== 
-# ==== IMGUI ==== 
-# =============== 
+# ===============
+# ==== IMGUI ====
+# ===============
 # Tries to find the library locally and if it doesn't find it, get it from Github
 message(STATUS "Getting Dear ImGui from Github")
 FetchContent_Declare(
@@ -26,9 +26,9 @@ add_library(
 # Set it's include directory
 target_include_directories(imgui INTERFACE ${imgui_SOURCE_DIR})
 
-# ================ 
-# ==== RAYLIB ==== 
-# ================ 
+# ================
+# ==== RAYLIB ====
+# ================
 message(STATUS "Getting raylib from Github")
 FetchContent_Declare(
   raylib
@@ -37,9 +37,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-# ==================== 
-# ==== RAYLIB_CPP ==== 
-# ==================== 
+# ====================
+# ==== RAYLIB_CPP ====
+# ====================
 message(STATUS "Getting raylib-cpp from Github")
 FetchContent_Declare(
   raylib_cpp
@@ -48,9 +48,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib_cpp)
 
-# ================= 
-# ==== RLIMGUI ==== 
-# ================= 
+# =================
+# ==== RLIMGUI ====
+# =================
 message(STATUS "Getting rlImGui from Github")
 FetchContent_Declare(
   rlImGui
@@ -75,6 +75,14 @@ FetchContent_MakeAvailable(fmt)
 
 
 add_definitions(-DSOME_DEFINITION)
-add_executable(Rayboy src/main.cpp src/lib/cart.cpp)
-target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)
+add_executable(Rayboy src/main.cpp
+    src/lib/cart.cpp
+    src/lib/bus.cpp
+    src/lib/cpu.cpp
+    src/lib/emu.cpp
+    src/lib/instruction.cpp
+    src/lib/ppu.cpp
+    src/lib/timer.cpp
 
+)
+target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)

@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include <fmt/core.h>
-#include <string_view>
 
 typedef union {
   uint16_t u16;
