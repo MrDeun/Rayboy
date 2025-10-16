@@ -83,6 +83,7 @@ add_executable(Rayboy src/main.cpp
     src/lib/instruction.cpp
     src/lib/ppu.cpp
     src/lib/timer.cpp
+    src/lib/cpu_proc.cpp
 
 )
 target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)

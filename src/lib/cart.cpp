@@ -194,8 +194,6 @@ const std::map<const uint8_t, const std::string> LICENSE_CODES = {
     {0xFF, "LJN"},
 };
 
-
-
 const std::string getCartLicenseName() {
   std::string res = NOT_FOUND_STR;
   if (ctx.header->license_code != 0x33) {
@@ -205,6 +203,18 @@ const std::string getCartLicenseName() {
 }
 
 const std::string getROMType() { return ROM_TYPES.at(ctx.header->type); }
+
+void dump_cart() {
+  if (ctx.rom_size == 0) {
+    return;
+  }
+
+  for (int i = 0; i < ctx.rom_size; i++) {
+    fmt::print("{:x} ", ctx.rom_data[i]);
+    if (i % 10 == 0)
+      puts("");
+  }
+}
 
 bool cart_load(const std::string &card_name) {
   std::ifstream file(card_name, std::ifstream::binary);
@@ -216,15 +226,15 @@ bool cart_load(const std::string &card_name) {
 
   fmt::println("File {} successfully opened!", card_name);
 
-  file.seekg(0,file.end);
+  file.seekg(0, file.end);
   ctx.rom_size = file.tellg();
-  file.seekg(0,file.beg);
+  file.seekg(0, file.beg);
 
   if (ctx.rom_data) {
     delete[] ctx.rom_data;
   }
   ctx.rom_data = new uint8_t[ctx.rom_size];
-  file.read((char*)ctx.rom_data, ctx.rom_size);
+  file.read((char *)ctx.rom_data, ctx.rom_size);
 
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
   ctx.header->title[15] = 0;
@@ -246,14 +256,14 @@ bool cart_load(const std::string &card_name) {
   fmt::println("\t Checksum : {0:x} ({1})", ctx.header->checksum,
                (x & 0xFF) ? "PASSED" : "FAILED");
 
+  fmt::println("DUMPED CART: 0x100 = {:x}, 0x101 = {:x}",ctx.rom_data[0x100],ctx.rom_data[0x101]);
+  // dump_cart();
+
   return true;
 }
 
-uint8_t cart_read(uint16_t address){
+uint8_t cart_read(uint16_t address) {
   // ROM ONLY
   return ctx.rom_data[address];
 }
-void cart_write(uint16_t address, uint8_t value){
-
-  NO_IMPL
-}
+void cart_write(uint16_t address, uint8_t value) { NO_IMPL("cart_write()"); }

@@ -1,3 +1,4 @@
+#pragma once
 #include "common.hpp"
 typedef struct {
     uint8_t entry[4];
@@ -17,6 +18,8 @@ typedef struct {
 } rom_header;
 
 bool cart_load(const std::string& card);
+
+void dump_cart();
 
 uint8_t cart_read(uint16_t address);
 void cart_write(uint16_t address, uint8_t value);

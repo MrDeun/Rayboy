@@ -28,7 +28,7 @@ struct cpu_registers {
     uint16_t HL;
     struct {
       uint8_t H;
-    uint8_t L;
+      uint8_t L;
     };
   };
 
@@ -37,17 +37,25 @@ struct cpu_registers {
 };
 
 struct cpu_context {
-    cpu_registers regs;
+  cpu_registers regs;
 
-    uint16_t fetch_data;
-    uint16_t mem_destination;
-    bool dest_is_mem;
-    uint8_t op_code;
-    instruction* cur_instruction;
+  uint16_t fetch_data;
+  uint16_t mem_destination;
+  bool dest_is_mem;
+  uint8_t op_code;
+  instruction *cur_instruction;
 
-    bool halted;
-    bool stepping;
+  bool halted;
+  bool stepping;
 };
+typedef void (*IN_PROC)(cpu_context *);
+IN_PROC inst_get_processor(in_type type);
+
+#define CPU_FLAG_Z BIT_GET(ctx->regs.F, 7)
+#define CPU_FLAG_N BIT_GET(ctx->regs.F, 6)
+#define CPU_FLAG_H BIT_GET(ctx->regs.F, 5)
+#define CPU_FLAG_C BIT_GET(ctx->regs.F, 4)
+
 void cpu_init();
 bool cpu_step();
 void emu_cycles(int cycles);

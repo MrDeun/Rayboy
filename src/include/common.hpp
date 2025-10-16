@@ -13,8 +13,7 @@ typedef union {
 #define BIT_SET(a, n, on) (on ? a |= (1 << n) : a &= ~(1 << n))
 #define BETWEEN(a, b, c) ((a >= b) && (a <= c))
 
-#define NO_IMPL {fmt::println("NO IMPLEMENTION - REVIEW CODE");exit(-5);}
-
+#define NO_IMPL(err) {printf("NO IMPLEMENTION - REVIEW CODE\nReason: %s",err);exit(-5);}
 
 const std::string NOT_FOUND_STR = "Not found";
 void delay(uint32_t ms);
