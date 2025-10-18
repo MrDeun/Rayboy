@@ -83,13 +83,14 @@ void fetch_data() {
   }
 }
 void execute() {
-  fmt::println("Executing Instruction: {:x} \t PC: {}",
-               ctx.op_code, ctx.regs.PC);
-    IN_PROC proc = inst_get_processor(ctx.cur_instruction->type);
-    if (!proc) {
-      NO_IMPL("Instruction not implemented!")
-    }
-    proc(&ctx);
+  fmt::println("Executing Instruction: {:x} \t PC: {}", ctx.op_code,
+               ctx.regs.PC);
+  IN_PROC proc = inst_get_processor(ctx.cur_instruction->type);
+  if (!proc) {
+    auto err = fmt::format("No known instruction: {:x}", ctx.op_code);
+    NO_IMPL(err.c_str());
+  }
+  proc(&ctx);
 }
 
 void emu_cycles(int cycles) {}

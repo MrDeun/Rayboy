@@ -33,24 +33,28 @@ void MainMenu() {
       }
 
       if (ImGui::MenuItem("Check Zelda")) {
-        cart_load("Zelda.gb");
-        ctx.running = true;
-        cpu_init();
+        if (cart_load("Zelda.gb")) {
+          ctx.running = true;
+          cpu_init();
+        }
       }
       if (ImGui::MenuItem("Check Tetris")) {
-        cart_load("Tetris.gb");
-        ctx.running = true;
-        cpu_init();
+        if (cart_load("Tetris.gb")) {
+          ctx.running = true;
+          cpu_init();
+        }
       }
       if (ImGui::MenuItem("Check Mario")) {
-        cart_load("Mario.gb");
-        ctx.running = true;
-        cpu_init();
+        if (cart_load("Mario.gb")) {
+          ctx.running = true;
+          cpu_init();
+        }
       }
       if (ImGui::MenuItem("Check Pokemon")) {
-        cart_load("Pokemon.gb");
-        ctx.running = true;
-        cpu_init();
+        if (cart_load("Pokemon.gb")) {
+          ctx.running = true;
+          cpu_init();
+        }
       }
 
       ImGui::EndMenu();
