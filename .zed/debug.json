@@ -1,0 +1,13 @@
+[
+  {
+    "label": "Debug native binary",
+    "build": {
+      "command": "cmake",
+      "args": ["--build", "build", "--parallel", "8"],
+      "cwd": "$ZED_WORKTREE_ROOT"
+    },
+    "program": "$ZED_WORKTREE_ROOT/build/Rayboy",
+    "request": "launch",
+    "adapter": "CodeLLDB"
+  }
+]

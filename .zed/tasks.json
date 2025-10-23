@@ -1,0 +1,12 @@
+[
+  {
+    "label": "CMake: Configure",
+    "command": "cmake",
+    "args": ["-B", "build", "-DCMAKE_BUILD_TYPE=Debug"]
+  },
+  {
+    "label": "CMake: Build",
+    "command": "cmake",
+    "args": ["--build", "build"]
+  }
+]
