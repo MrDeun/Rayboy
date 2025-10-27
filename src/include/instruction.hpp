@@ -82,6 +82,7 @@ enum addr_mode {
     AM_MR_D8,
     AM_MR,
     AM_A16_R,
+    AM_R_A16,
 };
 enum reg_type{
     RT_NONE,
