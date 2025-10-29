@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Launch Program",
+    "type": "lldb",
+    "request": "launch",
+    "program": "${workspaceFolder}/build/Rayboy",
+    "args": [],
+    "cwd": "${workspaceFolder}",
+    "stopOnEntry": false
+  }
+]

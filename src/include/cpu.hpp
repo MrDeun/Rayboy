@@ -60,6 +60,9 @@ IN_PROC inst_get_processor(in_type type);
 
 uint16_t cpu_read_reg(reg_type rt);
 void cpu_set_reg(reg_type rt, uint16_t value);
+void cpu_set_flags(cpu_context ctx, bool z, bool n, bool h, bool c);
+
+void fetch_data();
 
 void cpu_init();
 bool cpu_step();
