@@ -88,7 +88,10 @@ int emu_run(int argc, char **argv) {
   rlImGuiSetup(true);
 
   if (argc > 1) {
-    cart_load(argv[1]);
+    if(cart_load(argv[1])){
+        ctx.running = true;
+        cpu_init();
+    }
   }
 
   while (WindowShouldClose() == false) {
