@@ -91,8 +91,7 @@ int emu_run(int argc, char **argv) {
     cart_load(argv[1]);
   }
 
-  while (WindowShouldClose() == false) {
-
+  while (!WindowShouldClose()) {
     BeginDrawing();
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());

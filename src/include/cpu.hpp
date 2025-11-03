@@ -46,6 +46,8 @@ struct cpu_context {
   uint8_t op_code;
   instruction *cur_instruction;
 
+
+  bool int_master_enabled;
   bool halted;
   bool stepping;
 };

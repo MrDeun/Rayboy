@@ -86,6 +86,7 @@ add_executable(Rayboy src/main.cpp
     src/lib/cpu_proc.cpp
     src/lib/cpu_fetch.cpp
     src/lib/cpu_regs.cpp
+    src/lib/ram.cpp
 
 )
 target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)

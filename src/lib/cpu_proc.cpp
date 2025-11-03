@@ -62,6 +62,9 @@ static void proc_ld(cpu_context *ctx) {
 
     }
 }
+static void proc_di(cpu_context *ctx) {
+    ctx->int_master_enabled = false;
+}
 static void proc_jp(cpu_context *ctx) {
   if (check_cond(ctx)) {
     ctx->regs.PC = ctx->fetch_data;
@@ -70,11 +73,27 @@ static void proc_jp(cpu_context *ctx) {
 }
 
 static void proc_nop(cpu_context *ctx) {}
+static void proc_ldh(cpu_context *ctx) {
+    if (ctx->cur_instruction->reg1 == RT_A) {
+        cpu_set_reg(ctx->cur_instruction->reg1, bus_read(0xFF00 | ctx->fetch_data));
+    } else {
+        bus_write(0xFF00 | ctx->fetch_data, ctx->regs.A);
+    }
+    emu_cycles(1);
+}
+
+static void proc_xor(cpu_context *ctx) {
+    ctx->regs.A ^= ctx->fetch_data & 0xFF;
+    cpu_set_flags(ctx, ctx->regs.A == 0, 0, 0, 0);
+}
 
 static IN_PROC processors[] = {
     [IN_NONE] = proc_none,
+    [IN_DI] = proc_di,
+    [IN_XOR] = proc_xor,
     [IN_NOP] = proc_nop,
     [IN_LD] = proc_ld,
+    [IN_LDH] = proc_ldh,
     [IN_JP] = proc_jp,
 };
 

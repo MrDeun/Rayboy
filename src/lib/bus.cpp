@@ -1,21 +1,68 @@
-#include "../include/bus.hpp"
+#include "../include/all.hpp"
 #include "fmt/core.h"
 
 #include <cassert>
 #include <cstdint>
 uint8_t bus_read(uint16_t address) {
+    auto err = fmt::format("No implementation for bus_read(0x{:x})", address);
   if (address < 0x8000) {
+      //ROM Data
     return cart_read(address);
+  } else if (address < 0xA000){
+      //Char/Map data
+      NO_IMPL(err.c_str())
+  } else if (address < 0xC000) {
+      //Cartridge
+      return cart_read(address);
+  } else if (address < 0xE000) {
+      return wram_read(address);
+  } else if (address < 0xFE00) {
+      // reserved by echo ram
+      return 0;
+  } else if (address < 0xFEA0) {
+      //TODO: Graphics card
+      NO_IMPL(err.c_str());
+  } else if (address < 0xFF00) {
+      //reserved unused
+      return 0;
+  } else if (address < 0xff80) {
+      //IO Register
+      NO_IMPL(err.c_str());
+  } else if (address == 0xffff) {
+      //CPU Enable register
+      NO_IMPL(err.c_str());
   }
-  return 0;
-  NO_IMPL("bus_read()")
+
+  return hram_read(address);
 }
 void bus_write(uint16_t address, uint8_t value) {
-  if (address < 0x8000) {
+auto err = fmt::format("No implementation for bus_write(0x{:x})", address);
+if (address < 0x8000) {
+    //ROM Data
     cart_write(address, value);
+  } else if (address<0xA000) {
+      // Map/Char data
+      NO_IMPL(err.c_str());
+  } else if (address < 0xC000) {
+      //EXT-RAM
+      cart_write(address,  value);
+  } else if (address < 0xE000) {
+      //
+      wram_write(address,value);
+  } else if (address < 0xFE00) {
+      //OAM
+      NO_IMPL(err.c_str());
+  } else if (address < 0xFEA0) {
+      //echo ram - not used?
+  } else if (address < 0xFF00) {
+      //unusable
+      return;
+  } else if (address < 0xff80) {
+      NO_IMPL(err.c_str());
+  } else if (address == 0xffff) {
+      NO_IMPL(err.c_str());
   }
   return;
-  NO_IMPL("bus_write()")
 }
 
 uint16_t bus_read16(uint16_t address) {

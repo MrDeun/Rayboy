@@ -8,3 +8,4 @@
 #include "instruction.hpp"
 #include "ppu.hpp"
 #include "timer.hpp"
+#include "ram.hpp"

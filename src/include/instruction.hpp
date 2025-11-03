@@ -112,3 +112,4 @@ struct instruction {
 };
 
 instruction* get_instruction_by_opcode(uint8_t opcode);
+const std::string& get_inst_name(in_type type);

@@ -31,12 +31,17 @@ void emu_cycles(int cycles) {}
 
 bool cpu_step() {
   if (!ctx.halted) {
-    fmt::println("Fetching instruction...");
+      auto pc = ctx.regs.PC;
     fetch_instruction();
-    fmt::println("Fetching data...");
     fetch_data();
-    fmt::println("Executing...");
+
+    fmt::println("{}: {} ({:x} {:x} {:x}) A: {:x} BC: {:x}{:x} DE: {:x}{:x} HL: {:x}{:x}\n",
+        pc, get_inst_name(ctx.cur_instruction->type), ctx.op_code,
+        bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B, ctx.regs.B,
+        ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
     execute();
+
+
   }
 
   return true;
