@@ -210,7 +210,7 @@ void dump_cart() {
   }
 
   for (int i = 0; i < ctx.rom_size; i++) {
-    fmt::print("{:x} ", ctx.rom_data[i]);
+    fmt::print("{:X} ", ctx.rom_data[i]);
     if (i % 10 == 0)
       puts("");
   }
@@ -256,7 +256,7 @@ bool cart_load(const std::string &card_name) {
   fmt::println("\t Checksum : {0:x} ({1})", ctx.header->checksum,
                (x & 0xFF) ? "PASSED" : "FAILED");
 
-  fmt::println("DUMPED CART: 0x100 = {:x}, 0x101 = {:x}",ctx.rom_data[0x100],ctx.rom_data[0x101]);
+  fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}",ctx.rom_data[0x100],ctx.rom_data[0x101]);
   // dump_cart();
 
   return true;

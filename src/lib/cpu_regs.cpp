@@ -6,7 +6,7 @@ extern cpu_context ctx;
 void cpu_set_reg(reg_type rt, uint16_t value) {
   switch (rt) {
   case RT_NONE:
-    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:x}",
+    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:X}",
                  ctx.op_code);
     break;
   case RT_A:
@@ -79,7 +79,7 @@ uint16_t cpu_read_reg(reg_type rt) {
   case RT_HL:
     return ctx.regs.HL;
   default:
-    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:x}",
+    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:X}",
                  ctx.op_code);
     return 0;
   }
