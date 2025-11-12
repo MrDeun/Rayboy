@@ -59,6 +59,7 @@ IN_PROC inst_get_processor(in_type type);
 #define CPU_FLAG_H BIT_GET(ctx->regs.F, 5)
 #define CPU_FLAG_C BIT_GET(ctx->regs.F, 4)
 
+cpu_registers* cpu_get_regs();
 
 uint16_t cpu_read_reg(reg_type rt);
 void cpu_set_reg(reg_type rt, uint16_t value);

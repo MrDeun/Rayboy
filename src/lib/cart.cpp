@@ -256,7 +256,8 @@ bool cart_load(const std::string &card_name) {
   fmt::println("\t Checksum : {0:x} ({1})", ctx.header->checksum,
                (x & 0xFF) ? "PASSED" : "FAILED");
 
-  fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}",ctx.rom_data[0x100],ctx.rom_data[0x101]);
+  fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}", ctx.rom_data[0x100],
+               ctx.rom_data[0x101]);
   // dump_cart();
 
   return true;
@@ -266,4 +267,7 @@ uint8_t cart_read(uint16_t address) {
   // ROM ONLY
   return ctx.rom_data[address];
 }
-void cart_write(uint16_t address, uint8_t value) { NO_IMPL("cart_write()"); }
+void cart_write(uint16_t address, uint8_t value) {
+  auto err = fmt::format("cart_write(0x{:X})", address);
+  NO_IMPL(err.c_str());
+}

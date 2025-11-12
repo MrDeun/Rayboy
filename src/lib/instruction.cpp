@@ -17,22 +17,41 @@ instruction instructions[0x100] = {
     [0x11] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_DE},
     [0x12] = {.type = IN_LD, .mode = AM_MR_R, .reg1 = RT_DE, .reg2 = RT_A},
     [0x16] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_D},
+    [0x18] = {.type = IN_JR, .mode = AM_D8},
     [0x1A] = {.type = IN_LD, .mode = AM_R_MR, .reg1 = RT_A, .reg2 = RT_BC},
     [0x1E] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_C},
 
     // 0x2X
-
+    [0x20] = {.type = IN_JR,
+              .mode = AM_D8,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_NZ},
     [0x21] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_HL},
     [0x22] = {.type = IN_LD, .mode = AM_HLI_R, .reg1 = RT_HL, .reg2 = RT_A},
     [0x26] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_H},
+    [0x28] = {.type = IN_JR,
+              .mode = AM_D8,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_Z},
     [0x2A] = {.type = IN_LD, .mode = AM_R_MR, .reg1 = RT_A, .reg2 = RT_BC},
     [0x2E] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_C},
 
     // 0x3X
-
+    [0x30] = {.type = IN_JR,
+              .mode = AM_D8,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_NC},
     [0x31] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_SP},
     [0x32] = {.type = IN_LD, .mode = AM_HLD_R, .reg1 = RT_BC, .reg2 = RT_A},
     [0x36] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_C},
+    [0x38] = {.type = IN_JR,
+              .mode = AM_D8,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_C},
     [0x3A] = {.type = IN_LD, .mode = AM_R_MR, .reg1 = RT_A, .reg2 = RT_BC},
     [0x3E] = {.type = IN_LD, .mode = AM_R_D8, .reg1 = RT_C},
 
@@ -112,17 +131,43 @@ instruction instructions[0x100] = {
     [0xAF] = {.type = IN_XOR, .mode = AM_R, .reg1 = RT_A},
 
     // 0xCX
+    [0xC1] = {.type = IN_POP, .mode = AM_R, .reg1 = RT_BC},
     [0xC3] = {.type = IN_JP, .mode = AM_D16},
+    [0xC4] = {.type = IN_CALL,
+              .mode = AM_D16,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_NONE},
+    [0xC5] = {.type = IN_PUSH, .mode = AM_R, .reg1 = RT_BC},
+    [0xCA] = {.type = IN_JP,
+              .mode = AM_D16,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_Z},
+    [0xCC] = {.type = IN_CALL,
+              .mode = AM_D16,
+              .reg1 = RT_NONE,
+              .reg2 = RT_NONE,
+              .cond = CT_Z},
+    [0xCD] = {.type = IN_CALL, .mode = AM_D16},
+
+    // 0xDX
+    [0xD1] = {.type = IN_POP, .mode = AM_R, .reg1 = RT_DE},
+    [0xD5] = {.type = IN_PUSH, .mode = AM_R, .reg1 = RT_DE},
 
     // 0xEX
     [0xE0] = {.type = IN_LDH, .mode = AM_A8_R, .reg1 = RT_NONE, .reg2 = RT_A},
+    [0xE1] = {.type = IN_POP, .mode = AM_R, .reg1 = RT_HL},
     [0xE2] = {.type = IN_LD, .mode = AM_MR_R, .reg1 = RT_C, .reg2 = RT_A},
+    [0xE5] = {.type = IN_PUSH, .mode = AM_R, .reg1 = RT_HL},
     [0xEA] = {.type = IN_LD, .mode = AM_A16_R, .reg1 = RT_NONE, .reg2 = RT_A},
 
     // 0xFX
     [0xF0] = {.type = IN_LDH, .mode = AM_R_A8, .reg1 = RT_A},
+    [0xF1] = {.type = IN_POP, .mode = AM_R, .reg1 = RT_AF},
     [0xF2] = {.type = IN_LD, .mode = AM_R_MR, .reg1 = RT_C, .reg2 = RT_A},
     [0xF3] = {.type = IN_DI},
+    [0xF5] = {.type = IN_PUSH, .mode = AM_R, .reg1 = RT_AF},
     [0xFA] = {.type = IN_LD, .mode = AM_R_A16, .reg1 = RT_A},
 
 };
