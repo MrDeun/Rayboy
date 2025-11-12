@@ -51,7 +51,7 @@ struct cpu_context {
   bool halted;
   bool stepping;
 };
-typedef void (*IN_PROC)(cpu_context *);
+using IN_PROC = void (*)(cpu_context *);
 IN_PROC inst_get_processor(in_type type);
 
 #define CPU_FLAG_Z BIT_GET(ctx->regs.F, 7)
