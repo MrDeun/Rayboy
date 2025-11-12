@@ -17,8 +17,8 @@ void fetch_instruction() {
 }
 
 void execute() {
-  fmt::println("Executing Instruction: {:x} \t PC: {}", ctx.op_code,
-               ctx.regs.PC);
+  // fmt::println("Executing Instruction: {:x} \t PC: {}", ctx.op_code,
+               // ctx.regs.PC);
   IN_PROC proc = inst_get_processor(ctx.cur_instruction->type);
   if (!proc) {
     auto err = fmt::format("No known instruction: 0x{:x}", ctx.op_code);
@@ -35,7 +35,7 @@ bool cpu_step() {
     fetch_instruction();
     fetch_data();
 
-    fmt::println("{}: {} ({:x} {:x} {:x}) A: {:x} BC: {:x}{:x} DE: {:x}{:x} HL: {:x}{:x}\n",
+    fmt::println("{}: {} ({:x} {:x} {:x}) A: {:x} BC: {:x}{:x} DE: {:x}{:x} HL: {:x}{:x}",
         pc, get_inst_name(ctx.cur_instruction->type), ctx.op_code,
         bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B, ctx.regs.B,
         ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
