@@ -77,11 +77,31 @@ static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
     emu_cycles(1);
   }
 }
+static void proc_ret(cpu_context *ctx) {
+  if (ctx->cur_instruction->cond != CT_NONE) {
+    emu_cycles(1);
+  }
+  if (check_cond(ctx)) {
+    uint16_t low = stack_pop();
+    emu_cycles(1);
+    uint16_t high = stack_pop();
+    emu_cycles(1);
+
+    uint16_t value = (high << 8) | low;
+    ctx->regs.PC = value;
+    emu_cycles(1);
+  }
+}
+
+static void proc_reti(cpu_context *ctx) {
+  ctx->int_master_enabled = true;
+  proc_ret(ctx);
+}
 static void proc_di(cpu_context *ctx) { ctx->int_master_enabled = false; }
-static void proc_jr(cpu_context* ctx) {
-    char rel = (char)(ctx->fetch_data & 0xFF);
-    uint16_t address = ctx->regs.PC + rel;
-    goto_addr(ctx, address, false);
+static void proc_jr(cpu_context *ctx) {
+  char rel = (char)(ctx->fetch_data & 0xFF);
+  uint16_t address = ctx->regs.PC + rel;
+  goto_addr(ctx, address, false);
 }
 static void proc_jp(cpu_context *ctx) {
   goto_addr(ctx, ctx->fetch_data, false);
@@ -133,7 +153,8 @@ static IN_PROC processors[] = {
     [IN_NONE] = proc_none, [IN_LD] = proc_ld,   [IN_XOR] = proc_xor,
     [IN_NOP] = proc_nop,   [IN_POP] = proc_pop, [IN_JP] = proc_jp,
     [IN_PUSH] = proc_push, [IN_LDH] = proc_ldh, [IN_DI] = proc_di,
-    [IN_CALL] = proc_call, [IN_JR] = proc_jr
+    [IN_CALL] = proc_call, [IN_JR] = proc_jr,   [IN_RET] = proc_ret,
+    [IN_RETI] = proc_reti,
 };
 
 IN_PROC inst_get_processor(in_type type) { return processors[type]; }

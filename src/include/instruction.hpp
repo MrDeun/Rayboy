@@ -102,12 +102,12 @@ enum reg_type{
 };
 
 struct instruction {
-    in_type type;
-    addr_mode mode;
-    reg_type reg1;
-    reg_type reg2;
-    cond_type cond;
-    uint8_t param;
+    in_type type{IN_NONE};
+    addr_mode mode{AM_IMP};
+    reg_type reg1{RT_NONE};
+    reg_type reg2{RT_NONE};
+    cond_type cond{CT_NONE};
+    uint8_t param{0};
 };
 
 instruction* get_instruction_by_opcode(uint8_t opcode);
