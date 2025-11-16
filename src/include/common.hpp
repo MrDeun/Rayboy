@@ -14,6 +14,6 @@ typedef union {
 #define BETWEEN(a, b, c) ((a >= b) && (a <= c))
 
 #define NO_IMPL(err) {printf("NO IMPLEMENTION - REVIEW CODE\nReason: %s",err);exit(-5);}
-
+#define ERROR(err){printf("FATAL ERROR: %s");exit(-1);}
 const std::string NOT_FOUND_STR = "Not found";
 void delay(uint32_t ms);

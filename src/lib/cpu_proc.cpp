@@ -17,6 +17,29 @@ void cpu_set_flags(cpu_context *ctx, int8_t z, int8_t n, int8_t h, int8_t c) {
   }
 }
 
+static bool is_16bit(reg_type rt) {
+  switch (rt) {
+  case RT_A:
+  case RT_F:
+  case RT_B:
+  case RT_C:
+  case RT_D:
+  case RT_E:
+  case RT_H:
+  case RT_L:
+    return false;
+  case RT_HL:
+  case RT_AF:
+  case RT_BC:
+  case RT_DE:
+  case RT_SP:
+  case RT_PC:
+    return true;
+  default:
+    ERROR("Illegal State in is_16bit()");
+  }
+}
+
 static bool check_cond(cpu_context *ctx) {
   bool z = CPU_FLAG_Z;
   bool c = CPU_FLAG_C;
@@ -36,17 +59,72 @@ static bool check_cond(cpu_context *ctx) {
 
   return false;
 }
+static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
+  if (check_cond(ctx)) {
+    if (pushPC) {
+      stack_push16(ctx->regs.PC);
+      emu_cycles(2);
+    }
+
+    ctx->regs.PC = ctx->fetch_data;
+    emu_cycles(1);
+  }
+}
 
 static void proc_none(cpu_context *ctx) {
   fmt::println("FATAL: Invalid Instruction!");
   exit(-8);
 }
+static void proc_dec(cpu_context *ctx) {
+  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg2) - 1;
+  if (is_16bit(ctx->cur_instruction->reg1)) {
+    emu_cycles(1);
+  }
+  if (ctx->cur_instruction->reg1 == RT_HL &&
+      ctx->cur_instruction->mode == AM_MR) {
+    val = bus_read(cpu_read_reg(RT_HL) - 1);
+    val &= 0xff;
+    bus_write(cpu_read_reg(RT_HL), val);
+  } else {
+    cpu_set_reg(ctx->cur_instruction->reg1, val);
+    val = cpu_read_reg(ctx->cur_instruction->reg1);
+  }
 
+  if ((ctx->op_code & 0x03) == 0x03) {
+    return;
+  }
+
+  cpu_set_flags(ctx, val == 0, 0, (val & 0x0f) == 0, -1);
+}
+static void proc_inc(cpu_context *ctx) {
+  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg2) + 1;
+  if (is_16bit(ctx->cur_instruction->reg1)) {
+    emu_cycles(1);
+  }
+  if (ctx->cur_instruction->reg1 == RT_HL &&
+      ctx->cur_instruction->mode == AM_MR) {
+    val = bus_read(cpu_read_reg(RT_HL) + 1);
+    val &= 0xff;
+    bus_write(cpu_read_reg(RT_HL), val);
+  } else {
+    cpu_set_reg(ctx->cur_instruction->reg1, val);
+    val = cpu_read_reg(ctx->cur_instruction->reg1);
+  }
+
+  if ((ctx->op_code & 0x0B) == 0x0B) {
+    return;
+  }
+
+  cpu_set_flags(ctx, val == 0, 1, (val & 0x0f) == 0, -1);
+}
+static void proc_rst(cpu_context *ctx) {
+    goto_addr(ctx,ctx->cur_instruction->param,true);
+}
 static void proc_ld(cpu_context *ctx) {
   if (ctx->dest_is_mem) {
     if (ctx->cur_instruction->reg2 >= RT_AF) {
       emu_cycles(1);
-      // bus_write16(ctx->mem_destination,ctx->fetch_data);
+      bus_write16(ctx->mem_destination, ctx->fetch_data);
     } else {
       bus_write(ctx->mem_destination, ctx->fetch_data);
     }
@@ -66,17 +144,7 @@ static void proc_ld(cpu_context *ctx) {
                     (char)ctx->fetch_data);
   }
 }
-static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
-  if (check_cond(ctx)) {
-    if (pushPC) {
-      stack_push16(ctx->regs.PC);
-      emu_cycles(2);
-    }
 
-    ctx->regs.PC = ctx->fetch_data;
-    emu_cycles(1);
-  }
-}
 static void proc_ret(cpu_context *ctx) {
   if (ctx->cur_instruction->cond != CT_NONE) {
     emu_cycles(1);
@@ -154,7 +222,7 @@ static IN_PROC processors[] = {
     [IN_NOP] = proc_nop,   [IN_POP] = proc_pop, [IN_JP] = proc_jp,
     [IN_PUSH] = proc_push, [IN_LDH] = proc_ldh, [IN_DI] = proc_di,
     [IN_CALL] = proc_call, [IN_JR] = proc_jr,   [IN_RET] = proc_ret,
-    [IN_RETI] = proc_reti,
+    [IN_RETI] = proc_reti, [IN_INC] = proc_inc, [IN_DEC] = proc_dec, [IN_RST] = proc_rst
 };
 
 IN_PROC inst_get_processor(in_type type) { return processors[type]; }

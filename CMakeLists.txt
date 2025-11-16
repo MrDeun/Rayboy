@@ -73,11 +73,9 @@ FetchContent_Declare(
   GIT_TAG e69e5f977d458f2650bb346dadf2ad30c5320281) # 10.2.1
 FetchContent_MakeAvailable(fmt)
 
-
-add_definitions(-DSOME_DEFINITION)
 add_executable(Rayboy src/main.cpp
-    src/lib/cart.cpp
     src/lib/bus.cpp
+    src/lib/cart.cpp
     src/lib/cpu.cpp
     src/lib/emu.cpp
     src/lib/instruction.cpp
