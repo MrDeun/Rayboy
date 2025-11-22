@@ -36,7 +36,7 @@ static bool is_16bit(reg_type rt) {
   case RT_PC:
     return true;
   default:
-    ERROR("Illegal State in is_16bit()");
+    ERROR(fmt::format("Illegal State in is_16bit({})",(int)rt).c_str());
   }
 }
 
@@ -69,6 +69,24 @@ static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
     ctx->regs.PC = ctx->fetch_data;
     emu_cycles(1);
   }
+}
+
+static void proc_and(cpu_context* ctx){
+  ctx->regs.A &= ctx->fetch_data;
+  cpu_set_flags(ctx,ctx->regs.A == 0,0,1,0); 
+}
+static void proc_xor(cpu_context* ctx){
+  ctx->regs.A ^= ctx->fetch_data & 0xff;
+  cpu_set_flags(ctx,ctx->regs.A == 0,0,0,0); 
+}
+static void proc_or(cpu_context* ctx){
+  ctx->regs.A |= ctx->fetch_data & 0xff;
+  cpu_set_flags(ctx,ctx->regs.A == 0,0,0,0); 
+
+}
+static void proc_cp(cpu_context* ctx){
+  int n = (int)ctx->regs.A - (int)ctx->fetch_data;
+  cpu_set_flags(ctx,n==0,1, ((int)ctx->regs.A&0x0f) - ((int)ctx->fetch_data&0x0f)<0,n<0);
 }
 
 static void proc_add(cpu_context *ctx) {
@@ -265,11 +283,6 @@ static void proc_ldh(cpu_context *ctx) {
     bus_write(0xFF00 | ctx->fetch_data, ctx->regs.A);
   }
   emu_cycles(1);
-}
-
-static void proc_xor(cpu_context *ctx) {
-  ctx->regs.A ^= ctx->fetch_data & 0xFF;
-  cpu_set_flags(ctx, ctx->regs.A == 0, 0, 0, 0);
 }
 
 static void proc_push(cpu_context *ctx) {
