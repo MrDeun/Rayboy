@@ -195,7 +195,7 @@ const std::map<const uint8_t, const std::string> LICENSE_CODES = {
 };
 
 const std::string getCartLicenseName() {
-  std::string res = NOT_FOUND_STR;
+  std::string res = "Not found!";
   if (ctx.header->license_code != 0x33) {
     res = LICENSE_CODES.at(ctx.header->license_code);
   }

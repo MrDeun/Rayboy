@@ -3,6 +3,8 @@ project(Rayboy VERSION 0.1.0 LANGUAGES C CXX)
 include(FetchContent)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# set(CMAKE_C_COMPILER clang)
+# set(CMAKE_CXX_COMPILER clang++)
 # ===============
 # ==== IMGUI ====
 # ===============
