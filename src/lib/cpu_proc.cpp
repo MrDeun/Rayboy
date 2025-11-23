@@ -341,7 +341,7 @@ static void proc_cb(cpu_context *ctx) {
   }
     return;
   }
-  auto err = fmt::format("ERROR: INVALID CB: {:x}", op);
+  auto err = fmt::format("ERROR: INVALID CB: {:X}", op);
   ERROR(err.c_str());
 }
 static void proc_rst(cpu_context *ctx) {

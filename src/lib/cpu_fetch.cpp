@@ -5,7 +5,7 @@ extern cpu_context ctx;
 void fetch_data() {
   ctx.mem_destination = 0;
   ctx.dest_is_mem = false;
-
+  fmt::print("\n \n{} \n \n", (int)ctx.cur_instruction->mode);
   switch (ctx.cur_instruction->mode) {
   case AM_IMP:
     return;
@@ -26,6 +26,10 @@ void fetch_data() {
     emu_cycles(1);
     ctx.fetch_data = low | (high << 8);
     ctx.regs.PC += 2;
+    return;
+  }
+  case AM_R_R:{
+    ctx.fetch_data = cpu_read_reg(ctx.cur_instruction->reg2);
     return;
   }
   case AM_MR_R:

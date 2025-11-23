@@ -1,10 +1,70 @@
 #include "../include/all.hpp"
 #include "fmt/core.h"
+#include <cstdint>
 
 extern cpu_context ctx;
 
-void cpu_set_reg8();
+uint8_t cpu_read_reg8(reg_type rt) {
+  switch (rt) {
+  case RT_A:
+    return ctx.regs.A;
+  case RT_F:
+    return ctx.regs.F;
+  case RT_B:
+    return ctx.regs.B;
+  case RT_C:
+    return ctx.regs.C;
+  case RT_D:
+    return ctx.regs.D;
+  case RT_E:
+    return ctx.regs.E;
+  case RT_H:
+    return ctx.regs.H;
+  case RT_L:
+    return ctx.regs.L;
+  case RT_HL: {
+    return bus_read(cpu_read_reg(RT_HL));
+  }
+  default:
+    std::string err = fmt::format("Invalid REG8: {}", (int)rt);
+    ERROR(err.c_str());
+  }
+}
 
+void cpu_set_reg8(reg_type rt, uint8_t val) {
+  switch (rt) {
+  case RT_A:
+    ctx.regs.A = val & 0xFF;
+    break;
+  case RT_F:
+    ctx.regs.F = val & 0xFF;
+    break;
+  case RT_B:
+    ctx.regs.B = val & 0xFF;
+    break;
+  case RT_C:
+    ctx.regs.C = val & 0xFF;
+    break;
+  case RT_D:
+    ctx.regs.D = val & 0xFF;
+    break;
+  case RT_E:
+    ctx.regs.E = val & 0xFF;
+    break;
+  case RT_H:
+    ctx.regs.H = val & 0xFF;
+    break;
+  case RT_L:
+    ctx.regs.L = val & 0xFF;
+    break;
+  case RT_HL:
+    bus_write(cpu_read_reg(RT_HL), val);
+    break;
+  default:
+    std::string err = fmt::format("Invalid REG8: {}", (int)rt);
+    ERROR(err.c_str());
+  }
+}
 
 void cpu_set_reg(reg_type rt, uint16_t value) {
   switch (rt) {
@@ -87,5 +147,3 @@ uint16_t cpu_read_reg(reg_type rt) {
     return 0;
   }
 }
-
-
