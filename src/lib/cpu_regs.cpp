@@ -3,6 +3,9 @@
 
 extern cpu_context ctx;
 
+void cpu_set_reg8();
+
+
 void cpu_set_reg(reg_type rt, uint16_t value) {
   switch (rt) {
   case RT_NONE:
@@ -84,3 +87,5 @@ uint16_t cpu_read_reg(reg_type rt) {
     return 0;
   }
 }
+
+

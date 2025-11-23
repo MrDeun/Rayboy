@@ -36,7 +36,7 @@ static bool is_16bit(reg_type rt) {
   case RT_PC:
     return true;
   default:
-    ERROR(fmt::format("Illegal State in is_16bit({})",(int)rt).c_str());
+    ERROR(fmt::format("Illegal State in is_16bit({})", (int)rt).c_str());
   }
 }
 
@@ -71,22 +71,23 @@ static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
   }
 }
 
-static void proc_and(cpu_context* ctx){
+static void proc_and(cpu_context *ctx) {
   ctx->regs.A &= ctx->fetch_data;
-  cpu_set_flags(ctx,ctx->regs.A == 0,0,1,0); 
+  cpu_set_flags(ctx, ctx->regs.A == 0, 0, 1, 0);
 }
-static void proc_xor(cpu_context* ctx){
+static void proc_xor(cpu_context *ctx) {
   ctx->regs.A ^= ctx->fetch_data & 0xff;
-  cpu_set_flags(ctx,ctx->regs.A == 0,0,0,0); 
+  cpu_set_flags(ctx, ctx->regs.A == 0, 0, 0, 0);
 }
-static void proc_or(cpu_context* ctx){
+static void proc_or(cpu_context *ctx) {
   ctx->regs.A |= ctx->fetch_data & 0xff;
-  cpu_set_flags(ctx,ctx->regs.A == 0,0,0,0); 
-
+  cpu_set_flags(ctx, ctx->regs.A == 0, 0, 0, 0);
 }
-static void proc_cp(cpu_context* ctx){
+static void proc_cp(cpu_context *ctx) {
   int n = (int)ctx->regs.A - (int)ctx->fetch_data;
-  cpu_set_flags(ctx,n==0,1, ((int)ctx->regs.A&0x0f) - ((int)ctx->fetch_data&0x0f)<0,n<0);
+  cpu_set_flags(ctx, n == 0, 1,
+                ((int)ctx->regs.A & 0x0f) - ((int)ctx->fetch_data & 0x0f) < 0,
+                n < 0);
 }
 
 static void proc_add(cpu_context *ctx) {
@@ -214,6 +215,135 @@ static void proc_inc(cpu_context *ctx) {
 
   cpu_set_flags(ctx, val == 0, 1, (val & 0x0f) == 0, -1);
 }
+reg_type rt_lookup[] = {RT_B, RT_C, RT_D, RT_E, RT_H, RT_L, RT_HL, RT_A};
+
+reg_type decode_reg(uint8_t reg) {
+  if (reg > 0b111)
+    return RT_NONE;
+  return rt_lookup[reg];
+}
+
+static void proc_cb(cpu_context *ctx) {
+  uint8_t op = ctx->fetch_data;
+  reg_type reg = decode_reg(op & 0b111);
+  uint8_t bit = (op >> 3) & 0b111;
+  uint8_t bit_op = (op >> 6) & 0b11;
+  uint8_t reg_val = cpu_read_reg8(reg);
+
+  emu_cycles(1);
+
+  if (reg == RT_HL) {
+    emu_cycles(2);
+  }
+
+  switch (bit_op) {
+  case 1:
+    // BIT
+    cpu_set_flags(ctx, !(reg_val & (1 << bit)), 0, 1, -1);
+    return;
+
+  case 2:
+    // RST
+    reg_val &= ~(1 << bit);
+    cpu_set_reg8(reg, reg_val);
+    return;
+
+  case 3:
+    // SET
+    reg_val |= (1 << bit);
+    cpu_set_reg8(reg, reg_val);
+    return;
+  }
+
+  bool flagC = CPU_FLAG_C;
+
+  switch (bit) {
+  case 0: {
+    // RLC
+    bool setC = false;
+    uint8_t result = (reg_val << 1) & 0xFF;
+
+    if ((reg_val & (1 << 7)) != 0) {
+      result |= 1;
+      setC = true;
+    }
+
+    cpu_set_reg8(reg, result);
+    cpu_set_flags(ctx, result == 0, false, false, setC);
+  }
+    return;
+
+  case 1: {
+    // RRC
+    uint8_t old = reg_val;
+    reg_val >>= 1;
+    reg_val |= (old << 7);
+
+    cpu_set_reg8(reg, reg_val);
+    cpu_set_flags(ctx, !reg_val, false, false, old & 1);
+  }
+    return;
+
+  case 2: {
+    // RL
+    uint8_t old = reg_val;
+    reg_val <<= 1;
+    reg_val |= flagC;
+
+    cpu_set_reg8(reg, reg_val);
+    cpu_set_flags(ctx, !reg_val, false, false, !!(old & 0x80));
+  }
+    return;
+
+  case 3: {
+    // RR
+    uint8_t old = reg_val;
+    reg_val >>= 1;
+
+    reg_val |= (flagC << 7);
+
+    cpu_set_reg8(reg, reg_val);
+    cpu_set_flags(ctx, !reg_val, false, false, old & 1);
+  }
+    return;
+
+  case 4: {
+    // SLA
+    uint8_t old = reg_val;
+    reg_val <<= 1;
+
+    cpu_set_reg8(reg, reg_val);
+    cpu_set_flags(ctx, !reg_val, false, false, !!(old & 0x80));
+  }
+    return;
+
+  case 5: {
+    // SRA
+    uint8_t u = (int8_t)reg_val >> 1;
+    cpu_set_reg8(reg, u);
+    cpu_set_flags(ctx, !u, 0, 0, reg_val & 1);
+  }
+    return;
+
+  case 6: {
+    // SWAP
+    reg_val = ((reg_val & 0xF0) >> 4) | ((reg_val & 0xF) << 4);
+    cpu_set_reg8(reg, reg_val);
+    cpu_set_flags(ctx, reg_val == 0, false, false, false);
+  }
+    return;
+
+  case 7: {
+    // SRL
+    uint8_t u = reg_val >> 1;
+    cpu_set_reg8(reg, u);
+    cpu_set_flags(ctx, !u, 0, 0, reg_val & 1);
+  }
+    return;
+  }
+  auto err = fmt::format("ERROR: INVALID CB: {:x}", op);
+  ERROR(err.c_str());
+}
 static void proc_rst(cpu_context *ctx) {
   goto_addr(ctx, ctx->cur_instruction->param, true);
 }
@@ -316,6 +446,8 @@ static IN_PROC processors[] = {
     [IN_CALL] = proc_call, [IN_JR] = proc_jr,   [IN_RET] = proc_ret,
     [IN_RETI] = proc_reti, [IN_INC] = proc_inc, [IN_DEC] = proc_dec,
     [IN_RST] = proc_rst,   [IN_SBC] = proc_sbc, [IN_ADD] = proc_add,
-    [IN_SUB] = proc_sub,   [IN_ADC] = proc_adc};
+    [IN_SUB] = proc_sub,   [IN_ADC] = proc_adc, [IN_OR] = proc_or,
+    [IN_AND] = proc_and,   [IN_CP] = proc_cp, [IN_CB] = proc_cb,
+};
 
 IN_PROC inst_get_processor(in_type type) { return processors[type]; }

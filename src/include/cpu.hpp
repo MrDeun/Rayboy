@@ -65,6 +65,9 @@ uint16_t cpu_read_reg(reg_type rt);
 void cpu_set_reg(reg_type rt, uint16_t value);
 void cpu_set_flags(cpu_context ctx, bool z, bool n, bool h, bool c);
 
+void cpu_set_reg8(reg_type rt, uint8_t value);
+uint8_t cpu_read_reg8(reg_type rt);
+
 void fetch_data();
 
 void cpu_init();
