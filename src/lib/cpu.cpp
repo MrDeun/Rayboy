@@ -43,6 +43,10 @@ bool cpu_step() {
                  bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B,
                  ctx.regs.B, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
     execute();
+  } else {
+      if(ctx.int_flags) {
+          ctx.halted = false;
+      }
   }
 
   return true;

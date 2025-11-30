@@ -142,8 +142,8 @@ uint16_t cpu_read_reg(reg_type rt) {
   case RT_HL:
     return ctx.regs.HL;
   default:
-    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:X}",
-                 ctx.op_code);
+    fmt::println("WARNING: Required registery not defined! OPCODE = 0x{:X}, REG_TYPE={}",
+                 ctx.op_code, (int)rt);
     return 0;
   }
 }

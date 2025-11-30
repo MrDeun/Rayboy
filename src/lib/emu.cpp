@@ -32,26 +32,15 @@ void MainMenu() {
         fmt::println("TEMP_DEBUG: Open File");
       }
 
-      if (ImGui::MenuItem("Check Zelda")) {
-        if (cart_load("Zelda.gb")) {
-          ctx.running = true;
-          cpu_init();
-        }
-      }
+
       if (ImGui::MenuItem("Check Tetris")) {
         if (cart_load("Tetris.gb")) {
           ctx.running = true;
           cpu_init();
         }
       }
-      if (ImGui::MenuItem("Check Mario")) {
-        if (cart_load("Mario.gb")) {
-          ctx.running = true;
-          cpu_init();
-        }
-      }
-      if (ImGui::MenuItem("Check Pokemon")) {
-        if (cart_load("Pokemon.gb")) {
+      if (ImGui::MenuItem("Test Instruction Set")) {
+        if (cart_load("cpu_instrs.gb")) {
           ctx.running = true;
           cpu_init();
         }

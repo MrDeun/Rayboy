@@ -5,7 +5,7 @@ extern cpu_context ctx;
 void fetch_data() {
   ctx.mem_destination = 0;
   ctx.dest_is_mem = false;
-  fmt::print("\n \n{} \n \n", (int)ctx.cur_instruction->mode);
+  // fmt::print("\n \n{} \n \n", (int)ctx.cur_instruction->mode);
   switch (ctx.cur_instruction->mode) {
   case AM_IMP:
     return;

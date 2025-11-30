@@ -175,7 +175,7 @@ static void proc_none(cpu_context *ctx) {
   ERROR("Tried to fetch illegal processor for IN_NONE!");
 }
 static void proc_dec(cpu_context *ctx) {
-  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg2) - 1;
+  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - 1;
   if (is_16bit(ctx->cur_instruction->reg1)) {
     emu_cycles(1);
   }
@@ -196,7 +196,7 @@ static void proc_dec(cpu_context *ctx) {
   cpu_set_flags(ctx, val == 0, 0, (val & 0x0f) == 0, -1);
 }
 static void proc_inc(cpu_context *ctx) {
-  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg2) + 1;
+  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
   if (is_16bit(ctx->cur_instruction->reg1)) {
     emu_cycles(1);
   }
@@ -394,6 +394,7 @@ static void proc_reti(cpu_context *ctx) {
   proc_ret(ctx);
 }
 static void proc_di(cpu_context *ctx) { ctx->int_master_enabled = false; }
+static void proc_ei(cpu_context *ctx) { ctx->enabling_ime = true; }
 static void proc_jr(cpu_context *ctx) {
   char rel = (char)(ctx->fetch_data & 0xFF);
   uint16_t address = ctx->regs.PC + rel;
@@ -518,6 +519,6 @@ static IN_PROC processors[] = {
     [IN_RRCA] = proc_rrca, [IN_RLCA] = proc_rlca, [IN_RRA] = proc_rra,
     [IN_RLA] = proc_rla,   [IN_STOP] = proc_stop, [IN_CCF] = proc_ccf,
     [IN_CPL] = proc_cpl,   [IN_DAA] = proc_daa,   [IN_SCF] = proc_scf,
-    [IN_HALT] = proc_halt};
+    [IN_HALT] = proc_halt, [IN_EI] = proc_ei};
 
 IN_PROC inst_get_processor(in_type type) { return processors[type]; }

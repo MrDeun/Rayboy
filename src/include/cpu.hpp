@@ -48,8 +48,11 @@ struct cpu_context {
 
 
   bool int_master_enabled;
+  bool enabling_ime;
   bool halted;
   bool stepping;
+
+  uint8_t int_flags;
 };
 using IN_PROC = void (*)(cpu_context *);
 IN_PROC inst_get_processor(in_type type);
