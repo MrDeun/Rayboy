@@ -28,7 +28,7 @@ void fetch_data() {
     ctx.regs.PC += 2;
     return;
   }
-  case AM_R_R:{
+  case AM_R_R: {
     ctx.fetch_data = cpu_read_reg(ctx.cur_instruction->reg2);
     return;
   }
@@ -104,7 +104,6 @@ void fetch_data() {
     uint16_t high = bus_read(ctx.regs.PC + 1);
     emu_cycles(1);
 
-
     ctx.dest_is_mem = true;
     ctx.regs.PC += 2;
     ctx.fetch_data = cpu_read_reg(ctx.cur_instruction->reg2);
@@ -135,7 +134,7 @@ void fetch_data() {
 
     uint16_t addr = low | (high << 8);
 
-    ctx.regs.PC +=2;
+    ctx.regs.PC += 2;
     ctx.fetch_data = bus_read(addr);
     emu_cycles(1);
   }

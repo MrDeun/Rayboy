@@ -4,31 +4,31 @@
 instruction instructions[0x100] = {
     // 0x0X
     [0x00] = {.type = IN_NOP, .mode = AM_IMP},
-    [0x01] = {.type = IN_LD, .mode = AM_R_D16, RT_BC},
-    [0x02] = {.type = IN_LD, .mode = AM_MR_R, RT_BC, RT_A},
-    [0x03] = {.type = IN_INC, .mode = AM_R, RT_BC},
-    [0x04] = {.type = IN_INC, .mode = AM_R, RT_B},
+    [0x01] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_BC},
+    [0x02] = {.type = IN_LD, .mode = AM_MR_R, .reg1 = RT_BC, .reg2 = RT_A},
+    [0x03] = {.type = IN_INC, .mode = AM_R, .reg1 = RT_BC},
+    [0x04] = {.type = IN_INC, .mode = AM_R, .reg1 = RT_B},
     [0x05] = {.type = IN_DEC, .mode = AM_R, .reg1 = RT_B},
-
     [0x06] = {.type = IN_LD, .mode = AM_R_D8, RT_B},
-
+    [0x07] = {.type = IN_RLCA},
     [0x08] = {.type = IN_LD, .mode = AM_A16_R, RT_NONE, RT_SP},
     [0x09] = {.type = IN_ADD, .mode = AM_R_R, RT_HL, RT_BC},
-
     [0x0A] = {.type = IN_LD, .mode = AM_R_MR, RT_A, RT_BC},
     [0x0B] = {.type = IN_DEC, .mode = AM_R, RT_BC},
     [0x0C] = {.type = IN_INC, .mode = AM_R, RT_C},
     [0x0D] = {.type = IN_DEC, .mode = AM_R, RT_C},
-
     [0x0E] = {.type = IN_LD, .mode = AM_R_D8, RT_C},
+    [0x0F] = {.type = IN_RRCA},
 
     // 0x1X
+    [0x10] = {.type = IN_STOP},
     [0x11] = {.type = IN_LD, .mode = AM_R_D16, RT_DE},
     [0x12] = {.type = IN_LD, .mode = AM_MR_R, RT_DE, RT_A},
     [0x13] = {.type = IN_INC, .mode = AM_R, RT_DE},
     [0x14] = {.type = IN_INC, .mode = AM_R, RT_D},
     [0x15] = {.type = IN_DEC, .mode = AM_R, RT_D},
     [0x16] = {.type = IN_LD, .mode = AM_R_D8, RT_D},
+    [0x17] = {.type = IN_RLA},
     [0x18] = {.type = IN_JR, .mode = AM_D8},
     [0x19] = {.type = IN_ADD, .mode = AM_R_R, RT_HL, RT_DE},
     [0x1A] = {.type = IN_LD, .mode = AM_R_MR, RT_A, RT_DE},
@@ -36,6 +36,7 @@ instruction instructions[0x100] = {
     [0x1C] = {.type = IN_INC, .mode = AM_R, RT_E},
     [0x1D] = {.type = IN_DEC, .mode = AM_R, RT_E},
     [0x1E] = {.type = IN_LD, .mode = AM_R_D8, RT_E},
+    [0x1F] = {.type = IN_RRA},
 
     // 0x2X
     [0x20] = {.type = IN_JR, .mode = AM_D8, RT_NONE, RT_NONE, .cond = CT_NZ},
@@ -46,13 +47,14 @@ instruction instructions[0x100] = {
     [0x25] = {.type = IN_DEC, .mode = AM_R, RT_H},
     [0x26] = {.type = IN_LD, .mode = AM_R_D8, RT_H},
     [0x28] = {.type = IN_JR, .mode = AM_D8, RT_NONE, RT_NONE, .cond = CT_Z},
+    [0x27] = {.type = IN_DAA},
     [0x29] = {.type = IN_ADD, .mode = AM_R_R, RT_HL, RT_HL},
     [0x2A] = {.type = IN_LD, .mode = AM_R_HLI, RT_A, RT_HL},
     [0x2B] = {.type = IN_DEC, .mode = AM_R, RT_HL},
     [0x2C] = {.type = IN_INC, .mode = AM_R, RT_L},
     [0x2D] = {.type = IN_DEC, .mode = AM_R, RT_L},
     [0x2E] = {.type = IN_LD, .mode = AM_R_D8, RT_L},
-
+    [0x2F] = {.type = IN_CPL},
     // 0x3X
     [0x30] = {.type = IN_JR, .mode = AM_D8, RT_NONE, RT_NONE, .cond = CT_NC},
     [0x31] = {.type = IN_LD, .mode = AM_R_D16, RT_SP},
@@ -61,6 +63,7 @@ instruction instructions[0x100] = {
     [0x34] = {.type = IN_INC, .mode = AM_MR, RT_HL},
     [0x35] = {.type = IN_DEC, .mode = AM_MR, RT_HL},
     [0x36] = {.type = IN_LD, .mode = AM_MR_D8, RT_HL},
+    [0x37] = {.type = IN_SCF},
     [0x38] = {.type = IN_JR, .mode = AM_D8, RT_NONE, RT_NONE, .cond = CT_C},
     [0x39] = {.type = IN_ADD, .mode = AM_R_R, RT_HL, RT_SP},
     [0x3A] = {.type = IN_LD, .mode = AM_R_HLD, RT_A, RT_HL},
@@ -68,7 +71,7 @@ instruction instructions[0x100] = {
     [0x3C] = {.type = IN_INC, .mode = AM_R, RT_A},
     [0x3D] = {.type = IN_DEC, .mode = AM_R, RT_A},
     [0x3E] = {.type = IN_LD, .mode = AM_R_D8, RT_A},
-
+    [0x3F] = {.type = IN_CCF},
     // 0x4X
     [0x40] = {.type = IN_LD, .mode = AM_R_R, RT_B, RT_B},
     [0x41] = {.type = IN_LD, .mode = AM_R_R, RT_B, RT_C},
@@ -228,6 +231,7 @@ instruction instructions[0x100] = {
     [0xC8] = {.type = IN_RET, .mode = AM_IMP, RT_NONE, RT_NONE, .cond = CT_Z},
     [0xC9] = {.type = IN_RET},
     [0xCA] = {.type = IN_JP, .mode = AM_D16, RT_NONE, RT_NONE, .cond = CT_Z},
+    [0xCB] = {.type = IN_CB, .mode = AM_D8},
     [0xCC] = {.type = IN_CALL, .mode = AM_D16, RT_NONE, RT_NONE, .cond = CT_Z},
     [0xCD] = {.type = IN_CALL, .mode = AM_D16},
     [0xCE] = {.type = IN_ADC, .mode = AM_R_D8, RT_A},
@@ -290,7 +294,7 @@ instruction instructions[0x100] = {
     [0xF2] = {.type = IN_LD, .mode = AM_R_MR, RT_A, RT_C},
     [0xF3] = {.type = IN_DI},
     [0xF5] = {.type = IN_PUSH, .mode = AM_D8, RT_AF},
-    [0xF6] = {.type = IN_OR, .mode=AM_D8},
+    [0xF6] = {.type = IN_OR, .mode = AM_D8},
     [0xF7] = {.type = IN_RST,
               .mode = AM_IMP,
               RT_NONE,
