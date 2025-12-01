@@ -1,13 +1,11 @@
-#include "../include/cpu.hpp"
-#include "../include/bus.hpp"
+#include "../include/all.hpp"
 #include "fmt/core.h"
+#include <cstdint>
 
 cpu_context ctx = {0};
 
 void cpu_init() { ctx.regs.PC = 0x100; }
-cpu_registers* cpu_get_regs(){
-    return &ctx.regs;
-}
+cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
   ctx.op_code = bus_read(ctx.regs.PC++);
   ctx.cur_instruction = get_instruction_by_opcode(ctx.op_code);
@@ -30,7 +28,9 @@ void execute() {
 }
 
 void emu_cycles(int cycles) {}
+void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
 
+uint8_t cpu_get_int_flags() { return ctx.int_flags; }
 bool cpu_step() {
   if (!ctx.halted) {
     auto pc = ctx.regs.PC;
@@ -44,9 +44,18 @@ bool cpu_step() {
                  ctx.regs.B, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
     execute();
   } else {
-      if(ctx.int_flags) {
-          ctx.halted = false;
-      }
+    if (ctx.int_flags) {
+      ctx.halted = false;
+    }
+  }
+
+  if (ctx.int_master_enabled) {
+    cpu_handle_interrupts(&ctx);
+    ctx.enabling_ime = false;
+  }
+
+  if (ctx.enabling_ime) {
+    ctx.int_master_enabled = true;
   }
 
   return true;

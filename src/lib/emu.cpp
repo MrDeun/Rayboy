@@ -32,7 +32,6 @@ void MainMenu() {
         fmt::println("TEMP_DEBUG: Open File");
       }
 
-
       if (ImGui::MenuItem("Check Tetris")) {
         if (cart_load("Tetris.gb")) {
           ctx.running = true;
@@ -77,9 +76,9 @@ int emu_run(int argc, char **argv) {
   rlImGuiSetup(true);
 
   if (argc > 1) {
-    if(cart_load(argv[1])){
-        ctx.running = true;
-        cpu_init();
+    if (cart_load(argv[1])) {
+      ctx.running = true;
+      cpu_init();
     }
   }
 
@@ -93,7 +92,7 @@ int emu_run(int argc, char **argv) {
 
     MainMenu();
 
-    if (ctx.running && IsKeyPressed(KEY_ENTER)) {
+    if (ctx.running && raylib::Keyboard::IsKeyDown(KEY_ENTER)) {
       cpu_step();
     }
 
