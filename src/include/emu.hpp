@@ -7,7 +7,7 @@ struct emu_context{
     bool running;
     uint64_t ticks;
 
-    uint8_t EmulatorScale = 1;
+    uint8_t EmulatorScale = 4;
 };
 
 int emu_run(int argc, char** argv);

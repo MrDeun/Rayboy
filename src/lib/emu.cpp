@@ -1,4 +1,6 @@
 #include "../include/all.hpp"
+#include "Vector2.hpp"
+#include "Window.hpp"
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include "imgui.h"
@@ -12,24 +14,29 @@ static emu_context ctx;
 emu_context *emu_get_context() { return &ctx; }
 void delay(uint32_t ms);
 
-void testInstruction() {
-  auto instruct1 = get_instruction_by_opcode(0x00);
-  assert(instruct1 != nullptr);
-  fmt::println("Instruction 1 = {:p}", fmt::ptr(instruct1));
-
-  auto instruct2 = get_instruction_by_opcode(0x0E);
-  assert(instruct2 != nullptr);
-  fmt::println("Instruction 2 = {:p}", fmt::ptr(instruct2));
-
-  assert(instruct1 != instruct2);
+void OpenGameboyROM() {
+  ImGui::OpenPopup("EnterPath");
+  if (ImGui::BeginPopup("EnterPath")) {
+    static char path_buffer[0xFF];
+    ImGui::InputText("Path", path_buffer, IM_ARRAYSIZE(path_buffer));
+    if (ImGui::Button("Open")) {
+      if (cart_load(path_buffer)) {
+        ctx.running = true;
+        cpu_init();
+      }
+      ImGui::CloseCurrentPopup();
+    }
+  }
+  return;
 }
 
-void MainMenu() {
+void MainMenu(raylib::Window &window) {
   if (ImGui::BeginMainMenuBar()) {
     if (ImGui::BeginMenu("File")) {
       if (ImGui::MenuItem("Open", "Ctrl+O")) {
         // TODO: Loading a GameBoy cartridge
-        fmt::println("TEMP_DEBUG: Open File");
+        // OpenGameboyROM();
+        OpenGameboyROM();
       }
 
       if (ImGui::MenuItem("Check Tetris")) {
@@ -64,15 +71,16 @@ void MainMenu() {
     }
 
     ImGui::EndMainMenuBar();
+    window.SetSize(160 * ctx.EmulatorScale, 144 * ctx.EmulatorScale);
   }
 }
 
 int emu_run(int argc, char **argv) {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
-  raylib::Window window(1280, 720);
+  raylib::Window window(160, 144);
+  window.SetTitle("Rayboy - The Gameboy Emulator");
   SetTargetFPS(60);
 
-  testInstruction();
   rlImGuiSetup(true);
 
   if (argc > 1) {
@@ -87,10 +95,9 @@ int emu_run(int argc, char **argv) {
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());
 
+    MainMenu(window);
     DrawRectangle(0, 0, 160 * ctx.EmulatorScale, 140 * ctx.EmulatorScale,
                   raylib::Color::DarkBrown());
-
-    MainMenu();
 
     if (ctx.running && raylib::Keyboard::IsKeyDown(KEY_ENTER)) {
       cpu_step();

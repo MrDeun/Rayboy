@@ -37,11 +37,10 @@ bool cpu_step() {
     fetch_instruction();
     fetch_data();
 
-    fmt::println("{}: {} (OP_CODE=0x{:X} {:X} {:X}) A: {:X} BC: {:X}{:X} DE: "
+    fmt::println("{}: {} A: {:X} BC: {:X}{:X} DE: "
                  "{:X}{:X} HL: {:X}{:X}",
-                 pc, get_inst_name(ctx.cur_instruction->type), ctx.op_code,
-                 bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B,
-                 ctx.regs.B, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+                 pc, inst_toString(&ctx), ctx.regs.A, ctx.regs.B, ctx.regs.C,
+                 ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
     execute();
   } else {
     if (ctx.int_flags) {

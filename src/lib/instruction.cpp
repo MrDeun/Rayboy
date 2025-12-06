@@ -1,4 +1,5 @@
-#include "../include/instruction.hpp"
+#include "../include/all.hpp"
+#include "fmt/core.h"
 #include <cstdint>
 
 instruction instructions[0x100] = {
@@ -221,7 +222,7 @@ instruction instructions[0x100] = {
     [0xC3] = {.type = IN_JP, .mode = AM_D16},
     [0xC4] = {.type = IN_CALL, .mode = AM_D16, RT_NONE, RT_NONE, .cond = CT_NZ},
     [0xC5] = {.type = IN_PUSH, .mode = AM_R, RT_BC},
-    [0xC6] = {.type = IN_ADD, .mode = AM_R_A8, RT_A},
+    [0xC6] = {.type = IN_ADD, .mode = AM_R_D8, RT_A},
     [0xC7] = {.type = IN_RST,
               .mode = AM_IMP,
               RT_NONE,
@@ -247,7 +248,7 @@ instruction instructions[0x100] = {
     [0xD2] = {.type = IN_JP, .mode = AM_D16, RT_NONE, RT_NONE, .cond = CT_NC},
     [0xD4] = {.type = IN_CALL, .mode = AM_D16, RT_NONE, RT_NONE, .cond = CT_NC},
     [0xD5] = {.type = IN_PUSH, .mode = AM_R, RT_DE},
-    [0xD6] = {.type = IN_SUB, .mode = AM_D8, .reg1 = RT_A},
+    [0xD6] = {.type = IN_SUB, .mode = AM_R_D8, .reg1 = RT_A},
     [0xD7] = {.type = IN_RST,
               .mode = AM_IMP,
               RT_NONE,
@@ -277,11 +278,12 @@ instruction instructions[0x100] = {
               RT_NONE,
               .cond = CT_NONE,
               .param = 0x20},
-    [0xE6] = {.type = IN_AND, .mode = AM_D8},
+    [0xE6] = {.type = IN_AND, .mode = AM_R_D8, .reg1 = RT_A},
     [0xE8] = {.type = IN_ADD, .mode = AM_R_D8, RT_SP},
-    [0xE9] = {.type = IN_JP, .mode = AM_MR, RT_HL},
+    [0xE9] = {.type = IN_JP, .mode = AM_R, RT_HL},
 
     [0xEA] = {.type = IN_LD, .mode = AM_A16_R, RT_NONE, RT_A},
+    [0xEE] = {.type = IN_XOR, .mode = AM_R_D8, .reg1 = RT_A},
     [0xEF] = {.type = IN_RST,
               .mode = AM_IMP,
               RT_NONE,
@@ -295,7 +297,7 @@ instruction instructions[0x100] = {
     [0xF2] = {.type = IN_LD, .mode = AM_R_MR, RT_A, RT_C},
     [0xF3] = {.type = IN_DI},
     [0xF5] = {.type = IN_PUSH, .mode = AM_D8, RT_AF},
-    [0xF6] = {.type = IN_OR, .mode = AM_D8},
+    [0xF6] = {.type = IN_OR, .mode = AM_R_D8, .reg1 = RT_A},
     [0xF7] = {.type = IN_RST,
               .mode = AM_IMP,
               RT_NONE,
@@ -306,6 +308,7 @@ instruction instructions[0x100] = {
     [0xF9] = {.type = IN_LD, .mode = AM_R_R, .reg1 = RT_SP, .reg2 = RT_HL},
     [0xFA] = {.type = IN_LD, .mode = AM_R_A16, RT_A},
     [0xFB] = {.type = IN_EI},
+    [0xFE] = {.type = IN_CP, .mode = AM_R_D8, .reg1 = RT_A},
     [0xFF] = {.type = IN_RST,
               .mode = AM_IMP,
               .reg1 = RT_NONE,
@@ -324,7 +327,23 @@ const std::string inst_lookup[] = {
     "RST",    "IN_ERR",  "IN_RLC", "IN_RRC", "IN_RL",  "IN_RR", "IN_SLA",
     "IN_SRA", "IN_SWAP", "IN_SRL", "IN_BIT", "IN_RES", "IN_SET"};
 
+const std::string reg_lookup[]{
+    "RT_NONE", "RT_A",  "RT_F",  "RT_B",  "RT_C",  "RT_D",  "RT_E",  "RT_H",
+    "RT_L",    "RT_SP", "RT_PC", "RT_AF", "RT_BC", "RT_DE", "RT_HL",
+};
+
+const std::string &get_reg_name(reg_type reg) { return reg_lookup[reg]; }
+
 const std::string &get_inst_name(in_type type) { return inst_lookup[type]; }
+
+const std::string inst_toString(cpu_context *ctx) {
+  instruction *cur_instruction = ctx->cur_instruction;
+  return fmt::format("Instruction 0x{:X} = {type=\"{}\", mode=\"{}\", "
+                     "reg1=\"{}\", reg2=\"{}\"}",
+                     ctx->op_code, get_inst_name(cur_instruction->type),
+                     get_reg_name(cur_instruction->reg1),
+                     get_reg_name(cur_instruction->reg2));
+}
 
 instruction *get_instruction_by_opcode(uint8_t opcode) {
   if (instructions[opcode].type == IN_NONE) {

@@ -55,6 +55,7 @@ struct cpu_context {
   uint8_t int_flags;
   uint8_t ie_register;
 };
+const std::string inst_toString(cpu_context *ctx);
 using IN_PROC = void (*)(cpu_context *);
 IN_PROC inst_get_processor(in_type type);
 
