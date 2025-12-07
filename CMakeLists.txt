@@ -89,6 +89,9 @@ add_executable(Rayboy src/main.cpp
     src/lib/ram.cpp
     src/lib/stack.cpp
     src/lib/interupt.cpp
+    src/lib/io.cpp
+    src/lib/dbg.cpp
+
 
 )
 target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)

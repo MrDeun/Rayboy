@@ -4,7 +4,10 @@
 
 cpu_context ctx = {0};
 
-void cpu_init() { ctx.regs.PC = 0x100; }
+void cpu_init() {
+  ctx.regs.PC = 0x100;
+  ctx.regs.A = 0x01;
+}
 cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
   ctx.op_code = bus_read(ctx.regs.PC++);
@@ -17,8 +20,6 @@ void fetch_instruction() {
 }
 
 void execute() {
-  // fmt::println("Executing Instruction: {:X} \t PC: {}", ctx.op_code,
-  // ctx.regs.PC);
   IN_PROC proc = inst_get_processor(ctx.cur_instruction->type);
   if (!proc) {
     auto err = fmt::format("No known instruction: 0x{:X}", ctx.op_code);
@@ -35,12 +36,16 @@ bool cpu_step() {
   if (!ctx.halted) {
     auto pc = ctx.regs.PC;
     fetch_instruction();
+    emu_cycles(1);
     fetch_data();
-
     fmt::println("{}: {} A: {:X} BC: {:X}{:X} DE: "
                  "{:X}{:X} HL: {:X}{:X}",
                  pc, inst_toString(&ctx), ctx.regs.A, ctx.regs.B, ctx.regs.C,
                  ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+
+    dbg_update();
+    dbg_print();
+
     execute();
   } else {
     if (ctx.int_flags) {

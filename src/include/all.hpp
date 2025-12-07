@@ -9,5 +9,7 @@
 #include "ppu.hpp"
 #include "timer.hpp"
 #include "ram.hpp"
+#include "io.hpp"
+#include "dbg.hpp"
 #include "stack.hpp"
 #include "interupt.hpp"

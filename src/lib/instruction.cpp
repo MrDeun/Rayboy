@@ -338,11 +338,12 @@ const std::string &get_inst_name(in_type type) { return inst_lookup[type]; }
 
 const std::string inst_toString(cpu_context *ctx) {
   instruction *cur_instruction = ctx->cur_instruction;
-  return fmt::format("Instruction 0x{:X} = {type=\"{}\", mode=\"{}\", "
-                     "reg1=\"{}\", reg2=\"{}\"}",
-                     ctx->op_code, get_inst_name(cur_instruction->type),
-                     get_reg_name(cur_instruction->reg1),
-                     get_reg_name(cur_instruction->reg2));
+  auto ret = fmt::format("Instruction 0x{:X} = (type=\"{}\", "
+                         "reg1=\"{}\", reg2=\"{}\")",
+                         ctx->op_code, get_inst_name(cur_instruction->type),
+                         get_reg_name(cur_instruction->reg1),
+                         get_reg_name(cur_instruction->reg2));
+  return ret;
 }
 
 instruction *get_instruction_by_opcode(uint8_t opcode) {

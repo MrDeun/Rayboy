@@ -27,6 +27,7 @@ uint8_t bus_read(uint16_t address) {
     return 0;
   } else if (address < 0xff80) {
     // IO Register
+    return io_read(address);
     NO_IMPL(err.c_str());
   } else if (address == 0xffff) {
     // CPU Enable register
