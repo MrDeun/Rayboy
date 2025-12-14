@@ -1,8 +1,6 @@
 #include "../include/all.hpp"
-#include <cstdint>
 
-void cpu_request_interupts(interrupt_type i);
-void cpu_handle_interrupts(cpu_context *ctx);
+void cpu_request_interupts(interrupt_type i){}
 
 void int_handle(cpu_context *ctx, uint16_t address) {
   stack_push16(ctx->regs.PC);

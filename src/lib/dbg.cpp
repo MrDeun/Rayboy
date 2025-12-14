@@ -16,7 +16,8 @@ void dbg_update() {
 }
 
 void dbg_print() {
-    if (dbg_msg[0]) {
+
+    // if (dbg_msg[0]) {
         fmt::println("DEBUG: {}", dbg_msg);
-    }
+    // }
 }

@@ -9,7 +9,7 @@ uint8_t bus_read(uint16_t address) {
     // ROM Data
     return cart_read(address);
   } else if (address < 0xA000) {
-    // Char/Map data
+    return ppu_vram_read(address);
     NO_IMPL(err.c_str())
   } else if (address < 0xC000) {
     // Cartridge
@@ -20,8 +20,7 @@ uint8_t bus_read(uint16_t address) {
     // reserved by echo ram
     return 0;
   } else if (address < 0xFEA0) {
-    // TODO: Graphics card
-    NO_IMPL(err.c_str());
+      return ppu_oam_read(address);
   } else if (address < 0xFF00) {
     // reserved unused
     return 0;
@@ -43,7 +42,7 @@ void bus_write(uint16_t address, uint8_t value) {
     cart_write(address, value);
   } else if (address < 0xA000) {
     // Map/Char data
-    NO_IMPL(err.c_str());
+    ppu_vram_read(address);
   } else if (address < 0xC000) {
     // EXT-RAM
     cart_write(address, value);
@@ -54,7 +53,7 @@ void bus_write(uint16_t address, uint8_t value) {
     // OAM
     NO_IMPL(err.c_str());
   } else if (address < 0xFEA0) {
-    // echo ram - not used?
+      ppu_oam_read(address);
   } else if (address < 0xFF00) {
     // unusable
     return;

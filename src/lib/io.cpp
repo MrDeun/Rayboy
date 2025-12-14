@@ -11,6 +11,15 @@ void io_write(uint16_t address, uint8_t value) {
   case 0xff02:
     serial_data[1] = value;
     break;
+  case 0xff04:
+  case 0xff05:
+  case 0xff06:
+  case 0xff07:
+    timer_write(address, value);
+    break;
+  case 0xff0f:
+    cpu_set_int_flags(value);
+    break;
   default:
     ERROR("Unsupported bus read in io_read() ");
   }
@@ -24,8 +33,16 @@ uint8_t io_read(uint16_t address) {
   case 0xff02:
     return serial_data[1];
     break;
+  case 0xff04:
+  case 0xff05:
+  case 0xff06:
+  case 0xff07:
+    return timer_read(address);
+    break;
+  case 0xff0f:
+    return cpu_get_int_flags();
   default:
     break;
   }
-    ERROR("Unsupported bus read in io_read() ");
+  ERROR("Unsupported bus read in io_read() ");
 }

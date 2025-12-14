@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Window.hpp"
 #include <stdbool.h>
 #include <stdint.h>
 struct emu_context{
@@ -7,8 +8,9 @@ struct emu_context{
     bool running;
     uint64_t ticks;
 
-    uint8_t EmulatorScale = 4;
+    uint8_t EmulatorScale = 2;
     bool isHoldRequired = false;
+    raylib::Window window;
 };
 
 int emu_run(int argc, char** argv);
