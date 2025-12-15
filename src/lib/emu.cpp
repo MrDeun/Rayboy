@@ -7,52 +7,13 @@
 #include "raylib.h"
 #include "rlImGui.h"
 
-static emu_context ctx;
+static emu_context ctx = {0};
 emu_context *emu_get_context() { return &ctx; }
-void delay(uint32_t ms);
 
-bool checkHold(){
-    if(ctx.isHoldRequired) {
-        return raylib::Keyboard::IsKeyDown(KEY_ENTER);
-    } else {
-        return true;
-    }
-}
-
-void MainMenu() {
-  if (ImGui::BeginMainMenuBar()) {
-    // if (ImGui::BeginMenu("Rescale")) {
-    //   if (ImGui::MenuItem("1x")) {
-    //     ctx.EmulatorScale = 1;
-    //   }
-    //   if (ImGui::MenuItem("2x")) {
-    //     ctx.EmulatorScale = 2;
-    //   }
-    //   if (ImGui::MenuItem("4x")) {
-    //     ctx.EmulatorScale = 4;
-    //   }
-    //   if (ImGui::MenuItem("8x")) {
-    //     ctx.EmulatorScale = 8;
-    //   }
-    //   ImGui::EndMenu();
-    // }
-
-    if (ImGui::BeginMenu("Emulation Status")) {
-        auto hold_str = fmt::format("Hold To Run: {}", ctx.isHoldRequired ? "True" : "False");
-        if (ImGui::MenuItem(hold_str.c_str())) {
-            ctx.isHoldRequired = !ctx.isHoldRequired;
-        }
-
-        ImGui::EndMenu();
-    }
-
-    ImGui::EndMainMenuBar();
-  }
-}
 
 int emu_run(int argc, char **argv) {
-  UiSetup();
-
+    RayboyUI _ui(emu_get_context());
+  _ui.Setup();
 
   if (argc > 1) {
     if (cart_load(argv[1])) {
@@ -66,13 +27,8 @@ int emu_run(int argc, char **argv) {
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());
 
-    MainMenu();
-    DrawRectangle(0, 0, 160 * ctx.EmulatorScale, 140 * ctx.EmulatorScale,
-                  raylib::Color::DarkBrown());
+    _ui.Draw();
 
-    if (ctx.running && checkHold()) {
-      cpu_step();
-    }
 
     rlImGuiEnd();
     EndDrawing();

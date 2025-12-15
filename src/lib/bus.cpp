@@ -30,7 +30,7 @@ uint8_t bus_read(uint16_t address) {
     NO_IMPL(err.c_str());
   } else if (address == 0xffff) {
     // CPU Enable register
-    NO_IMPL(err.c_str());
+    cpu_get_ie_register();
   }
 
   return hram_read(address);
@@ -60,7 +60,7 @@ void bus_write(uint16_t address, uint8_t value) {
   } else if (address < 0xff80) {
     NO_IMPL(err.c_str());
   } else if (address == 0xffff) {
-    NO_IMPL(err.c_str());
+      cpu_set_ie_register(value);
   }
   return;
 }

@@ -50,6 +50,8 @@ void cpu_set_reg(reg_type rt, uint16_t value);
 void cpu_set_flags(cpu_context ctx, bool z, bool n, bool h, bool c);
 uint8_t cpu_get_int_flags();
 void cpu_set_int_flags(uint8_t flags);
+uint8_t cpu_get_ie_register();
+void cpu_set_ie_register(uint8_t n);
 void cpu_set_reg8(reg_type rt, uint8_t value);
 uint8_t cpu_read_reg8(reg_type rt);
 

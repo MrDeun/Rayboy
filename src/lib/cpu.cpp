@@ -3,7 +3,13 @@
 #include <cstdint>
 
 cpu_context ctx = {0};
+uint8_t cpu_get_ie_register() {
+    return ctx.ie_register;
+}
 
+void cpu_set_ie_register(uint8_t n) {
+    ctx.ie_register = n;
+}
 void cpu_init() {
   ctx.regs.PC = 0x100;
   ctx.regs.A = 0x01;
