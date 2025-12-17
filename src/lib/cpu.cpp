@@ -11,8 +11,16 @@ void cpu_set_ie_register(uint8_t n) {
     ctx.ie_register = n;
 }
 void cpu_init() {
-  ctx.regs.PC = 0x100;
-  ctx.regs.A = 0x01;
+    ctx.regs.PC = 0x100;
+    ctx.regs.SP = 0xFFFE;
+    *((short *)&ctx.regs.A) = 0xB001;
+    *((short *)&ctx.regs.B) = 0x1300;
+    *((short *)&ctx.regs.D) = 0xD800;
+    *((short *)&ctx.regs.H) = 0x4D01;
+    ctx.ie_register = 0;
+    ctx.int_flags = 0;
+    ctx.int_master_enabled = false;
+    ctx.enabling_ime = false;
 }
 cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
