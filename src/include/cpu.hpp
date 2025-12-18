@@ -18,6 +18,7 @@ typedef struct {
 
 struct cpu_context {
   cpu_registers regs;
+  uint32_t ticks;
 
   uint16_t fetch_data;
   uint16_t mem_destination;
@@ -29,10 +30,12 @@ struct cpu_context {
   bool int_master_enabled;
   bool enabling_ime;
   bool halted;
-  bool stepping;
+  bool paused;
+  bool running;
 
   uint8_t int_flags;
   uint8_t ie_register;
+  pthread_t* gb_thread;
 };
 const std::string inst_toString(cpu_context *ctx);
 using IN_PROC = void (*)(cpu_context *);
@@ -56,7 +59,7 @@ void cpu_set_reg8(reg_type rt, uint8_t value);
 uint8_t cpu_read_reg8(reg_type rt);
 
 void fetch_data();
-
+void* cpu_run(void*);
 void cpu_init();
 bool cpu_step();
 void emu_cycles(int cycles);

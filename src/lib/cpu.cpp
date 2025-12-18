@@ -44,7 +44,28 @@ void execute() {
 
 void emu_cycles(int cycles) {}
 void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
+void *cpu_run(void *p) {
+    timer_init();
+    cpu_init();
 
+    ctx.running = true;
+    ctx.paused= false;
+    ctx.ticks = 0;
+
+    while(ctx.running) {
+        if (ctx.paused) {
+            delay(10);
+            continue;
+        }
+
+        if (!cpu_step()) {
+            printf("CPU Stopped\n");
+            return 0;
+        }
+    }
+
+    return 0;
+}
 uint8_t cpu_get_int_flags() { return ctx.int_flags; }
 bool cpu_step() {
   if (!ctx.halted) {
