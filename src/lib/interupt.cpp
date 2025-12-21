@@ -25,7 +25,7 @@ void cpu_handle_interrupts(cpu_context *ctx) {
   if (int_check(ctx, 0x40, IT_VBLANK)) {
   } else if (int_check(ctx, 0x48, IT_LCD_STAT)) {
   } else if (int_check(ctx, 0x50, IT_TIMER)) {
-  } else if (int_check(ctx, 0x58, IT_TIMER)) {
-  } else if (int_check(ctx, 0x60, IT_TIMER)) {
+  } else if (int_check(ctx, 0x58, IT_SERIAL)) {
+  } else if (int_check(ctx, 0x60, IT_JOYPAD)) {
   }
 }

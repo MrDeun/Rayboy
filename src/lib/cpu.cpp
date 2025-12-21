@@ -4,7 +4,10 @@
 
 cpu_context ctx = {0};
 
-void cpu_init() { ctx.regs.PC = 0x100; }
+void cpu_init() {
+  ctx.regs.PC = 0x100;
+  ctx.regs.A = 0x01;
+}
 cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
   ctx.op_code = bus_read(ctx.regs.PC++);
@@ -42,8 +45,10 @@ bool cpu_step() {
                  pc, get_inst_name(ctx.cur_instruction->type), ctx.op_code,
                  bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B,
                  ctx.regs.B, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+    // if(pc == 252) {exit(-1);}
     execute();
   } else {
+    emu_cycles(1);
     if (ctx.int_flags) {
       ctx.halted = false;
     }
@@ -60,3 +65,7 @@ bool cpu_step() {
 
   return true;
 }
+
+uint8_t cpu_get_ie_register() { return ctx.ie_register; }
+
+void cpu_set_get_ie_register(uint8_t value) { ctx.ie_register = value; }

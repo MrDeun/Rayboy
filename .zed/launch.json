@@ -4,8 +4,8 @@
     "type": "lldb",
     "request": "launch",
     "program": "${workspaceFolder}/build/Rayboy",
-    "args": [],
+    "args": ["${workspaceFolder}/build/01-special.gb"],
     "cwd": "${workspaceFolder}",
-    "stopOnEntry": false
-  }
+    "stopOnEntry": false,
+  },
 ]

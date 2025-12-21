@@ -3,6 +3,7 @@
 #include "fmt/format.h"
 #include "imgui.h"
 #include <cassert>
+#include <pthread.h>
 
 #include "raylib-cpp.hpp"
 #include "raylib.h"
@@ -10,43 +11,32 @@
 
 static emu_context ctx;
 emu_context *emu_get_context() { return &ctx; }
-void delay(uint32_t ms);
+void delay(uint32_t ms) { WaitTime(ms / 1000.0f); }
 
-void testInstruction() {
-  auto instruct1 = get_instruction_by_opcode(0x00);
-  assert(instruct1 != nullptr);
-  fmt::println("Instruction 1 = {:p}", fmt::ptr(instruct1));
+void *cpu_run(void *p) {
+  cpu_init();
 
-  auto instruct2 = get_instruction_by_opcode(0x0E);
-  assert(instruct2 != nullptr);
-  fmt::println("Instruction 2 = {:p}", fmt::ptr(instruct2));
+  ctx.running = true;
+  ctx.paused = false;
+  ctx.ticks = 0;
 
-  assert(instruct1 != instruct2);
+  while (ctx.running) {
+    if (ctx.paused) {
+      delay(10);
+      continue;
+    }
+
+    if (!cpu_step()) {
+      fmt::println("CPU stopped...");
+      return 0;
+    }
+
+    ctx.ticks++;
+  }
 }
 
 void MainMenu() {
   if (ImGui::BeginMainMenuBar()) {
-    if (ImGui::BeginMenu("File")) {
-      if (ImGui::MenuItem("Open", "Ctrl+O")) {
-        // TODO: Loading a GameBoy cartridge
-        fmt::println("TEMP_DEBUG: Open File");
-      }
-
-      if (ImGui::MenuItem("Check Tetris")) {
-        if (cart_load("Tetris.gb")) {
-          ctx.running = true;
-          cpu_init();
-        }
-      }
-      if (ImGui::MenuItem("Test Instruction Set")) {
-        if (cart_load("cpu_instrs.gb")) {
-          ctx.running = true;
-          cpu_init();
-        }
-      }
-
-      ImGui::EndMenu();
-    }
     if (ImGui::BeginMenu("Rescale")) {
       if (ImGui::MenuItem("1x")) {
         ctx.EmulatorScale = 1;
@@ -70,15 +60,14 @@ void MainMenu() {
 int emu_run(int argc, char **argv) {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
   raylib::Window window(1280, 720);
+  pthread_t gb_thread = {0};
   SetTargetFPS(60);
 
-  testInstruction();
   rlImGuiSetup(true);
 
-  if (argc > 1) {
-    if (cart_load(argv[1])) {
-      ctx.running = true;
-      cpu_init();
+  if (cart_load("01-special.gb")) {
+    if (!pthread_create(&gb_thread, nullptr, cpu_run, nullptr)) {
+      fmt::println("ERROR: Failed to run Gameboy Thread");
     }
   }
 
@@ -91,10 +80,6 @@ int emu_run(int argc, char **argv) {
                   raylib::Color::DarkBrown());
 
     MainMenu();
-
-    if (ctx.running && raylib::Keyboard::IsKeyDown(KEY_ENTER)) {
-      cpu_step();
-    }
 
     rlImGuiEnd();
     EndDrawing();
