@@ -119,7 +119,7 @@ static void proc_add(cpu_context *ctx) {
         0x1000;
     uint32_t n = ((uint32_t)cpu_read_reg(ctx->cur_instruction->reg1)) +
                  ((uint32_t)ctx->fetch_data);
-    c = n >= 0x1000;
+    c = n >= 0x10000;
   }
 
   if (ctx->cur_instruction->reg1 == RT_SP) {
@@ -169,8 +169,8 @@ static void proc_adc(cpu_context *ctx) {
 
   ctx->regs.A = (a + u + c) & 0xFF;
 
-  cpu_set_flags(ctx, ctx->regs.A == 0, (a & 0xf), (u & 0xf) + c > 0xf,
-                a + u + c > 0xff);
+  cpu_set_flags(ctx, ctx->regs.A == 0, 0, (a & 0xF) + (u & 0xF) + c > 0xF,
+                a + u + c > 0xFF);
 }
 
 static void proc_none(cpu_context *ctx) {
@@ -195,7 +195,7 @@ static void proc_dec(cpu_context *ctx) {
     return;
   }
 
-  cpu_set_flags(ctx, val == 0, 0, (val & 0x0f) == 0, -1);
+  cpu_set_flags(ctx, val == 0, 1, (val & 0x0f) == 0x0f, -1);
 }
 static void proc_inc(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
@@ -216,7 +216,7 @@ static void proc_inc(cpu_context *ctx) {
     return;
   }
 
-  cpu_set_flags(ctx, val == 0, 1, (val & 0x0f) == 0, -1);
+  cpu_set_flags(ctx, val == 0, 0, (val & 0x0f) == 0, -1);
 }
 reg_type rt_lookup[] = {RT_B, RT_C, RT_D, RT_E, RT_H, RT_L, RT_HL, RT_A};
 
@@ -499,7 +499,7 @@ static void proc_daa(cpu_context *ctx) {
   cpu_set_flags(ctx, ctx->regs.A == 0, -1, 0, fc);
 }
 static void proc_cpl(cpu_context *ctx) {
-  ctx->regs.A = -ctx->regs.A;
+  ctx->regs.A = ~ctx->regs.A;
   cpu_set_flags(ctx, -1, 1, 1, -1);
 }
 static void proc_scf(cpu_context *ctx) { cpu_set_flags(ctx, -1, 0, 0, 1); }

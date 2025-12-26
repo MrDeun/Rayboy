@@ -4,8 +4,8 @@
     "type": "lldb",
     "request": "launch",
     "program": "${workspaceFolder}/build/Rayboy",
-    "args": [],
+    "args": ["./build/mem_timing.gb"],
     "cwd": "${workspaceFolder}",
-    "stopOnEntry": false
-  }
+    "stopOnEntry": false,
+  },
 ]

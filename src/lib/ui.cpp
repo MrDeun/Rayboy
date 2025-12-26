@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "imgui.h"
 #include "raylib.h"
+#include "Image.hpp"
 #include "rlImGui.h"
 #include <array>
 extern emu_context ctx;
@@ -31,27 +32,33 @@ void RayboyUI::Setup() {
 
 void delay(uint32_t ms) { WaitTime(ms / 1000.0f); }
 
-void RayboyUI::displayTile(uint16_t beginAddress, uint16_t tileNum, int x,
-                           int y) {
-  raylib::Rectangle rec;
+Image RayboyUI::displayTile(uint16_t beginAddress, uint16_t tileNum, int scale) {
+  // Create an 8x8 image for the tile
+  Image img = GenImageColor(8 * scale, 8 * scale, BLACK);
+
   for (int tileY = 0; tileY < 16; tileY += 2) {
     uint8_t b1 = bus_read(beginAddress + (tileNum * 16) + tileY);
     uint8_t b2 = bus_read(beginAddress + (tileNum * 16) + tileY + 1);
 
+    fmt::println("ImageByte1 = {:b}, ImageByte2 = {:b}",b1,b2);
+
     for (int bit = 7; bit >= 0; bit--) {
-      uint8_t high = !!(b1 & (1 << bit)) << 1;
+      uint8_t high = !!(b2 & (1 << bit)) << 1;
       uint8_t low = !!(b1 & (1 << bit));
+      uint8_t colorIndex = high | low;
 
-      uint8_t color = high | low;
-
-      rec.x = x + ((7 - bit) * EmulatorScale);
-      rec.y = y + (tileY / 2 * EmulatorScale);
-      rec.width = EmulatorScale;
-      rec.height = EmulatorScale;
-
-      rec.Draw(tile_colors[color]);
+      // Draw a scaled pixel
+      for (int sy = 0; sy < scale; sy++) {
+        for (int sx = 0; sx < scale; sx++) {
+          int pixelX = ((7 - bit) * scale) + sx;
+          int pixelY = (tileY / 2 * scale) + sy;
+          ImageDrawPixel(&img, pixelX, pixelY, tile_colors[colorIndex]);
+        }
+      }
     }
   }
+
+  return img;
 }
 
 bool RayboyUI::checkHold() {
@@ -63,17 +70,24 @@ bool RayboyUI::checkHold() {
 }
 
 void RayboyUI::drawDebug() {
-
   BeginTextureMode(debugTexture);
   ClearBackground(BLACK);
+
   int xDraw = 0;
   int yDraw = 0;
   int tileNum = 0;
   uint16_t address = 0x8000;
+
   for (int y = 0; y < 24; y++) {
     for (int x = 0; x < 16; x++) {
-      displayTile(address, tileNum, xDraw + (x * EmulatorScale),
-                  yDraw + (y * EmulatorScale));
+      Image tileImg = displayTile(address, tileNum, EmulatorScale);
+      Texture2D tileTex = LoadTextureFromImage(tileImg);
+
+      DrawTexture(tileTex, xDraw, yDraw, WHITE);
+
+      UnloadTexture(tileTex);
+      UnloadImage(tileImg);
+
       xDraw += (8 * EmulatorScale);
       tileNum++;
     }

@@ -7,6 +7,7 @@
 static char dbg_msg[1024] = {0};
 static int msg_size = 0;
 void dbg_update() {
+// fmt::println("bus_read(0xFF02) = {:X}",bus_read(0xff02));
   if (bus_read(0xFF02) == 0x81) {
     int8_t c = bus_read(0xFF01);
 
@@ -17,7 +18,7 @@ void dbg_update() {
 
 void dbg_print() {
 
-    // if (dbg_msg[0]) {
+    if (dbg_msg[0]) {
         fmt::println("DEBUG: {}", dbg_msg);
-    // }
+    }
 }

@@ -5,6 +5,7 @@
 #include "Window.hpp"
 #include "common.hpp"
 #include "emu.hpp"
+#include "raylib.h"
 #include <cstddef>
 void delay(uint32_t ms);
 
@@ -20,7 +21,7 @@ public:
   static const int width = 1280;
   static const int height = 720;
 
-  uint8_t EmulatorScale = 2;
+  static const uint8_t EmulatorScale = 4;
   bool isHoldRequired = true;
 
   RayboyUI() = delete;
@@ -31,9 +32,7 @@ public:
     }
     m_emuCtx = ctx;
   }
-
-  void displayTile(uint16_t beginAddress, uint16_t tileNum, int x,
-                                int y);
+  Image displayTile(uint16_t beginAddress, uint16_t tileNum, int scale);
   void Draw();
   void Setup();
 };

@@ -1,10 +1,14 @@
 #include "../include/all.hpp"
+#include "fmt/core.h"
 #include <cstdint>
 
 static char serial_data[2];
 
 void io_write(uint16_t address, uint8_t value) {
   switch (address) {
+  case 0xff00:
+    fmt::println("Joypad not supported yet...");
+    break;
   case 0xff01:
     serial_data[0] = value;
     break;
@@ -21,12 +25,15 @@ void io_write(uint16_t address, uint8_t value) {
     cpu_set_int_flags(value);
     break;
   default:
-    ERROR("Unsupported bus read in io_read() ");
+    NO_IMPL("Unsupported bus write in io_write() ");
   }
 }
 
 uint8_t io_read(uint16_t address) {
   switch (address) {
+  case 0xff00:
+    fmt::println("Joypad not supported yet...");
+    return 0;
   case 0xff01:
     return serial_data[0];
     break;
@@ -44,5 +51,6 @@ uint8_t io_read(uint16_t address) {
   default:
     break;
   }
-  ERROR("Unsupported bus read in io_read() ");
+  NO_IMPL("Unsupported bus read in io_read() ");
+  return 0;
 }

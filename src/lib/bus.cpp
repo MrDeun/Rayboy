@@ -40,27 +40,33 @@ void bus_write(uint16_t address, uint8_t value) {
   if (address < 0x8000) {
     // ROM Data
     cart_write(address, value);
+    return;
   } else if (address < 0xA000) {
     // Map/Char data
     ppu_vram_read(address);
+    return;
   } else if (address < 0xC000) {
     // EXT-RAM
     cart_write(address, value);
+    return;
   } else if (address < 0xE000) {
     //
     wram_write(address, value);
+  return;
   } else if (address < 0xFE00) {
     // OAM
-    NO_IMPL(err.c_str());
+    ppu_oam_write(address,value);
+    return;
   } else if (address < 0xFEA0) {
-      ppu_oam_read(address);
+    NO_IMPL(err.c_str());
   } else if (address < 0xFF00) {
     // unusable
     return;
   } else if (address < 0xff80) {
-    NO_IMPL(err.c_str());
+    io_write(address, value);
   } else if (address == 0xffff) {
       cpu_set_ie_register(value);
+      return;
   }
   return;
 }

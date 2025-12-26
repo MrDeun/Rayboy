@@ -14,16 +14,16 @@ emu_context *emu_get_context() { return &ctx; }
 
 
 int emu_run(int argc, char **argv) {
-    RayboyUI _ui(emu_get_context());
+  RayboyUI _ui(emu_get_context());
   _ui.Setup();
   pthread_t gb_thread;
+  // fmt::println(argv[2]);
 
-  if (argc > 1) {
     if (cart_load(argv[1])) {
-      pthread_create(&gb_thread, NULL, 
+      pthread_create(&gb_thread, NULL,
         cpu_run, NULL);
     }
-  }
+
 
   while (!WindowShouldClose()) {
     BeginDrawing();
