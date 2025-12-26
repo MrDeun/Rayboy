@@ -1,4 +1,5 @@
 #include "../include/all.hpp"
+#include "fmt/core.h"
 extern cpu_context ctx;
 
 uint16_t reverse(uint16_t n) {
@@ -69,8 +70,8 @@ uint8_t cpu_read_reg8(reg_type rt) {
             return bus_read(cpu_read_reg(RT_HL));
         }
         default:
-            printf("**ERR INVALID REG8: %d\n", rt);
-            ERROR("");
+            auto err = fmt::format("Illegal registry has been found: {}",(int)rt);
+            ERROR(err.c_str());
     }
 }
 
@@ -85,8 +86,10 @@ void cpu_set_reg8(reg_type rt, uint8_t val) {
         case RT_H: ctx.regs.H = val & 0xFF; break;
         case RT_L: ctx.regs.L = val & 0xFF; break;
         case RT_HL: bus_write(cpu_read_reg(RT_HL), val); break;
-        default:
-            printf("**ERR INVALID REG8: %d\n", rt);
-            ERROR("")
+        default: {
+            auto err = fmt::format("Illegal registry has been found: {}",(int)rt);
+            ERROR(err.c_str());
+        }
+
     }
 }

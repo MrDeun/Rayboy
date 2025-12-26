@@ -36,8 +36,10 @@ static bool is_16bit(reg_type rt) {
   case RT_SP:
   case RT_PC:
     return true;
-  default:
-    ERROR(fmt::format("Illegal State in is_16bit({})", (int)rt).c_str());
+  default: {
+    auto err = fmt::format("Illegal State in is_16bit({})", (int)rt);
+    ERROR(err.c_str());
+  }
   }
 }
 
