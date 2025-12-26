@@ -11,3 +11,6 @@
 #include "ram.hpp"
 #include "stack.hpp"
 #include "interupt.hpp"
+#include "all.hpp"
+#include "io.hpp"
+#include "dbg.hpp"

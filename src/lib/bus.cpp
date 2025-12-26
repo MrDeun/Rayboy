@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdint>
 uint8_t bus_read(uint16_t address) {
+  // fmt::print("{:X}\n",address);
   auto err = fmt::format("No implementation for bus_read(0x{:X})", address);
   if (address < 0x8000) {
     // ROM Data
@@ -25,9 +26,9 @@ uint8_t bus_read(uint16_t address) {
   } else if (address < 0xFF00) {
     // reserved unused
     return 0;
-  } else if (address < 0xff80) {
+  } else if (address < 0xFF80) {
     // IO Register
-    NO_IMPL(err.c_str());
+    return io_read(address);
   } else if (address == 0xffff) {
     // CPU Enable register
     NO_IMPL(err.c_str());
@@ -55,9 +56,9 @@ void bus_write(uint16_t address, uint8_t value) {
   } else if (address < 0xFEA0) {
     // echo ram - not used?
   } else if (address < 0xFF00) {
-    // unusable
-    return;
+    NO_IMPL(err.c_str());
   } else if (address < 0xff80) {
+    io_write(address, value);
     NO_IMPL(err.c_str());
   } else if (address == 0xffff) {
     NO_IMPL(err.c_str());

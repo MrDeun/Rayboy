@@ -46,6 +46,8 @@ bool cpu_step() {
                  bus_read(pc + 1), bus_read(pc + 2), ctx.regs.A, ctx.regs.B,
                  ctx.regs.B, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
     // if(pc == 252) {exit(-1);}
+    dbg_update();
+    dbg_print();
     execute();
   } else {
     emu_cycles(1);

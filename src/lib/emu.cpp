@@ -33,6 +33,7 @@ void *cpu_run(void *p) {
 
     ctx.ticks++;
   }
+  return 0;
 }
 
 void MainMenu() {
@@ -60,18 +61,18 @@ void MainMenu() {
 int emu_run(int argc, char **argv) {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
   raylib::Window window(1280, 720);
-  pthread_t gb_thread = {0};
+  pthread_t gb_thread;
   SetTargetFPS(60);
 
   rlImGuiSetup(true);
 
   if (cart_load("01-special.gb")) {
-    if (!pthread_create(&gb_thread, nullptr, cpu_run, nullptr)) {
+    if (pthread_create(&gb_thread, nullptr, cpu_run, nullptr)) {
       fmt::println("ERROR: Failed to run Gameboy Thread");
     }
   }
 
-  while (!WindowShouldClose()) {
+  while (!WindowShouldClose() && !ctx.die) {
     BeginDrawing();
     rlImGuiBegin();
     ClearBackground(raylib::Color::White());

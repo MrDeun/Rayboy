@@ -5,6 +5,7 @@
 struct emu_context{
     bool paused;
     bool running;
+    bool die;
     uint64_t ticks;
 
     uint8_t EmulatorScale = 1;
