@@ -24,6 +24,10 @@ void io_write(uint16_t address, uint8_t value) {
   case 0xff0f:
     cpu_set_int_flags(value);
     break;
+  case 0xff46:
+    dma_start(value);
+    fmt::println("Started DMA...");
+
   default:
     NO_IMPL("Unsupported bus write in io_write() ");
   }
@@ -48,6 +52,8 @@ uint8_t io_read(uint16_t address) {
     break;
   case 0xff0f:
     return cpu_get_int_flags();
+  case 0xFF44:
+    return 0x94;
   default:
     break;
   }

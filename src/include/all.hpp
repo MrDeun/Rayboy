@@ -14,3 +14,4 @@
 #include "stack.hpp"
 #include "timer.hpp"
 #include "ui.hpp"
+#include "dma.hpp"

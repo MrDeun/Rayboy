@@ -39,7 +39,16 @@ void execute() {
   proc(&ctx);
 }
 
-void emu_cycles(int cycles) {}
+void emu_cycles(int cycles) {
+
+  for (int i = 0; i < cycles; i++) {
+    for (int n = 0; n < 4; n++) {
+      ctx.ticks++;
+      timer_tick();
+    }
+    dma_tick();
+  }
+}
 void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
 void *cpu_run(void *p) {
   timer_init();

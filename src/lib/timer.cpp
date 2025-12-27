@@ -9,16 +9,16 @@ void timer_tick() {
   bool timer_update = false;
 
   switch (ctx.tac & (0b11)) {
-  case 0xb00:
+  case 0b00:
     timer_update = (prev_div & (1 << 9)) && (!(ctx.div & (1 << 9)));
     break;
-  case 0xb01:
+  case 0b01:
     timer_update = (prev_div & (1 << 3)) && (!(ctx.div & (1 << 3)));
     break;
-  case 0xb10:
+  case 0b10:
     timer_update = (prev_div & (1 << 5)) && (!(ctx.div & (1 << 5)));
     break;
-  case 0xb11:
+  case 0b11:
     timer_update = (prev_div & (1 << 7)) && (!(ctx.div & (1 << 7)));
     break;
   }
