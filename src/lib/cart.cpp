@@ -268,6 +268,6 @@ uint8_t cart_read(uint16_t address) {
   return ctx.rom_data[address];
 }
 void cart_write(uint16_t address, uint8_t value) {
-  auto err = fmt::format("cart_write(0x{:X})", address);
-  NO_IMPL(err.c_str());
+  // auto err = fmt::format("cart_write(0x{:X})", address);
+  // NO_IMPL(err.c_str());
 }

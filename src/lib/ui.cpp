@@ -40,7 +40,7 @@ Image RayboyUI::displayTile(uint16_t beginAddress, uint16_t tileNum, int scale) 
     uint8_t b1 = bus_read(beginAddress + (tileNum * 16) + tileY);
     uint8_t b2 = bus_read(beginAddress + (tileNum * 16) + tileY + 1);
 
-    fmt::println("ImageByte1 = {:b}, ImageByte2 = {:b}",b1,b2);
+    // fmt::println("ImageByte1 = {:b}, ImageByte2 = {:b}",b1,b2);
 
     for (int bit = 7; bit >= 0; bit--) {
       uint8_t high = !!(b2 & (1 << bit)) << 1;

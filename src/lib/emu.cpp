@@ -14,6 +14,7 @@ emu_context *emu_get_context() { return &ctx; }
 
 
 int emu_run(int argc, char **argv) {
+  SetTraceLogLevel(LOG_NONE);
   RayboyUI _ui(emu_get_context());
   _ui.Setup();
   pthread_t gb_thread;
@@ -23,7 +24,6 @@ int emu_run(int argc, char **argv) {
       pthread_create(&gb_thread, NULL,
         cpu_run, NULL);
     }
-
 
   while (!WindowShouldClose()) {
     BeginDrawing();

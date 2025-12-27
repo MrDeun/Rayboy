@@ -14,7 +14,7 @@ typedef union {
 
 #define NO_IMPL(err)                                                           \
   {                                                                            \
-    printf("NO IMPLEMENTION - REVIEW CODE\nReason: %s\n", err);                \
+    printf("");                \
   }
 #define ERROR(err)                                                             \
   {                                                                            \

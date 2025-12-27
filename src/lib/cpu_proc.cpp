@@ -65,11 +65,11 @@ static bool check_cond(cpu_context *ctx) {
 static void goto_addr(cpu_context *ctx, uint16_t address, bool pushPC) {
   if (check_cond(ctx)) {
     if (pushPC) {
-      stack_push16(ctx->regs.PC);
       emu_cycles(2);
+      stack_push16(ctx->regs.PC);
     }
 
-    ctx->regs.PC = ctx->fetch_data;
+    ctx->regs.PC = address;
     emu_cycles(1);
   }
 }
@@ -94,46 +94,37 @@ static void proc_cp(cpu_context *ctx) {
 }
 
 static void proc_add(cpu_context *ctx) {
-  uint32_t val = cpu_read_reg(ctx->cur_instruction->reg1) + ctx->fetch_data;
-  bool is16bit = is_16bit(ctx->cur_instruction->reg1);
-  if (is16bit) {
-    emu_cycles(1);
-  }
+    uint32_t val = cpu_read_reg(ctx->cur_instruction->reg1) + ctx->fetch_data;
 
-  if (ctx->cur_instruction->reg1 == RT_SP) {
-    val = cpu_read_reg(ctx->cur_instruction->reg1) + (char)ctx->fetch_data;
-  }
+    bool is16bit = is_16bit(ctx->cur_instruction->reg1);
 
-  int z = (val & 0xff) == 0;
-  int h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xf) +
-              (ctx->fetch_data & 0xf) >=
-          0x10;
-  int c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xff) +
-              (int)(ctx->fetch_data & 0xff) >=
-          0x100;
+    if (is16bit) {
+        emu_cycles(1);
+    }
 
-  if (is16bit) {
-    z = -1;
-    h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xfff) +
-            (ctx->fetch_data & 0xfff) >
-        0x1000;
-    uint32_t n = ((uint32_t)cpu_read_reg(ctx->cur_instruction->reg1)) +
-                 ((uint32_t)ctx->fetch_data);
-    c = n >= 0x10000;
-  }
+    if (ctx->cur_instruction->reg1 == RT_SP) {
+        val = cpu_read_reg(ctx->cur_instruction->reg1) + (int8_t)ctx->fetch_data;
+    }
 
-  if (ctx->cur_instruction->reg1 == RT_SP) {
-    z = 0;
-    h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xf) +
-            (ctx->fetch_data & 0xf) >=
-        0x10;
-    c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xff) +
-            (int)(ctx->fetch_data & 0xff) >=
-        0x100;
-  }
+    int z = (val & 0xFF) == 0;
+    int h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xF) + (ctx->fetch_data & 0xF) >= 0x10;
+    int c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF) + (int)(ctx->fetch_data & 0xFF) >= 0x100;
 
-  cpu_set_reg(ctx->cur_instruction->reg1, val);
-  cpu_set_flags(ctx, z, 0, h, c);
+    if (is16bit) {
+        z = -1;
+        h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xFFF) + (ctx->fetch_data & 0xFFF) >= 0x1000;
+        uint32_t n = ((uint32_t)cpu_read_reg(ctx->cur_instruction->reg1)) + ((uint32_t)ctx->fetch_data);
+        c = n >= 0x10000;
+    }
+
+    if (ctx->cur_instruction->reg1 == RT_SP) {
+        z = 0;
+        h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xF) + (ctx->fetch_data & 0xF) >= 0x10;
+        c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF) + (int)(ctx->fetch_data & 0xFF) >= 0x100;
+    }
+
+    cpu_set_reg(ctx->cur_instruction->reg1, val & 0xFFFF);
+    cpu_set_flags(ctx, z, 0, h, c);
 }
 static void proc_sub(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - ctx->fetch_data;
@@ -150,7 +141,7 @@ static void proc_sub(cpu_context *ctx) {
 }
 static void proc_sbc(cpu_context *ctx) {
   uint16_t val = CPU_FLAG_C + ctx->fetch_data;
-  int z = cpu_read_reg(ctx->cur_instruction->reg1) == 0;
+  int z = cpu_read_reg(ctx->cur_instruction->reg1) -val == 0;
   int h = ((int)cpu_read_reg(ctx->cur_instruction->reg1) & 0xf) -
               ((int)ctx->fetch_data & 0xf) - (int)CPU_FLAG_C <
           0;
@@ -352,29 +343,40 @@ static void proc_rst(cpu_context *ctx) {
   goto_addr(ctx, ctx->cur_instruction->param, true);
 }
 static void proc_ld(cpu_context *ctx) {
-  if (ctx->dest_is_mem) {
-    if (ctx->cur_instruction->reg2 >= RT_AF) {
-      emu_cycles(1);
-      bus_write16(ctx->mem_destination, ctx->fetch_data);
-    } else {
-      bus_write(ctx->mem_destination, ctx->fetch_data);
+ if (ctx->dest_is_mem) {
+        //LD (BC), A for instance...
+
+        if (is_16bit(ctx->cur_instruction->reg2)) {
+            //if 16 bit register...
+            emu_cycles(1);
+            bus_write16(ctx->mem_destination, ctx->fetch_data);
+        } else {
+            bus_write(ctx->mem_destination, ctx->fetch_data);
+        }
+
+        emu_cycles(1);
+
+        return;
     }
-  }
 
-  if (ctx->cur_instruction->mode == AM_HL_SPR) {
-    auto hflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0x000f) +
-                     (ctx->fetch_data + 0x000f) >=
-                 0x10;
-    auto cflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0x00ff) +
-                     (ctx->fetch_data + 0x00ff) >=
-                 0x100;
+    if (ctx->cur_instruction->mode == AM_HL_SPR) {
+        uint8_t hflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0xF) + 
+            (ctx->fetch_data & 0xF) >= 0x10;
 
-    cpu_set_flags(ctx, 0, 0, hflag, cflag);
-    cpu_set_reg(ctx->cur_instruction->reg1,
-                cpu_read_reg(ctx->cur_instruction->reg2) +
-                    (char)ctx->fetch_data);
-  }
+        uint8_t cflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0xFF) + 
+            (ctx->fetch_data & 0xFF) >= 0x100;
+
+        cpu_set_flags(ctx, 0, 0, hflag, cflag);
+        cpu_set_reg(ctx->cur_instruction->reg1, 
+            cpu_read_reg(ctx->cur_instruction->reg2) + (int8_t)ctx->fetch_data);
+
+        return;
+    }
+
+    cpu_set_reg(ctx->cur_instruction->reg1, ctx->fetch_data);
 }
+
+
 
 static void proc_ret(cpu_context *ctx) {
   if (ctx->cur_instruction->cond != CT_NONE) {
@@ -415,7 +417,7 @@ static void proc_ldh(cpu_context *ctx) {
   if (ctx->cur_instruction->reg1 == RT_A) {
     cpu_set_reg(ctx->cur_instruction->reg1, bus_read(0xFF00 | ctx->fetch_data));
   } else {
-    bus_write(0xFF00 | ctx->fetch_data, ctx->regs.A);
+    bus_write(ctx->mem_destination, ctx->regs.A);
   }
   emu_cycles(1);
 }
@@ -425,7 +427,7 @@ static void proc_push(cpu_context *ctx) {
   emu_cycles(1);
   stack_push(high);
 
-  uint16_t low = (cpu_read_reg(ctx->cur_instruction->reg2)) & 0xFF;
+  uint16_t low = cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF; //Potenial bug
   emu_cycles(1);
   stack_push(low);
 

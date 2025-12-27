@@ -26,7 +26,7 @@ void io_write(uint16_t address, uint8_t value) {
     break;
   case 0xff46:
     dma_start(value);
-    fmt::println("Started DMA...");
+    NO_IMPL("Started DMA...");
 
   default:
     NO_IMPL("Unsupported bus write in io_write() ");
@@ -36,7 +36,7 @@ void io_write(uint16_t address, uint8_t value) {
 uint8_t io_read(uint16_t address) {
   switch (address) {
   case 0xff00:
-    fmt::println("Joypad not supported yet...");
+    NO_IMPL("Joypad not supported yet...");
     return 0;
   case 0xff01:
     return serial_data[0];
