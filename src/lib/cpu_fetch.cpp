@@ -42,7 +42,7 @@ void fetch_data() {
     return;
   case AM_R_MR: {
     uint16_t addr = cpu_read_reg(ctx.cur_instruction->reg2);
-    if (ctx.cur_instruction->reg1 == RT_C) {
+    if (ctx.cur_instruction->reg2 == RT_C) {
       ctx.mem_destination |= 0xFF00;
     }
     ctx.fetch_data = bus_read(addr);
@@ -105,6 +105,7 @@ void fetch_data() {
     emu_cycles(1);
 
     ctx.dest_is_mem = true;
+    ctx.mem_destination = low | (high<<8);
     ctx.regs.PC += 2;
     ctx.fetch_data = cpu_read_reg(ctx.cur_instruction->reg2);
     return;
@@ -137,6 +138,7 @@ void fetch_data() {
     ctx.regs.PC += 2;
     ctx.fetch_data = bus_read(addr);
     emu_cycles(1);
+    return;
   }
 
   default:

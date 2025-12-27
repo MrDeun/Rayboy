@@ -10,7 +10,7 @@
 extern emu_context ctx;
 
 static RenderTexture2D debugTexture;
-int scale = 2;
+int scale = 4;
 static bool showDebugWindow = true;
 const std::array<raylib::Color, 4> tile_colors{
     raylib::Color::White(), raylib::Color::LightGray(),

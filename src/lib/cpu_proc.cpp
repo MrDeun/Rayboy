@@ -178,45 +178,46 @@ static void proc_none(cpu_context *ctx) {
 }
 static void proc_dec(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - 1;
+
   if (is_16bit(ctx->cur_instruction->reg1)) {
-    emu_cycles(1);
-  }
-  if (ctx->cur_instruction->reg1 == RT_HL &&
-      ctx->cur_instruction->mode == AM_MR) {
-    val = bus_read(cpu_read_reg(RT_HL) - 1);
-    val &= 0xff;
-    bus_write(cpu_read_reg(RT_HL), val);
-  } else {
-    cpu_set_reg(ctx->cur_instruction->reg1, val);
-    val = cpu_read_reg(ctx->cur_instruction->reg1);
+      emu_cycles(1);
   }
 
-  if ((ctx->op_code & 0x03) == 0x03) {
-    return;
-  }
-
-  cpu_set_flags(ctx, val == 0, 1, (val & 0x0f) == 0x0f, -1);
-}
-static void proc_inc(cpu_context *ctx) {
-  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
-  if (is_16bit(ctx->cur_instruction->reg1)) {
-    emu_cycles(1);
-  }
-  if (ctx->cur_instruction->reg1 == RT_HL &&
-      ctx->cur_instruction->mode == AM_MR) {
-    val = bus_read(cpu_read_reg(RT_HL) + 1);
-    val &= 0xff;
-    bus_write(cpu_read_reg(RT_HL), val);
+  if (ctx->cur_instruction->reg1 == RT_HL && ctx->cur_instruction->mode == AM_MR) {
+      val = bus_read(cpu_read_reg(RT_HL)) - 1;
+      bus_write(cpu_read_reg(RT_HL), val);
   } else {
-    cpu_set_reg(ctx->cur_instruction->reg1, val);
-    val = cpu_read_reg(ctx->cur_instruction->reg1);
+      cpu_set_reg(ctx->cur_instruction->reg1, val);
+      val = cpu_read_reg(ctx->cur_instruction->reg1);
   }
 
   if ((ctx->op_code & 0x0B) == 0x0B) {
-    return;
+      return;
   }
 
-  cpu_set_flags(ctx, val == 0, 0, (val & 0x0f) == 0, -1);
+  cpu_set_flags(ctx, val == 0, 1, (val & 0x0F) == 0x0F, -1);
+}
+static void proc_inc(cpu_context *ctx) {
+  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
+
+  if (is_16bit(ctx->cur_instruction->reg1)) {
+      emu_cycles(1);
+  }
+
+  if (ctx->cur_instruction->reg1 == RT_HL && ctx->cur_instruction->mode == AM_MR) {
+      val = bus_read(cpu_read_reg(RT_HL)) + 1;
+      val &= 0xFF;
+      bus_write(cpu_read_reg(RT_HL), val);
+  } else {
+      cpu_set_reg(ctx->cur_instruction->reg1, val);
+      val = cpu_read_reg(ctx->cur_instruction->reg1);
+  }
+
+  if ((ctx->op_code & 0x03) == 0x03) {
+      return;
+  }
+
+  cpu_set_flags(ctx, val == 0, 0, (val & 0x0F) == 0, -1);
 }
 reg_type rt_lookup[] = {RT_B, RT_C, RT_D, RT_E, RT_H, RT_L, RT_HL, RT_A};
 
