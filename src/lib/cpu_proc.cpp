@@ -20,6 +20,7 @@ void cpu_set_flags(cpu_context *ctx, int8_t z, int8_t n, int8_t h, int8_t c) {
 
 static bool is_16bit(reg_type rt) {
   switch (rt) {
+  case RT_NONE:
   case RT_A:
   case RT_F:
   case RT_B:
@@ -440,9 +441,10 @@ static void proc_pop(cpu_context *ctx) {
   emu_cycles(1);
   uint16_t val = (high << 8) | low;
 
-  cpu_set_reg(ctx->cur_instruction->reg1, val);
   if (ctx->cur_instruction->reg1 == RT_AF) {
     cpu_set_reg(ctx->cur_instruction->reg1, val & 0xFFF0);
+  } else {
+    cpu_set_reg(ctx->cur_instruction->reg1, val);
   }
 }
 static void proc_rlca(cpu_context *ctx) {

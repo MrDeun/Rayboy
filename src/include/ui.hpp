@@ -28,7 +28,7 @@ public:
   RayboyUI(emu_context *ctx)
       : m_window(width, height, "Rayboy - Gameboy emulator built in Raylib") {
     if (!ctx) {
-      ERROR("No emulation context provided in RayboyUI")
+      ERROR("No emulation context provided in RayboyUI");
     }
     m_emuCtx = ctx;
   }

@@ -6,8 +6,8 @@
 cpu_context ctx = {0};
 uint8_t cpu_get_ie_register() { return ctx.ie_register; }
 
-int LOG_MAX = 50000;
-int log_count = 0;
+size_t LOG_MAX = -1;
+size_t log_count = 0;
 
 void cpu_set_ie_register(uint8_t n) { ctx.ie_register = n; }
 void cpu_init() {

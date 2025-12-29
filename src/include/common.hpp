@@ -16,9 +16,5 @@ typedef union {
   {                                                                            \
     printf("");                \
   }
-#define ERROR(err)                                                             \
-  {                                                                            \
-    printf("FATAL ERROR: %s (you fucked up)\n");                               \
-    exit(-1);                                                                  \
-  }
+void ERROR(std::string err);
 void delay(uint32_t ms);

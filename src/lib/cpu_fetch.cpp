@@ -43,7 +43,7 @@ void fetch_data() {
   case AM_R_MR: {
     uint16_t addr = cpu_read_reg(ctx.cur_instruction->reg2);
     if (ctx.cur_instruction->reg2 == RT_C) {
-      ctx.mem_destination |= 0xFF00;
+      addr |= 0xFF00;
     }
     ctx.fetch_data = bus_read(addr);
     emu_cycles(1);

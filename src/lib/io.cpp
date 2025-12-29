@@ -53,7 +53,7 @@ uint8_t io_read(uint16_t address) {
   case 0xff0f:
     return cpu_get_int_flags();
   case 0xFF44:
-    return 0x94;
+    return 0x90;
   default:
     break;
   }

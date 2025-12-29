@@ -3,6 +3,7 @@
 #include "../include/all.hpp"
 #include "fmt/core.h"
 #include <cstdint>
+#include <iostream>
 
 static char dbg_msg[1024] = {0};
 static int msg_size = 0;
@@ -19,6 +20,7 @@ void dbg_update() {
 void dbg_print() {
 
     if (dbg_msg[0]) {
-        fmt::println("DEBUG: {}", dbg_msg);
+      auto debug_msg =  fmt::format("DEBUG: {}\n", dbg_msg);
+      std::cerr << debug_msg;
     }
 }

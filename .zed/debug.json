@@ -7,7 +7,7 @@
       "cwd": "$ZED_WORKTREE_ROOT",
     },
     "program": "$ZED_WORKTREE_ROOT/build/Rayboy",
-    "args": ["$ZED_WORKTREE_ROOT/build/01-special.gb"],
+    "args": ["$ZED_WORKTREE_ROOT/build/04-op r,imm.gb"],
     "cwd": "$ZED_WORKTREE_ROOT/build",
     "request": "launch",
     "adapter": "CodeLLDB",

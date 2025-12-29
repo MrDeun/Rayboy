@@ -100,6 +100,7 @@ add_executable(Rayboy src/main.cpp
     src/lib/dbg.cpp
     src/lib/ui.cpp
     src/lib/dma.cpp
+    src/lib/common.cpp
 
 )
 target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp fmt::fmt)
