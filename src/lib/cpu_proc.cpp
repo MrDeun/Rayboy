@@ -17,6 +17,8 @@ void cpu_set_flags(cpu_context *ctx, int8_t z, int8_t n, int8_t h, int8_t c) {
   if (c != -1) {
     BIT_SET(ctx->regs.F, 4, c);
   }
+
+  ctx->regs.F &= 0xF0;
 }
 
 static bool is_16bit(reg_type rt) {
@@ -96,37 +98,61 @@ static void proc_cp(cpu_context *ctx) {
 }
 
 static void proc_add(cpu_context *ctx) {
-    uint32_t val = cpu_read_reg(ctx->cur_instruction->reg1) + ctx->fetch_data;
+  reg_type r = ctx->cur_instruction->reg1;
 
-    bool is16bit = is_16bit(ctx->cur_instruction->reg1);
+  /* =========================
+     ADD SP, e8  (SPECIAL CASE)
+     ========================= */
+  if (r == RT_SP) {
+    uint16_t sp = ctx->regs.SP;
+    int8_t e = (int8_t)ctx->fetch_data;
 
-    if (is16bit) {
-        emu_cycles(1);
-    }
+    uint16_t result = sp + e;
 
-    if (ctx->cur_instruction->reg1 == RT_SP) {
-        val = cpu_read_reg(ctx->cur_instruction->reg1) + (int8_t)ctx->fetch_data;
-    }
+    int h = ((sp & 0xF) + (e & 0xF)) > 0xF;
+    int c = ((sp & 0xFF) + (e & 0xFF)) > 0xFF;
 
-    int z = (val & 0xFF) == 0;
-    int h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xF) + (ctx->fetch_data & 0xF) >= 0x10;
-    int c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF) + (int)(ctx->fetch_data & 0xFF) >= 0x100;
+    ctx->regs.SP = result;
 
-    if (is16bit) {
-        z = -1;
-        h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xFFF) + (ctx->fetch_data & 0xFFF) >= 0x1000;
-        uint32_t n = ((uint32_t)cpu_read_reg(ctx->cur_instruction->reg1)) + ((uint32_t)ctx->fetch_data);
-        c = n >= 0x10000;
-    }
+    cpu_set_flags(ctx, 0, 0, h, c);
+    return;
+  }
 
-    if (ctx->cur_instruction->reg1 == RT_SP) {
-        z = 0;
-        h = (cpu_read_reg(ctx->cur_instruction->reg1) & 0xF) + (ctx->fetch_data & 0xF) >= 0x10;
-        c = (int)(cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF) + (int)(ctx->fetch_data & 0xFF) >= 0x100;
-    }
+  bool is16bit = is_16bit(r);
 
-    cpu_set_reg(ctx->cur_instruction->reg1, val & 0xFFFF);
-    cpu_set_flags(ctx, z, 0, h, c);
+  /* =========================
+     ADD HL, rr
+     ========================= */
+  if (is16bit) {
+    emu_cycles(1);
+
+    uint32_t a = cpu_read_reg(r);
+    uint32_t b = ctx->fetch_data; // decoder must supply correct 16-bit value
+
+    uint32_t result = a + b;
+
+    int h = ((a & 0xFFF) + (b & 0xFFF)) > 0xFFF;
+    int c = result > 0xFFFF;
+
+    cpu_set_reg(r, result & 0xFFFF);
+    cpu_set_flags(ctx, -1, 0, h, c);
+    return;
+  }
+
+  /* =========================
+     ADD A, r / ADD A, n
+     ========================= */
+  uint8_t a = ctx->regs.A;
+  uint8_t b = ctx->fetch_data & 0xFF;
+
+  uint16_t result = a + b;
+
+  int z = (result & 0xFF) == 0;
+  int h = ((a & 0xF) + (b & 0xF)) > 0xF;
+  int c = result > 0xFF;
+
+  ctx->regs.A = result & 0xFF;
+  cpu_set_flags(ctx, z, 0, h, c);
 }
 static void proc_sub(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - ctx->fetch_data;
@@ -143,7 +169,7 @@ static void proc_sub(cpu_context *ctx) {
 }
 static void proc_sbc(cpu_context *ctx) {
   uint16_t val = CPU_FLAG_C + ctx->fetch_data;
-  int z = cpu_read_reg(ctx->cur_instruction->reg1) -val == 0;
+  int z = cpu_read_reg(ctx->cur_instruction->reg1) - val == 0;
   int h = ((int)cpu_read_reg(ctx->cur_instruction->reg1) & 0xf) -
               ((int)ctx->fetch_data & 0xf) - (int)CPU_FLAG_C <
           0;
@@ -173,19 +199,20 @@ static void proc_dec(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - 1;
 
   if (is_16bit(ctx->cur_instruction->reg1)) {
-      emu_cycles(1);
+    emu_cycles(1);
   }
 
-  if (ctx->cur_instruction->reg1 == RT_HL && ctx->cur_instruction->mode == AM_MR) {
-      val = bus_read(cpu_read_reg(RT_HL)) - 1;
-      bus_write(cpu_read_reg(RT_HL), val);
+  if (ctx->cur_instruction->reg1 == RT_HL &&
+      ctx->cur_instruction->mode == AM_MR) {
+    val = bus_read(cpu_read_reg(RT_HL)) - 1;
+    bus_write(cpu_read_reg(RT_HL), val);
   } else {
-      cpu_set_reg(ctx->cur_instruction->reg1, val);
-      val = cpu_read_reg(ctx->cur_instruction->reg1);
+    cpu_set_reg(ctx->cur_instruction->reg1, val);
+    val = cpu_read_reg(ctx->cur_instruction->reg1);
   }
 
   if ((ctx->op_code & 0x0B) == 0x0B) {
-      return;
+    return;
   }
 
   cpu_set_flags(ctx, val == 0, 1, (val & 0x0F) == 0x0F, -1);
@@ -194,20 +221,21 @@ static void proc_inc(cpu_context *ctx) {
   uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
 
   if (is_16bit(ctx->cur_instruction->reg1)) {
-      emu_cycles(1);
+    emu_cycles(1);
   }
 
-  if (ctx->cur_instruction->reg1 == RT_HL && ctx->cur_instruction->mode == AM_MR) {
-      val = bus_read(cpu_read_reg(RT_HL)) + 1;
-      val &= 0xFF;
-      bus_write(cpu_read_reg(RT_HL), val);
+  if (ctx->cur_instruction->reg1 == RT_HL &&
+      ctx->cur_instruction->mode == AM_MR) {
+    val = bus_read(cpu_read_reg(RT_HL)) + 1;
+    val &= 0xFF;
+    bus_write(cpu_read_reg(RT_HL), val);
   } else {
-      cpu_set_reg(ctx->cur_instruction->reg1, val);
-      val = cpu_read_reg(ctx->cur_instruction->reg1);
+    cpu_set_reg(ctx->cur_instruction->reg1, val);
+    val = cpu_read_reg(ctx->cur_instruction->reg1);
   }
 
   if ((ctx->op_code & 0x03) == 0x03) {
-      return;
+    return;
   }
 
   cpu_set_flags(ctx, val == 0, 0, (val & 0x0F) == 0, -1);
@@ -345,42 +373,42 @@ static void proc_rst(cpu_context *ctx) {
   goto_addr(ctx, ctx->cur_instruction->param, true);
 }
 static void proc_ld(cpu_context *ctx) {
- if (ctx->dest_is_mem) {
-        //LD (BC), A for instance...
+  if (ctx->dest_is_mem) {
+    // LD (BC), A for instance...
 
-        if (is_16bit(ctx->cur_instruction->reg2)) {
-            //if 16 bit register...
-            emu_cycles(1);
-            bus_write16(ctx->mem_destination, ctx->fetch_data);
-        } else {
-            bus_write(ctx->mem_destination, ctx->fetch_data);
-        }
-
-        emu_cycles(1);
-
-        return;
+    if (is_16bit(ctx->cur_instruction->reg2)) {
+      // if 16 bit register...
+      emu_cycles(1);
+      bus_write16(ctx->mem_destination, ctx->fetch_data);
+    } else {
+      bus_write(ctx->mem_destination, ctx->fetch_data);
     }
 
-    if (ctx->cur_instruction->mode == AM_HL_SPR) {
-        uint8_t hflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0xF) + 
-            (ctx->fetch_data & 0xF) >= 0x10;
+    emu_cycles(1);
 
-        uint8_t cflag = (cpu_read_reg(ctx->cur_instruction->reg2) & 0xFF) + 
-            (ctx->fetch_data & 0xFF) >= 0x100;
+    return;
+  }
 
-        cpu_set_flags(ctx, 0, 0, hflag, cflag);
-        cpu_set_reg(ctx->cur_instruction->reg1, 
-            cpu_read_reg(ctx->cur_instruction->reg2) + (int8_t)ctx->fetch_data);
+  if (ctx->cur_instruction->mode == AM_HL_SPR) {
+    uint16_t sp = cpu_read_reg(ctx->cur_instruction->reg2);
+    int8_t e = (int8_t)ctx->fetch_data;
 
-        return;
-    }
-    // if (ctx->op_code=0x46) {
-    //   std::cerr << fmt::format("Fetch Data = 0x{:04X}, Address was {:04X}\n",ctx->fetch_data,cpu_read_reg(ctx->cur_instruction->reg2));
-    // }
-    cpu_set_reg(ctx->cur_instruction->reg1, ctx->fetch_data);
+    uint16_t result = sp + e;
+
+    uint8_t hflag = ((sp & 0xF) + (e & 0xF)) > 0xF;
+    uint8_t cflag = ((sp & 0xFF) + (e & 0xFF)) > 0xFF;
+
+    cpu_set_flags(ctx, 0, 0, hflag, cflag);
+    cpu_set_reg(ctx->cur_instruction->reg1, result);
+
+    return;
+  }
+  // if (ctx->op_code=0x46) {
+  //   std::cerr << fmt::format("Fetch Data = 0x{:04X}, Address was
+  //   {:04X}\n",ctx->fetch_data,cpu_read_reg(ctx->cur_instruction->reg2));
+  // }
+  cpu_set_reg(ctx->cur_instruction->reg1, ctx->fetch_data);
 }
-
-
 
 static void proc_ret(cpu_context *ctx) {
   if (ctx->cur_instruction->cond != CT_NONE) {
@@ -431,7 +459,8 @@ static void proc_push(cpu_context *ctx) {
   emu_cycles(1);
   stack_push(high);
 
-  uint16_t low = cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF; //Potenial bug
+  uint16_t low = cpu_read_reg(ctx->cur_instruction->reg1) & 0xFF; // Potenial
+                                                                  // bug
   emu_cycles(1);
   stack_push(low);
 
@@ -491,31 +520,31 @@ static void proc_stop(cpu_context *ctx) {
 }
 
 static void proc_daa(cpu_context *ctx) {
-    int a = ctx->regs.A;  // Use int to catch overflow
-    
-    if (!CPU_FLAG_N) {  // After addition
-        if (CPU_FLAG_H || (a & 0x0F) > 9) {
-            a += 0x06;
-        }
-        if (CPU_FLAG_C || a > 0x9F) {  // Check AFTER adding 0x06!
-            a += 0x60;
-        }
-    } else {  // After subtraction
-        if (CPU_FLAG_H) {
-            a -= 0x06;
-        }
-        if (CPU_FLAG_C) {
-            a -= 0x60;
-        }
+  int a = ctx->regs.A; // Use int to catch overflow
+
+  if (!CPU_FLAG_N) { // After addition
+    if (CPU_FLAG_H || (a & 0x0F) > 9) {
+      a += 0x06;
     }
-    
-    ctx->regs.A = a & 0xFF;
-    
-    cpu_set_flags(ctx, 
-                  ctx->regs.A == 0,     // Z
-                  -1,                    // N unchanged
-                  0,                     // H always cleared
-                  (a & 0x100) ? 1 : -1); // C set if overflow, else unchanged
+    if (CPU_FLAG_C || a > 0x9F) { // Check AFTER adding 0x06!
+      a += 0x60;
+    }
+  } else { // After subtraction
+    if (CPU_FLAG_H) {
+      a -= 0x06;
+    }
+    if (CPU_FLAG_C) {
+      a -= 0x60;
+    }
+  }
+
+  ctx->regs.A = a & 0xFF;
+
+  cpu_set_flags(ctx,
+                ctx->regs.A == 0,      // Z
+                -1,                    // N unchanged
+                0,                     // H always cleared
+                (a & 0x100) ? 1 : -1); // C set if overflow, else unchanged
 }
 
 static void proc_cpl(cpu_context *ctx) {
