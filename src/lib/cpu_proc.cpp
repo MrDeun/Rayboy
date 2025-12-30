@@ -2,6 +2,7 @@
 #include "fmt/core.h"
 #include <cstdint>
 #include <cstdio>
+#include <iostream>
 
 void cpu_set_flags(cpu_context *ctx, int8_t z, int8_t n, int8_t h, int8_t c) {
   if (z != -1) {
@@ -373,7 +374,9 @@ static void proc_ld(cpu_context *ctx) {
 
         return;
     }
-
+    // if (ctx->op_code=0x46) {
+    //   std::cerr << fmt::format("Fetch Data = 0x{:04X}, Address was {:04X}\n",ctx->fetch_data,cpu_read_reg(ctx->cur_instruction->reg2));
+    // }
     cpu_set_reg(ctx->cur_instruction->reg1, ctx->fetch_data);
 }
 
@@ -488,21 +491,33 @@ static void proc_stop(cpu_context *ctx) {
 }
 
 static void proc_daa(cpu_context *ctx) {
-  uint8_t u = 0;
-  int fc = 0;
-
-  if (CPU_FLAG_H || (!CPU_FLAG_N && (ctx->regs.A & 0xf) > 9)) {
-    u = 6;
-  }
-
-  if (CPU_FLAG_C || (!CPU_FLAG_N && (ctx->regs.A > 0x99))) {
-    u |= 0x60;
-    fc = 1;
-  }
-  ctx->regs.A += CPU_FLAG_N ? -u : u;
-
-  cpu_set_flags(ctx, ctx->regs.A == 0, -1, 0, fc);
+    int a = ctx->regs.A;  // Use int to catch overflow
+    
+    if (!CPU_FLAG_N) {  // After addition
+        if (CPU_FLAG_H || (a & 0x0F) > 9) {
+            a += 0x06;
+        }
+        if (CPU_FLAG_C || a > 0x9F) {  // Check AFTER adding 0x06!
+            a += 0x60;
+        }
+    } else {  // After subtraction
+        if (CPU_FLAG_H) {
+            a -= 0x06;
+        }
+        if (CPU_FLAG_C) {
+            a -= 0x60;
+        }
+    }
+    
+    ctx->regs.A = a & 0xFF;
+    
+    cpu_set_flags(ctx, 
+                  ctx->regs.A == 0,     // Z
+                  -1,                    // N unchanged
+                  0,                     // H always cleared
+                  (a & 0x100) ? 1 : -1); // C set if overflow, else unchanged
 }
+
 static void proc_cpl(cpu_context *ctx) {
   ctx->regs.A = ~ctx->regs.A;
   cpu_set_flags(ctx, -1, 1, 1, -1);

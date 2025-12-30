@@ -224,7 +224,7 @@ bool cart_load(const std::string &card_name) {
     return false;
   }
 
-  fmt::println("File {} successfully opened!", card_name);
+  // fmt::println("File {} successfully opened!", card_name);
 
   file.seekg(0, file.end);
   ctx.rom_size = file.tellg();
@@ -239,25 +239,25 @@ bool cart_load(const std::string &card_name) {
   ctx.header = (rom_header *)(ctx.rom_data + 0x100);
   ctx.header->title[15] = 0;
 
-  fmt::println("Cartridge Loaded:");
-  fmt::println("\t Title    : {}", ctx.header->title);
-  fmt::println("\t Type     : {0:x} ({1})", ctx.header->type, getROMType());
-  fmt::println("\t ROM Size : {} KB", 32 << ctx.header->rom_size);
-  fmt::println("\t RAM Size : {0:x}", ctx.header->ram_size);
-  fmt::println("\t LIC Code : {0:x} ({1})", ctx.header->license_code,
-               getCartLicenseName());
-  fmt::println("\t ROM Vers : {0:x}", ctx.header->version);
+  // fmt::println("Cartridge Loaded:");
+  // fmt::println("\t Title    : {}", ctx.header->title);
+  // fmt::println("\t Type     : {0:x} ({1})", ctx.header->type, getROMType());
+  // fmt::println("\t ROM Size : {} KB", 32 << ctx.header->rom_size);
+  // fmt::println("\t RAM Size : {0:x}", ctx.header->ram_size);
+  // fmt::println("\t LIC Code : {0:x} ({1})", ctx.header->license_code,
+  //              getCartLicenseName());
+  // fmt::println("\t ROM Vers : {0:x}", ctx.header->version);
 
   uint16_t x = 0;
   for (uint16_t i = 0x0134; i <= 0x014C; i++) {
     x = x - ctx.rom_data[i] - 1;
   }
 
-  fmt::println("\t Checksum : {0:x} ({1})", ctx.header->checksum,
-               (x & 0xFF) ? "PASSED" : "FAILED");
+  // fmt::println("\t Checksum : {0:x} ({1})", ctx.header->checksum,
+  //              (x & 0xFF) ? "PASSED" : "FAILED");
 
-  fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}", ctx.rom_data[0x100],
-               ctx.rom_data[0x101]);
+  // fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}", ctx.rom_data[0x100],
+  //              ctx.rom_data[0x101]);
   // dump_cart();
 
   return true;

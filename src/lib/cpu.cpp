@@ -21,6 +21,9 @@ void cpu_init() {
   ctx.int_flags = 0;
   ctx.int_master_enabled = false;
   ctx.enabling_ime = false;
+
+  init_ram();
+
 }
 cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
@@ -52,6 +55,18 @@ void emu_cycles(int cycles) {
     dma_tick();
   }
 }
+
+std::string currentCPUState() {
+  auto flags = fmt::format(
+      "{:c}{:c}{:c}{:c}", ctx.regs.F & (1 << 7) ? 'Z' : '-',
+      ctx.regs.F & (1 << 6) ? 'N' : '-', ctx.regs.F & (1 << 5) ? 'H' : '-',
+      ctx.regs.F & (1 << 4) ? 'C' : '-');
+  return fmt::format("{} A: {:02X} F:{} BC: {:02X}{:02X} DE: "
+               "{:02X}{:02X} HL: {:02X}{:02X}\n",
+               inst_toString(&ctx), ctx.regs.A, flags, ctx.regs.B, ctx.regs.C,
+               ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+}
+
 void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
 void *cpu_run(void *p) {
   timer_init();
@@ -66,10 +81,10 @@ void *cpu_run(void *p) {
       delay(10);
       continue;
     }
-      if (!cpu_step()) {
-        printf("CPU Stopped\n");
-        return 0;
-      }
+    if (!cpu_step()) {
+      printf("CPU Stopped\n");
+      return 0;
+    }
   }
 
   return 0;
@@ -93,17 +108,17 @@ bool cpu_step() {
         "{:c}{:c}{:c}{:c}", ctx.regs.F & (1 << 7) ? 'Z' : '-',
         ctx.regs.F & (1 << 6) ? 'N' : '-', ctx.regs.F & (1 << 5) ? 'H' : '-',
         ctx.regs.F & (1 << 4) ? 'C' : '-');
-    // fmt::println("{}: {} A: {:X} BC: {:X}{:X} DE: "
-    //  "{:X}{:X} HL: {:X}{:X}",
-    //  pc, inst_toString(&ctx), ctx.regs.A, ctx.regs.B, ctx.regs.C,
-    //  ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+    // fmt::println("{}: {} A: {:02X} F:{} BC: {:02X}{:02X} DE: "
+    //              "{:02X}{:02X} HL: {:02X}{:02X}",
+    //              pc, inst_toString(&ctx), ctx.regs.A, flags, ctx.regs.B,
+    //              ctx.regs.C, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
 
     dbg_update();
     dbg_print();
 
     execute();
     log_count++;
-    if(log_count>LOG_MAX){
+    if (log_count > LOG_MAX) {
       fmt::println("Excedded max logs");
       exit(-1);
     }
