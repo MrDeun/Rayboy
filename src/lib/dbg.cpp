@@ -21,6 +21,6 @@ void dbg_print() {
 
     if (dbg_msg[0]) {
       auto debug_msg =  fmt::format("DEBUG: {}\n", dbg_msg);
-      // std::cerr << debug_msg;
+      std::cerr << debug_msg;
     }
 }
