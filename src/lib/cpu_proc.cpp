@@ -196,50 +196,65 @@ static void proc_none(cpu_context *ctx) {
   ERROR("Tried to fetch illegal processor for IN_NONE!");
 }
 static void proc_dec(cpu_context *ctx) {
-  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) - 1;
+  uint8_t old;
+  uint8_t val;
 
   if (is_16bit(ctx->cur_instruction->reg1)) {
+    uint16_t v = cpu_read_reg(ctx->cur_instruction->reg1) - 1;
+    cpu_set_reg(ctx->cur_instruction->reg1, v);
     emu_cycles(1);
+    return; // 16-bit DEC does NOT affect flags
   }
 
   if (ctx->cur_instruction->reg1 == RT_HL &&
       ctx->cur_instruction->mode == AM_MR) {
-    val = bus_read(cpu_read_reg(RT_HL)) - 1;
-    bus_write(cpu_read_reg(RT_HL), val);
+    uint16_t addr = cpu_read_reg(RT_HL);
+    old = bus_read(addr);
+    val = old - 1;
+    bus_write(addr, val);
   } else {
+    old = cpu_read_reg(ctx->cur_instruction->reg1);
+    val = old - 1;
     cpu_set_reg(ctx->cur_instruction->reg1, val);
-    val = cpu_read_reg(ctx->cur_instruction->reg1);
   }
 
-  if ((ctx->op_code & 0x0B) == 0x0B) {
-    return;
-  }
-
-  cpu_set_flags(ctx, val == 0, 1, (val & 0x0F) == 0x0F, -1);
+  cpu_set_flags(ctx,
+    val == 0,                 // Z
+    1,                        // N
+    (old & 0x0F) == 0x00,     // H (borrow)
+    -1                        // C unchanged
+  );
 }
 static void proc_inc(cpu_context *ctx) {
-  uint16_t val = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
-
   if (is_16bit(ctx->cur_instruction->reg1)) {
+    uint16_t v = cpu_read_reg(ctx->cur_instruction->reg1) + 1;
+    cpu_set_reg(ctx->cur_instruction->reg1, v);
     emu_cycles(1);
+    return; // NO FLAGS
   }
+
+  uint8_t old, val;
 
   if (ctx->cur_instruction->reg1 == RT_HL &&
       ctx->cur_instruction->mode == AM_MR) {
-    val = bus_read(cpu_read_reg(RT_HL)) + 1;
-    val &= 0xFF;
-    bus_write(cpu_read_reg(RT_HL), val);
+    uint16_t addr = cpu_read_reg(RT_HL);
+    old = bus_read(addr);
+    val = old + 1;
+    bus_write(addr, val);
   } else {
+    old = cpu_read_reg(ctx->cur_instruction->reg1);
+    val = old + 1;
     cpu_set_reg(ctx->cur_instruction->reg1, val);
-    val = cpu_read_reg(ctx->cur_instruction->reg1);
   }
 
-  if ((ctx->op_code & 0x03) == 0x03) {
-    return;
-  }
-
-  cpu_set_flags(ctx, val == 0, 0, (val & 0x0F) == 0, -1);
+  cpu_set_flags(ctx,
+    val == 0,
+    0,
+    (old & 0x0F) == 0x0F,
+    -1
+  );
 }
+
 reg_type rt_lookup[] = {RT_B, RT_C, RT_D, RT_E, RT_H, RT_L, RT_HL, RT_A};
 
 reg_type decode_reg(uint8_t reg) {
