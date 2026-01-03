@@ -12,8 +12,8 @@ void delay(uint32_t ms);
 struct RayboyUI {
 private:
   emu_context *m_emuCtx = nullptr;
-  void drawDebug();
-  bool checkHold();
+  // void drawDebug();
+  // bool checkHold();
   void mainMenu();
 
 public:
@@ -32,7 +32,7 @@ public:
     }
     m_emuCtx = ctx;
   }
-  Image displayTile(uint16_t beginAddress, uint16_t tileNum, int scale);
+  // Image displayTile(uint16_t beginAddress, uint16_t tileNum, int scale);
   void Draw();
   void Setup();
 };

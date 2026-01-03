@@ -37,7 +37,7 @@ instruction instructions[0x100] = {
     [0x1C] = {.type = IN_INC, .mode = AM_R, RT_E},
     [0x1D] = {.type = IN_DEC, .mode = AM_R, RT_E},
     [0x1E] = {.type = IN_LD, .mode = AM_R_D8, RT_E},
-    [0x1F] = {.type = IN_RRA},
+    [0x1F] = {.type = IN_RRA},/*  */
 
     // 0x2X
     [0x20] = {.type = IN_JR, .mode = AM_D8, RT_NONE, RT_NONE, .cond = CT_NZ},

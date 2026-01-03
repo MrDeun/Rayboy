@@ -73,8 +73,10 @@ void bus_write(uint16_t address, uint8_t value) {
   } else if (address == 0xffff) {
       cpu_set_ie_register(value);
       return;
+  } else {
+    hram_write(address, value);
   }
-  return;
+  
 }
 
 uint16_t bus_read16(uint16_t address) {

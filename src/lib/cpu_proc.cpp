@@ -168,18 +168,18 @@ static void proc_sub(cpu_context *ctx) {
   cpu_set_flags(ctx, z, 1, h, c);
 }
 static void proc_sbc(cpu_context *ctx) {
-  uint16_t val = CPU_FLAG_C + ctx->fetch_data;
-  int z = cpu_read_reg(ctx->cur_instruction->reg1) - val == 0;
-  int h = ((int)cpu_read_reg(ctx->cur_instruction->reg1) & 0xf) -
-              ((int)ctx->fetch_data & 0xf) - (int)CPU_FLAG_C <
-          0;
-  int c = ((int)cpu_read_reg(ctx->cur_instruction->reg1)) -
-              ((int)ctx->fetch_data) - (int)CPU_FLAG_C <
-          0;
-
-  cpu_set_reg(ctx->cur_instruction->reg1,
-              cpu_read_reg(ctx->cur_instruction->reg1) - val);
-  cpu_set_flags(ctx, z, 1, h, c);
+    uint8_t reg_val = cpu_read_reg(ctx->cur_instruction->reg1);
+    uint8_t data = ctx->fetch_data;
+    uint8_t carry = CPU_FLAG_C ? 1 : 0;
+    
+    int result = reg_val - data - carry;
+    
+    int z = (result & 0xFF) == 0;
+    int h = ((reg_val & 0xF) - (data & 0xF) - carry) < 0;
+    int c = result < 0;
+    
+    cpu_set_reg(ctx->cur_instruction->reg1, (uint8_t)(result & 0xFF));
+    cpu_set_flags(ctx, z, 1, h, c);
 }
 static void proc_adc(cpu_context *ctx) {
   uint16_t u = ctx->fetch_data;
@@ -520,19 +520,34 @@ static void proc_stop(cpu_context *ctx) {
 }
 
 static void proc_daa(cpu_context *ctx) {
-  uint8_t u = 0;
-  int fc = 0;
+    uint8_t a = ctx->regs.A;
+    uint8_t adj = 0;
+    bool carry = CPU_FLAG_C;
 
-  if (CPU_FLAG_H || (!CPU_FLAG_N && (ctx->regs.A & 0x9) > 9)) {
-    u = 6;
-  }
-  if (CPU_FLAG_C || (!CPU_FLAG_N && ctx->regs.A > 0x99)) {
-    u |= 0x60;
-    fc = 1;
-  }
+    if (!CPU_FLAG_N) {
+        if (CPU_FLAG_H || (a & 0x0F) > 9)
+            adj |= 0x06;
+        if (CPU_FLAG_C || a > 0x99) {
+            adj |= 0x60;
+            carry = true;
+        }
+        a += adj;
+    } else {
+        if (CPU_FLAG_H)
+            adj |= 0x06;
+        if (CPU_FLAG_C)
+            adj |= 0x60;
+        a -= adj;
+    }
 
-  ctx->regs.A += CPU_FLAG_N ? -u : u;
-  cpu_set_flags(ctx,ctx->regs.A == 0,-1,0,fc);
+    ctx->regs.A = a;
+
+    cpu_set_flags(ctx,
+        a == 0,            // Z
+        CPU_FLAG_N,        // N unchanged
+        0,                 // H cleared
+        carry              // C preserved / set
+    );
 }
 
 static void proc_cpl(cpu_context *ctx) {

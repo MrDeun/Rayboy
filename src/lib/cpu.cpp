@@ -8,6 +8,9 @@ uint8_t cpu_get_ie_register() { return ctx.ie_register; }
 
 size_t LOG_MAX = -1;
 size_t log_count = 0;
+void cpu_request_interupts(interrupt_type i){
+  ctx.int_flags |= i;
+}
 
 void cpu_set_ie_register(uint8_t n) { ctx.ie_register = n; }
 void cpu_init() {
@@ -93,13 +96,13 @@ uint8_t cpu_get_int_flags() { return ctx.int_flags; }
 bool cpu_step() {
   if (!ctx.halted) {
     auto pc = ctx.regs.PC;
-    fmt::println("A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} "
-                 "H:{:02X} L:{:02X} "
-                 "SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
-                 ctx.regs.A, ctx.regs.F, ctx.regs.B, ctx.regs.C, ctx.regs.D,
-                 ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP, ctx.regs.PC,
-                 bus_read(ctx.regs.PC), bus_read(ctx.regs.PC + 1),
-                 bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
+    // fmt::println("A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} "
+    //              "H:{:02X} L:{:02X} "
+    //              "SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
+    //              ctx.regs.A, ctx.regs.F, ctx.regs.B, ctx.regs.C, ctx.regs.D,
+    //              ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP, ctx.regs.PC,
+    //              bus_read(ctx.regs.PC), bus_read(ctx.regs.PC + 1),
+    //              bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
 
     fetch_instruction();
     emu_cycles(1);
@@ -123,6 +126,7 @@ bool cpu_step() {
       exit(-1);
     }
   } else {
+    emu_cycles(1);
     if (ctx.int_flags) {
       ctx.halted = false;
     }
@@ -130,11 +134,11 @@ bool cpu_step() {
 
   if (ctx.int_master_enabled) {
     cpu_handle_interrupts(&ctx);
-    ctx.enabling_ime = false;
   }
-
+  
   if (ctx.enabling_ime) {
     ctx.int_master_enabled = true;
+    ctx.enabling_ime = false;
   }
 
   return true;
