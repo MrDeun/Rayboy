@@ -20,10 +20,10 @@ uint8_t bus_read(uint16_t address) {
     // reserved by echo ram
     return 0;
   } else if (address < 0xFEA0) {
-    if(dma_transferring()){
+    if (dma_transferring()) {
       return 0xff;
     }
-      return ppu_oam_read(address);
+    return ppu_oam_read(address);
   } else if (address < 0xFF00) {
     // reserved unused
     return 0;
@@ -46,7 +46,7 @@ void bus_write(uint16_t address, uint8_t value) {
     return;
   } else if (address < 0xA000) {
     // Map/Char data
-    ppu_vram_write(address,value);
+    ppu_vram_write(address, value);
     return;
   } else if (address < 0xC000) {
     // EXT-RAM
@@ -55,13 +55,13 @@ void bus_write(uint16_t address, uint8_t value) {
   } else if (address < 0xE000) {
     //
     wram_write(address, value);
-  return;
+    return;
   } else if (address < 0xFE00) {
     // OAM
     if (dma_transferring()) {
       return;
     }
-    ppu_oam_write(address,value);
+    ppu_oam_write(address, value);
     return;
   } else if (address < 0xFEA0) {
     NO_IMPL(err.c_str());
@@ -71,12 +71,11 @@ void bus_write(uint16_t address, uint8_t value) {
   } else if (address < 0xff80) {
     io_write(address, value);
   } else if (address == 0xffff) {
-      cpu_set_ie_register(value);
-      return;
+    cpu_set_ie_register(value);
+    return;
   } else {
     hram_write(address, value);
   }
-  
 }
 
 uint16_t bus_read16(uint16_t address) {
