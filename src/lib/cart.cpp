@@ -12,7 +12,9 @@ struct cart_context {
 };
 
 static cart_context ctx;
-
+rom_header* getROMHeader(){
+  return ctx.header;
+}
 const std::map<uint8_t, const std::string> ROM_TYPES = {
     {0x00, "ROM ONLY"},
     {0x01, "MBC1"},

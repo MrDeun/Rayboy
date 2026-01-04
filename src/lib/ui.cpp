@@ -7,13 +7,8 @@
 #include "Image.hpp"
 #include "rlImGui.h"
 #include <array>
+#include <cstdint>
 extern emu_context ctx;
-
-static RenderTexture2D debugTexture;
-static bool showDebugWindow = true;
-const std::array<raylib::Color, 4> tile_colors{
-    raylib::Color::White(), raylib::Color::LightGray(),
-    raylib::Color::DarkGray(), raylib::Color::Black()};
 
 void RayboyUI::Setup() {
   m_window.SetSize(1280, 720);
@@ -21,10 +16,6 @@ void RayboyUI::Setup() {
   SetConfigFlags(FLAG_MSAA_4X_HINT);
   int debugWidth = 16 * 8 * EmulatorScale;
   int debugHeight = 32 * 8 * EmulatorScale;
-
-  debugTexture = LoadRenderTexture(debugWidth * debugWidth,
-                                   debugHeight * (64 * EmulatorScale));
-
   rlImGuiSetup(true);
 }
 
@@ -62,8 +53,33 @@ void RayboyUI::mainMenu() {
     ImGui::EndMainMenuBar();
   }
 }
+auto constexpr x = 0;
+auto constexpr y = 0;
+auto constexpr scale = 8;
 
-void RayboyUI::Draw() {
+
+void RayboyUI::Draw(const std::array<uint8_t,48>& nintendo_bytes) {
   mainMenu();
   DrawRectangle(0, 0, 160*EmulatorScale, 144*EmulatorScale, DARKGRAY);
+  //Draw Nintendo Logo
+  auto pixels = RayboyUI::decodeNintendoLogo(nintendo_bytes.data());
+  for (int py = 0; py < 16; py++) {  // 16 rows total (2 rows of tiles)
+        for (int px = 0; px < 48; px++) {
+            int pixelIndex = py * 48 + px;
+            GBColor color = pixels[pixelIndex];
+            
+            // Convert enum to grayscale value
+            uint8_t gray = static_cast<int>(color);
+            Color rayColor = { gray, gray, gray, 255 };
+            
+            // Draw scaled pixel
+            DrawRectangle(
+                x + px * scale,
+                y + py * scale,
+                scale,
+                scale,
+                rayColor
+            );
+        }
+    }
 }

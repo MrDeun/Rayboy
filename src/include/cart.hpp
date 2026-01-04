@@ -18,7 +18,7 @@ typedef struct {
 } rom_header;
 
 bool cart_load(const std::string& card);
-
+rom_header* getROMHeader();
 void dump_cart();
 
 uint8_t cart_read(uint16_t address);
