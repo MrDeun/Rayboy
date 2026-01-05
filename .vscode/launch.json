@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
-      "args": ["${workspaceFolder}/build/cpu_instrs.gb"],
+      "args": ["${workspaceFolder}/blargg_tests/cpu_instrs/cpu_instrs.gb"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

@@ -13,13 +13,9 @@ static ram_context ctx;
 bool writeToFF03 = false;
 
 void init_ram() {
-  for (auto &byte : ctx.wram) {
-    byte = 0xff;
-  }
-
-  for (auto &byte : ctx.hram) {
-    byte = 0xff;
-  }
+  ctx.wram.fill(0xff);
+  ctx.hram.fill(0xff);
+  
 }
 
 uint8_t wram_read(uint16_t address) {
@@ -29,7 +25,7 @@ uint8_t wram_read(uint16_t address) {
     fmt::println(err);
     exit(-1);
   }
-  return ctx.wram[address];
+  return ctx.wram.at(address);
 }
 
 void wram_write(uint16_t address, uint8_t value) {
@@ -49,7 +45,7 @@ uint8_t hram_read(uint16_t address) {
     fmt::println(err);
     exit(-1);
   }
-  return ctx.hram[address];
+  return ctx.hram.at(address);
 }
 
 void hram_write(uint16_t address, uint8_t value) {
