@@ -2,15 +2,17 @@
 #include "fmt/core.h"
 #include "raylib.h"
 #include <cstdint>
+#include <mutex>
+#include <pthread.h>
+#include <thread>
+#include <unistd.h>
 
 cpu_context ctx = {0};
 uint8_t cpu_get_ie_register() { return ctx.ie_register; }
 
 size_t LOG_MAX = -1;
 size_t log_count = 0;
-void cpu_request_interupts(interrupt_type i){
-  ctx.int_flags |= i;
-}
+void cpu_request_interupts(interrupt_type i) { ctx.int_flags |= i; }
 
 void cpu_set_ie_register(uint8_t n) { ctx.ie_register = n; }
 void cpu_init() {
@@ -26,7 +28,6 @@ void cpu_init() {
   ctx.enabling_ime = false;
 
   init_ram();
-
 }
 cpu_registers *cpu_get_regs() { return &ctx.regs; }
 void fetch_instruction() {
@@ -65,33 +66,56 @@ std::string currentCPUState() {
       ctx.regs.F & (1 << 6) ? 'N' : '-', ctx.regs.F & (1 << 5) ? 'H' : '-',
       ctx.regs.F & (1 << 4) ? 'C' : '-');
   return fmt::format("{} A: {:02X} F:{} BC: {:02X}{:02X} DE: "
-               "{:02X}{:02X} HL: {:02X}{:02X}\n",
-               inst_toString(&ctx), ctx.regs.A, flags, ctx.regs.B, ctx.regs.C,
-               ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
+                     "{:02X}{:02X} HL: {:02X}{:02X}\n",
+                     inst_toString(&ctx), ctx.regs.A, flags, ctx.regs.B,
+                     ctx.regs.C, ctx.regs.D, ctx.regs.E, ctx.regs.H,
+                     ctx.regs.L);
 }
 
 void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
-void *cpu_run(void *p) {
+void cpu_run(EmulatorShared *shared) {
   timer_init();
   cpu_init();
-
-  ctx.running = true;
-  ctx.paused = false;
-  ctx.ticks = 0;
-
-  while (ctx.running) {
-    if (ctx.paused) {
-      delay(10);
+  
+  {
+    std::lock_guard<std::mutex> lock(*shared->mutex);
+    ctx.running = true;
+    ctx.paused = false;
+    ctx.ticks = 0;
+  }
+  
+  while (true) {
+    {
+      std::lock_guard<std::mutex> lock(*shared->mutex);
+      if (!ctx.running) {
+        break;
+      }
+      if (ctx.paused) {
+        // Unlock before sleeping
+      }
+    }
+    
+    // Check paused state outside the lock to avoid holding it during sleep
+    bool should_pause;
+    {
+      std::lock_guard<std::mutex> lock(*shared->mutex);
+      should_pause = ctx.paused;
+    }
+    
+    if (should_pause) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
       continue;
     }
-    if (!cpu_step()) {
-      printf("CPU Stopped\n");
-      return 0;
+    
+    bool ok = cpu_step();
+    
+    if (!ok) {
+      fmt::println("CPU Stopped");
+      break;
     }
   }
-
-  return 0;
 }
+
 uint8_t cpu_get_int_flags() { return ctx.int_flags; }
 bool cpu_step() {
   if (!ctx.halted) {
@@ -100,9 +124,9 @@ bool cpu_step() {
     //              "H:{:02X} L:{:02X} "
     //              "SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
     //              ctx.regs.A, ctx.regs.F, ctx.regs.B, ctx.regs.C, ctx.regs.D,
-    //              ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP, ctx.regs.PC,
-    //              bus_read(ctx.regs.PC), bus_read(ctx.regs.PC + 1),
-    //              bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
+    //              ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP,
+    //              ctx.regs.PC, bus_read(ctx.regs.PC), bus_read(ctx.regs.PC +
+    //              1), bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
 
     fetch_instruction();
     emu_cycles(1);
@@ -135,7 +159,7 @@ bool cpu_step() {
   if (ctx.int_master_enabled) {
     cpu_handle_interrupts(&ctx);
   }
-  
+
   if (ctx.enabling_ime) {
     ctx.int_master_enabled = true;
     ctx.enabling_ime = false;

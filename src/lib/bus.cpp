@@ -5,12 +5,10 @@
 #include <cstdint>
 uint8_t bus_read(uint16_t address) {
   auto err = fmt::format("No implementation for bus_read(0x{:X})", address);
-  if (address < 0x8000) {
-    // ROM Data
+  if (address < 0x8000) /*ROM Data*/ {
     return cart_read(address);
   } else if (address < 0xA000) {
     return ppu_vram_read(address);
-    NO_IMPL(err.c_str())
   } else if (address < 0xC000) {
     // Cartridge
     return cart_read(address);
