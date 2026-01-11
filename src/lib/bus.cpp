@@ -1,6 +1,7 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
 
+#include <format>
+#include <print>
 #include <cassert>
 #include <cstdint>
 uint8_t bus_read(uint16_t address) {

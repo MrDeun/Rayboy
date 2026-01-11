@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../include/all.hpp"
-#include "fmt/core.h"
 #include <cstdint>
 #include <iostream>
+#include <format>
 
 static char dbg_msg[1024] = {0};
 static int msg_size = 0;

@@ -1,5 +1,5 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include <cstdint>
 
 static char serial_data[2];

@@ -1,11 +1,8 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include "raylib.h"
 #include <cstdint>
-#include <mutex>
-#include <pthread.h>
 #include <thread>
-#include <unistd.h>
 
 cpu_context ctx = {0};
 uint8_t cpu_get_ie_register() { return ctx.ie_register; }
@@ -73,60 +70,67 @@ std::string currentCPUState() {
 }
 
 void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
-void cpu_run(EmulatorShared *shared) {
-  timer_init();
-  cpu_init();
-  
-  {
-    std::lock_guard<std::mutex> lock(*shared->mutex);
-    ctx.running = true;
-    ctx.paused = false;
-    ctx.ticks = 0;
-  }
-  
-  while (true) {
-    {
-      std::lock_guard<std::mutex> lock(*shared->mutex);
-      if (!ctx.running) {
-        break;
-      }
-      if (ctx.paused) {
-        // Unlock before sleeping
-      }
+void cpu_run_threaded(EmulatorShared* shared) {
+    timer_init();
+    cpu_init();
+    
+    shared->running.store(true, std::memory_order_release);
+    
+    int tile_update_counter = 0;
+    const int TILE_UPDATE_INTERVAL = 60;
+    
+    auto last_fps_time = std::chrono::steady_clock::now();
+    uint32_t frames_this_second = 0;
+    
+    while (!shared->should_exit.load(std::memory_order_acquire)) {
+        if (shared->paused.load(std::memory_order_acquire)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+            continue;
+        }
+        
+        if (!cpu_step()) {
+            break;
+        }
+        
+        shared->frame_count.fetch_add(1, std::memory_order_relaxed);
+        frames_this_second++;
+        
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_fps_time);
+        if (elapsed.count() >= 1000) {
+            shared->fps.store(frames_this_second, std::memory_order_relaxed);
+            frames_this_second = 0;
+            last_fps_time = now;
+        }
+        
+        tile_update_counter++;
+        if (tile_update_counter >= TILE_UPDATE_INTERVAL) {
+            tile_update_counter = 0;
+            
+            std::vector<uint8_t>& cpu_buffer = shared->getCpuTileBuffer();
+            
+            for (uint16_t addr = 0x8000; addr < 0x9800; addr++) {
+                cpu_buffer[addr - 0x8000] = bus_read(addr);
+            }
+            
+            shared->signalTileDataReady();
+        }
     }
     
-    // Check paused state outside the lock to avoid holding it during sleep
-    bool should_pause;
-    {
-      std::lock_guard<std::mutex> lock(*shared->mutex);
-      should_pause = ctx.paused;
-    }
-    
-    if (should_pause) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(1));
-      continue;
-    }
-    
-    bool ok = cpu_step();
-    
-    if (!ok) {
-      fmt::println("CPU Stopped");
-      break;
-    }
-  }
+    shared->running.store(false, std::memory_order_release);
 }
 
 uint8_t cpu_get_int_flags() { return ctx.int_flags; }
 bool cpu_step() {
   if (!ctx.halted) {
     auto pc = ctx.regs.PC;
-    // fmt::println("A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} "
-    //              "H:{:02X} L:{:02X} "
-    //              "SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
-    //              ctx.regs.A, ctx.regs.F, ctx.regs.B, ctx.regs.C, ctx.regs.D,
-    //              ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP,
-    //              ctx.regs.PC, bus_read(ctx.regs.PC), bus_read(ctx.regs.PC +
-    //              1), bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
+    fmt::println("A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} "
+                 "H:{:02X} L:{:02X} "
+                 "SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
+                 ctx.regs.A, ctx.regs.F, ctx.regs.B, ctx.regs.C, ctx.regs.D,
+                 ctx.regs.E, ctx.regs.H, ctx.regs.L, ctx.regs.SP,
+                 ctx.regs.PC, bus_read(ctx.regs.PC), bus_read(ctx.regs.PC +
+                 1), bus_read(ctx.regs.PC + 2), bus_read(ctx.regs.PC + 3));
 
     fetch_instruction();
     emu_cycles(1);

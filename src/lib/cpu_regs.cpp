@@ -1,5 +1,5 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 extern cpu_context ctx;
 
 uint16_t reverse(uint16_t n) {

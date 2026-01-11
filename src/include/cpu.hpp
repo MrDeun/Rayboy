@@ -87,7 +87,7 @@ void cpu_set_reg8(reg_type rt, uint8_t value);
 uint8_t cpu_read_reg8(reg_type rt);
 
 void fetch_data();
-void cpu_run(EmulatorShared* shared);
+void cpu_run_threaded(EmulatorShared* shared);
 void cpu_init();
 bool cpu_step();
 void emu_cycles(int cycles);

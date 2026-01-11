@@ -1,7 +1,7 @@
 #pragma once
 #include "../include/all.hpp"
 
-#include "Window.hpp"
+
 #include "common.hpp"
 #include "emu.hpp"
 #include "raylib.h"
@@ -13,25 +13,69 @@
 static const std::array<Color, 4> tileColors{WHITE, DARKGRAY, LIGHTGRAY, BLACK};
 
 class RayboyUI {
-private:
-  std::vector<uint8_t> tile_data_copy; // Local copy for rendering
-  std::mutex render_mutex;             // Separate mutex for render data
-  Image debugImage;
-  Texture2D debugTexture;
-
-  static constexpr uint16_t _ScreenWidth = 1024;
-  static constexpr uint16_t _ScreenHeight = 768;
-  static constexpr uint8_t scale = 4;
-
 public:
-  void shutdown();
-  void displayTile(uint16_t startLocation, uint16_t tileNum, int x, int y);
-  void setup();
-  void draw();
-  void displayTileFromCopy(uint16_t tileNum, int x, int y);
-  void copyTileData();
-  void updateTileViewer();
-  // Called from emulation thread with emu_mutex held
-
-  // Called from main thread WITHOUT emu_mutex
+    RayboyUI() = default;
+    ~RayboyUI() = default;
+    
+    void setup(EmulatorShared* shared);
+    void shutdown();
+    void update();
+    void draw();
+    bool shouldExit() const { return should_exit_flag; }
+    
+private:
+    EmulatorShared* shared = nullptr;
+    bool should_exit_flag = false;
+    
+    // Display constants
+    static constexpr int SCALE = 3;
+    static constexpr int TILE_SIZE = 8;
+    static constexpr int TILES_PER_ROW = 16;
+    static constexpr int TILES_PER_COL = 24;
+    static constexpr int UI_PADDING = 20;
+    static constexpr int PANEL_WIDTH = 250;
+    
+    // Colors
+    static constexpr Color BG_COLOR = {25, 25, 30, 255};
+    static constexpr Color PANEL_COLOR = {35, 35, 40, 255};
+    static constexpr Color ACCENT_COLOR = {100, 150, 255, 255};
+    static constexpr Color TEXT_COLOR = {220, 220, 220, 255};
+    
+    static constexpr Color TILE_COLORS[4] = {
+        {255, 255, 255, 255},  // White
+        {170, 170, 170, 255},  // Light gray
+        {85, 85, 85, 255},     // Dark gray
+        {0, 0, 0, 255}         // Black
+    };
+    
+    // Rendering resources
+    Image tile_image;
+    Texture2D tile_texture;
+    bool texture_needs_update = false;
+    Font ui_font;
+    
+    // Layout positions
+    int window_width;
+    int window_height;
+    int tile_viewer_x;
+    int tile_viewer_y;
+    int stats_panel_x;
+    int stats_panel_y;
+    
+    // UI state
+    bool show_tile_viewer = true;
+    bool show_stats = true;
+    bool show_help = false;
+    
+    // Private methods
+    void handleInput();
+    void updateTileImage();
+    void renderTile(const uint8_t* tile_data, int tile_num, int x, int y);
+    void drawStatsPanel();
+    void drawTileViewer();
+    void drawHelpOverlay();
+    void drawStatusBar();
+    
+    void drawPanel(int x, int y, int width, int height, const char* title);
+    void drawButton(int x, int y, int width, int height, const char* text, bool* state);
 };

@@ -1,5 +1,5 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include <cstdint>
 
 instruction instructions[0x100] = {

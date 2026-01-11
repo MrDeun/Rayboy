@@ -1,8 +1,8 @@
 #pragma once
 
+#include "common.hpp"
 #include "bus.hpp"
 #include "cart.hpp"
-#include "common.hpp"
 #include "cpu.hpp"
 #include "dbg.hpp"
 #include "emu.hpp"

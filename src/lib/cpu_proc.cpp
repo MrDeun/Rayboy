@@ -1,5 +1,5 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include <cstdint>
 #include <cstdio>
 #include <iostream>

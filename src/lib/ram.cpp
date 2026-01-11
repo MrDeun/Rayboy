@@ -1,8 +1,8 @@
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include <array>
 #include <cassert>
-#include <iostream>
+#include <print>
 struct ram_context {
   std::array<uint8_t, 0x2000> wram;
   std::array<uint8_t, 0x80> hram;

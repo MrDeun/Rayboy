@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../include/all.hpp"
-#include "fmt/core.h"
+
 #include <cstdint>
 
 struct dma_context {
