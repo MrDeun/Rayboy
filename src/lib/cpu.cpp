@@ -135,24 +135,16 @@ bool cpu_step() {
     fetch_instruction();
     emu_cycles(1);
     fetch_data();
-    auto flags = fmt::format(
-        "{:c}{:c}{:c}{:c}", ctx.regs.F & (1 << 7) ? 'Z' : '-',
-        ctx.regs.F & (1 << 6) ? 'N' : '-', ctx.regs.F & (1 << 5) ? 'H' : '-',
-        ctx.regs.F & (1 << 4) ? 'C' : '-');
-    // fmt::println("{}: {} A: {:02X} F:{} BC: {:02X}{:02X} DE: "
-    //              "{:02X}{:02X} HL: {:02X}{:02X}",
-    //              pc, inst_toString(&ctx), ctx.regs.A, flags, ctx.regs.B,
-    //              ctx.regs.C, ctx.regs.D, ctx.regs.E, ctx.regs.H, ctx.regs.L);
 
     dbg_update();
     dbg_print();
 
     execute();
-    log_count++;
-    if (log_count > LOG_MAX) {
-      fmt::println("Excedded max logs");
-      exit(-1);
-    }
+    // log_count++;
+    // if (log_count > LOG_MAX) {
+    //   fmt::println("Excedded max logs");
+    //   exit(-1);
+    // }
   } else {
     emu_cycles(1);
     if (ctx.int_flags) {
@@ -162,6 +154,10 @@ bool cpu_step() {
 
   if (ctx.int_master_enabled) {
     cpu_handle_interrupts(&ctx);
+  }
+
+  if (dma_transferring()) {
+    dma_tick();
   }
 
   if (ctx.enabling_ime) {

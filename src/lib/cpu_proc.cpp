@@ -1,9 +1,5 @@
 #include "../include/all.hpp"
 
-#include <cstdint>
-#include <cstdio>
-#include <iostream>
-
 void cpu_set_flags(cpu_context *ctx, int8_t z, int8_t n, int8_t h, int8_t c) {
   if (z != -1) {
     BIT_SET(ctx->regs.F, 7, z);

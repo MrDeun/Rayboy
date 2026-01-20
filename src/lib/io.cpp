@@ -1,8 +1,12 @@
 #include "../include/all.hpp"
+#include "fmt/core.h"
 
 #include <cstdint>
 
 static char serial_data[2];
+
+uint8_t lx = 0;
+uint8_t ly = 0;
 
 void io_write(uint16_t address, uint8_t value) {
   switch (address) {
@@ -24,12 +28,23 @@ void io_write(uint16_t address, uint8_t value) {
   case 0xff0f:
     cpu_set_int_flags(value);
     break;
+  case 0xff40:
+  case 0xff41:
+  case 0xff42:
+  case 0xff43:
+  case 0xff44:
+  case 0xff45:
   case 0xff46:
-    dma_start(value);
-    NO_IMPL("Started DMA...");
-
+  case 0xff47:
+  case 0xff48:
+  case 0xff49:
+  case 0xff4A:
+  case 0xff4B:
+    lcd_write(address, value);
+    break;
   default:
-    NO_IMPL("Unsupported bus write in io_write() ");
+    NO_IMPL(fmt::format("Unsupported bus read in io_write({:02X}) ", address));
+    break;
   }
 }
 
@@ -52,11 +67,22 @@ uint8_t io_read(uint16_t address) {
     break;
   case 0xff0f:
     return cpu_get_int_flags();
-  case 0xFF44:
-    return 0x90;
+  case 0xff40:
+  case 0xff41:
+  case 0xff42:
+  case 0xff43:
+  case 0xff44:
+  case 0xff45:
+  case 0xff46:
+  case 0xff47:
+  case 0xff48:
+  case 0xff49:
+  case 0xff4A:
+  case 0xff4B:
+    return lcd_read(address);
   default:
     break;
   }
-  NO_IMPL("Unsupported bus read in io_read() ");
+  NO_IMPL(fmt::format("Unsupported bus read in io_read({:02X}) ", address));
   return 0;
 }

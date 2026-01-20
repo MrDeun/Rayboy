@@ -2,6 +2,8 @@
 #include <cstdint>
 
 static ppu_context ctx = {0};
+void ppu_tick(){}
+void ppu_init(){}
 
 void ppu_oam_write(uint16_t address, uint8_t value) {
   if (address >= 0xfe00) {

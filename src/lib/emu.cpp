@@ -2,6 +2,9 @@
 
 #include <thread>
 #include <print>
+
+EmulatorShared* g_shared;
+
 int emu_run(int argc, char **argv) {
     if (argc < 2) {
         fmt::println("Missing ROM path\nUSAGE: Rayboy <path-to-rom>");
@@ -16,7 +19,7 @@ int emu_run(int argc, char **argv) {
     EmulatorShared shared;
     RayboyUI ui;
     ui.setup(&shared);
-    
+    g_shared = &shared;
     std::thread cpu_thread(cpu_run_threaded, &shared);
     
     while (!ui.shouldExit()) {
@@ -29,7 +32,7 @@ int emu_run(int argc, char **argv) {
     if (cpu_thread.joinable()) {
         cpu_thread.join();
     }
-    
+    g_shared = nullptr;
     ui.shutdown();
     
     return 0;
