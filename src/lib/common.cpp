@@ -16,6 +16,6 @@ uint32_t get_ticks(){
     return static_cast<uint32_t>(ms.count());
 }
 
-void delay(int32_t ms) {
+void delay(uint32_t ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }

@@ -52,6 +52,7 @@ void emu_cycles(int cycles) {
     for (int n = 0; n < 4; n++) {
       ctx.ticks++;
       timer_tick();
+      ppu_tick();
     }
     dma_tick();
   }
@@ -73,6 +74,7 @@ void cpu_set_int_flags(uint8_t flags) { ctx.int_flags = flags; }
 void cpu_run_threaded(EmulatorShared* shared) {
     timer_init();
     cpu_init();
+    ppu_init();
     
     shared->running.store(true, std::memory_order_release);
     
