@@ -5,9 +5,6 @@
 
 static char serial_data[2];
 
-uint8_t lx = 0;
-uint8_t ly = 0;
-
 void io_write(uint16_t address, uint8_t value) {
   switch (address) {
   case 0xff00:

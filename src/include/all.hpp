@@ -16,3 +16,4 @@
 #include "ui.hpp"
 #include "dma.hpp"
 #include "lcd.hpp"
+#include "ppu_state_machine.hpp"

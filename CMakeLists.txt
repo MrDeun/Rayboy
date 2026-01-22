@@ -104,6 +104,7 @@ add_executable(Rayboy src/main.cpp
     src/lib/dma.cpp
     src/lib/common.cpp
     src/lib/lcd.cpp
+    src/lib/ppu_state_machine.cpp
 
 )
 # target_link_libraries(Rayboy PRIVATE imgui rlimgui raylib raylib_cpp std::fmt)

@@ -2,6 +2,13 @@
 
 #include "all.hpp"
 #include <cstdint>
+
+static const int LINES_PER_FRAMES = 154;
+static const int TICKS_PER_LINE = 456;
+static const int YRES = 144;
+static const int XRES = 160;
+
+
 struct oam_entry {
   uint8_t y;
   uint8_t x;
@@ -18,7 +25,13 @@ struct oam_entry {
 struct ppu_context {
     oam_entry oam_ram[40];
     uint8_t vram[0x2000];
+
+    uint32_t current_frame;
+    uint32_t line_ticks;
+    uint32_t* video_buffer;
 };
+
+ppu_context* ppu_get_context();
 
 void ppu_tick();
 void ppu_init();

@@ -1,9 +1,35 @@
 #include "../include/all.hpp"
-#include <cstdint>
 
 static ppu_context ctx = {0};
-void ppu_tick(){}
-void ppu_init(){}
+ppu_context *ppu_get_context() { return &ctx; }
+void ppu_tick() {
+  ctx.line_ticks++;
+
+  switch (LCDS_MODE) {
+  case MODE_OAM:
+    ppu_mode_oam();
+    break;
+  case MODE_XFER:
+    ppu_mode_xfer();
+    break;
+  case MODE_VBLANK:
+    ppu_mode_vblank();
+    break;
+  case MODE_HBLANK:
+    ppu_mode_hblank();
+    break;
+  }
+}
+void ppu_init() {
+  ctx.current_frame = 0;
+  ctx.line_ticks = 0;
+  ctx.video_buffer = new uint32_t[YRES * XRES];
+
+  lcd_init();
+  LCDS_MODE_SET(MODE_OAM);
+  memset(ctx.oam_ram, 0, sizeof(ctx.oam_ram));
+  memset(ctx.video_buffer, 0, YRES * XRES * sizeof(uint32_t));
+}
 
 void ppu_oam_write(uint16_t address, uint8_t value) {
   if (address >= 0xfe00) {
@@ -21,8 +47,6 @@ uint8_t ppu_oam_read(uint16_t address) {
 }
 
 void ppu_vram_write(uint16_t address, uint8_t value) {
-    ctx.vram[address-0x8000] = value;
+  ctx.vram[address - 0x8000] = value;
 }
-uint8_t ppu_vram_read(uint16_t address) {
-    return ctx.vram[address-0x8000];
-}
+uint8_t ppu_vram_read(uint16_t address) { return ctx.vram[address - 0x8000]; }

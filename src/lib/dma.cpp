@@ -25,12 +25,12 @@ void dma_tick() {
     if (!ctx.active) {
         return;
     }
-    
+
     if (ctx.delay) {
         ctx.delay--;
         return;  // Add return here - was missing
     }
-    
+
     // Check if tile copying is in progress
     // If so, pause DMA briefly to let it finish
     if (g_shared && g_shared->isCopyingTiles()) {
@@ -38,14 +38,10 @@ void dma_tick() {
         // So just wait one tick - copying will finish very soon
         return;
     }
-    
+
     ppu_oam_write(ctx.byte, bus_read((ctx.value * 0x100) + ctx.byte));
     ctx.byte++;
     ctx.active = ctx.byte < 0xA0;
-    
-    if (!ctx.active) {
-        fmt::println("DMA Stopped");
-    }
 }
 
 bool dma_transferring() {

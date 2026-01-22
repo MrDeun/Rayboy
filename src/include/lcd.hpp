@@ -24,7 +24,7 @@ struct lcd_context {
   uint32_t sp1_colors[4];
   uint32_t sp2_colors[4];
 };
-lcd_context *get_lcd_context();
+lcd_context *lcd_get_context();
 
 #define LCDC_BGW_ENABLE (BIT(lcd_get_context()->lcdc, 0))
 #define LCDC_OBJ_ENABLE (BIT(lcd_get_context()->lcdc, 1))
@@ -36,11 +36,7 @@ lcd_context *get_lcd_context();
 #define LCDC_LCD_ENABLE (BIT(lcd_get_context()->lcdc, 7))
 
 #define LCDS_MODE ((lcd_mode)(lcd_get_context()->lcds & 0b11))
-#define LCDS_MODE_SET(mode)                                                    \
-  {                                                                            \
-    lcd_get_context()->lcds &= ~0b11;                                          \
-    lcd_get_context()->lcds |= mode;                                           \
-  }
+#define LCDS_MODE_SET(mode)       {lcd_get_context()->lcds &= ~0b11;lcd_get_context()->lcds |= mode;}
 
 #define LCDS_LYC (BIT(lcd_get_context()->lcds, 2))
 #define LCDS_LYC_SET(b) (BIT_SET(lcd_get_context()->lcds, 2, b))

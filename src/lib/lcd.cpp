@@ -5,7 +5,7 @@
 static lcd_context ctx = {};
 
 static uint32_t colors_defaults[4];
-lcd_context *get_lcd_context() { return &ctx; }
+lcd_context *lcd_get_context() { return &ctx; }
 void lcd_init() {
   ctx.lcdc = 0;
   ctx.scroll_x = 0;
@@ -38,7 +38,7 @@ void update_pallete(uint8_t value, uint8_t pal) {
   case 1:
     p_colors = ctx.sp1_colors;
     break;
-  case 2:  
+  case 2:
     p_colors = ctx.sp2_colors;
     break;
   default:
@@ -53,14 +53,14 @@ void update_pallete(uint8_t value, uint8_t pal) {
 
 uint8_t lcd_read(uint16_t address) {
   uint8_t offset = address - 0xff40;
-  auto ptr = (uint8_t *)get_lcd_context();
+  auto ptr = (uint8_t *)lcd_get_context();
 
   return ptr[offset];
 }
 
 void lcd_write(uint16_t address, uint8_t value) {
   uint8_t offset = (address - 0xff40);
-  uint8_t *ptr = (uint8_t *)get_lcd_context();
+  uint8_t *ptr = (uint8_t *)lcd_get_context();
 
   if (offset == 6) {
     dma_start(value);
