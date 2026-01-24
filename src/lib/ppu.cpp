@@ -1,4 +1,5 @@
 #include "../include/all.hpp"
+#include <cstddef>
 
 static ppu_context ctx = {0};
 ppu_context *ppu_get_context() { return &ctx; }
@@ -24,6 +25,14 @@ void ppu_init() {
   ctx.current_frame = 0;
   ctx.line_ticks = 0;
   ctx.video_buffer = new uint32_t[YRES * XRES];
+
+  ctx.pfc.line_x = 0;
+  ctx.pfc.pushed_x = 0;
+  ctx.pfc.fetch_x = 0;
+  ctx.pfc.pixel_fifo.size = 0;
+  ctx.pfc.pixel_fifo.head = ctx.pfc.pixel_fifo.tail = nullptr;
+  ctx.pfc.cur_fetch_state = FS_TILE;
+
 
   lcd_init();
   LCDS_MODE_SET(MODE_OAM);

@@ -17,3 +17,4 @@
 #include "dma.hpp"
 #include "lcd.hpp"
 #include "ppu_state_machine.hpp"
+#include "ppu_pipeline.hpp"
