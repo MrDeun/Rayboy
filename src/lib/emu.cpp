@@ -5,6 +5,15 @@
 
 EmulatorShared* g_shared;
 
+EmulatorShared* get_shared_emulator_state(){
+    return g_shared;
+}
+
+
+
+
+
+
 int emu_run(int argc, char **argv) {
     if (argc < 2) {
         fmt::println("Missing ROM path\nUSAGE: Rayboy <path-to-rom>");

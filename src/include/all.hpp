@@ -2,10 +2,10 @@
 
 #include "common.hpp"
 #include "bus.hpp"
+#include "emu.hpp"
 #include "cart.hpp"
 #include "cpu.hpp"
 #include "dbg.hpp"
-#include "emu.hpp"
 #include "instruction.hpp"
 #include "interupt.hpp"
 #include "io.hpp"

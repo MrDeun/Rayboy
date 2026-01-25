@@ -1,12 +1,10 @@
 #pragma once
 
-#include "all.hpp"
-#include <cstdint>
+#include "emu.hpp"
 
 static const int LINES_PER_FRAMES = 154;
 static const int TICKS_PER_LINE = 456;
-static const int YRES = 144;
-static const int XRES = 160;
+
 
 enum fetch_state {
   FS_TILE,

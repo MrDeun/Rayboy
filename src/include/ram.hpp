@@ -1,5 +1,5 @@
-#include "common.hpp"
-
+#pragma once
+#include <cstdint>
 void init_ram();
 
 uint8_t wram_read(uint16_t address);

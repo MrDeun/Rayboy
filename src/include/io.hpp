@@ -1,6 +1,5 @@
 #pragma once
 
-#include "all.hpp"
 #include <cstdint>
 
 uint8_t io_read(uint16_t address);

@@ -1,13 +1,10 @@
 #pragma once
-#include "../include/all.hpp"
 
-#include "common.hpp"
-#include "emu.hpp"
+#include "all.hpp"
 #include "raylib.h"
 #include <array>
 #include <cstdint>
 #include <sys/types.h>
-#include <vector>
 
 static const std::array<Color, 4> tileColors{WHITE, DARKGRAY, LIGHTGRAY, BLACK};
 
@@ -40,6 +37,13 @@ private:
   static constexpr int UI_PADDING = 20;
   static constexpr int PANEL_WIDTH = 250;
 
+  static constexpr int GB_W = 160;
+  static constexpr int GB_H = 144;
+  Image screen_image{};
+  Texture2D screen_texture{};
+  int screen_x = 0;
+  int screen_y = 0;
+
   // Colors
   static constexpr Color BG_COLOR = {25, 25, 30, 255};
   static constexpr Color PANEL_COLOR = {35, 35, 40, 255};
@@ -66,6 +70,10 @@ private:
   bool show_help = false;
 
   // Private methods
+  void updateScreenTexture();
+  void drawScreen();
+
+
   void handleInput();
   void updateTileImage();
   void renderTile(const uint8_t *tile_data, int tile_num, int x, int y);

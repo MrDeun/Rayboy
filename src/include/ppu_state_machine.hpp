@@ -1,5 +1,4 @@
 #pragma once
-#include "all.hpp"
 
 
 void ppu_mode_oam();

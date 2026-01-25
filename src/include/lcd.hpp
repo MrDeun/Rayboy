@@ -1,5 +1,4 @@
 #pragma once
-#include "all.hpp"
 #include <cstdint>
 
 struct lcd_context {
@@ -26,14 +25,14 @@ struct lcd_context {
 };
 lcd_context *lcd_get_context();
 
-#define LCDC_BGW_ENABLE (BIT(lcd_get_context()->lcdc, 0))
-#define LCDC_OBJ_ENABLE (BIT(lcd_get_context()->lcdc, 1))
-#define LCDC_OBJ_HEIGHT (BIT(lcd_get_context()->lcdc, 2) ? 16 : 8)
-#define LCDC_BG_MAP_AREA (BIT(lcd_get_context()->lcdc, 3) ? 0x9C00 : 0x9800)
-#define LCDC_BGW_DATA_AREA (BIT(lcd_get_context()->lcdc, 4) ? 0x8000 : 0x8800)
-#define LCDC_WIN_ENABLE (BIT(lcd_get_context()->lcdc, 5))
-#define LCDC_WIN_MAP_AREA (BIT(lcd_get_context()->lcdc, 6) ? 0x9C00 : 0x9800)
-#define LCDC_LCD_ENABLE (BIT(lcd_get_context()->lcdc, 7))
+#define LCDC_BGW_ENABLE (BIT_GET(lcd_get_context()->lcdc, 0))
+#define LCDC_OBJ_ENABLE (BIT_GET(lcd_get_context()->lcdc, 1))
+#define LCDC_OBJ_HEIGHT (BIT_GET(lcd_get_context()->lcdc, 2) ? 16 : 8)
+#define LCDC_BG_MAP_AREA (BIT_GET(lcd_get_context()->lcdc, 3) ? 0x9C00 : 0x9800)
+#define LCDC_BGW_DATA_AREA (BIT_GET(lcd_get_context()->lcdc, 4) ? 0x8000 : 0x8800)
+#define LCDC_WIN_ENABLE (BIT_GET(lcd_get_context()->lcdc, 5))
+#define LCDC_WIN_MAP_AREA (BIT_GET(lcd_get_context()->lcdc, 6) ? 0x9C00 : 0x9800)
+#define LCDC_LCD_ENABLE (BIT_GET(lcd_get_context()->lcdc, 7))
 
 #define LCDS_MODE ((lcd_mode)(lcd_get_context()->lcds & 0b11))
 #define LCDS_MODE_SET(mode)       {lcd_get_context()->lcds &= ~0b11;lcd_get_context()->lcds |= mode;}

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "common.hpp"
 #include <cstdint>
 
 void stack_push(uint8_t);

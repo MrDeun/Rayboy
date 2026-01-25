@@ -16,7 +16,6 @@ void increment_ly() {
     LCDS_LYC_SET(0);
   }
 }
-
 void ppu_mode_oam() {
   if (ppu_get_context()->line_ticks >= 80) {
     LCDS_MODE_SET(MODE_XFER);
@@ -49,6 +48,17 @@ void ppu_mode_vblank() {
     ppu_get_context()->line_ticks = 0;
   }
 }
+void ppu_present_frame(EmulatorShared* shared) {
+    int w = shared->write_index.load(std::memory_order_relaxed);
+    int r = shared->read_index.load(std::memory_order_relaxed);
+
+    shared->write_index.store(r, std::memory_order_relaxed);
+    shared->read_index.store(w, std::memory_order_release);
+
+    ppu_get_context()->video_buffer = shared->frames[r];
+
+    shared->frame_ready.store(true, std::memory_order_release);
+}
 
 void ppu_mode_hblank() {
   if (ppu_get_context()->line_ticks >= TICKS_PER_LINE) {
@@ -60,7 +70,7 @@ void ppu_mode_hblank() {
       if (LCDS_STAT_INT(SS_VBLANK)) {
         cpu_request_interupts(IT_LCD_STAT);
       }
-
+      ppu_present_frame(get_shared_emulator_state());
       ppu_get_context()->current_frame++;
 
       uint32_t end = get_ticks();

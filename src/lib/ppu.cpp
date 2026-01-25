@@ -24,7 +24,7 @@ void ppu_tick() {
 void ppu_init() {
   ctx.current_frame = 0;
   ctx.line_ticks = 0;
-  ctx.video_buffer = new uint32_t[YRES * XRES];
+  ctx.video_buffer = get_shared_emulator_state()->frames[get_shared_emulator_state()->write_index];
 
   ctx.pfc.line_x = 0;
   ctx.pfc.pushed_x = 0;

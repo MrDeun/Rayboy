@@ -1,11 +1,24 @@
 #pragma once
-#include "all.hpp"
+
+
+#include "common.hpp"
+#include "bus.hpp"
 
 #include <mutex>
 #include <thread>
 #include <atomic>
 #include <vector>
+
 struct EmulatorShared {
+
+    uint32_t frames[2][XRES*YRES];
+
+    std::atomic<int> write_index{0};
+    std::atomic<int> read_index{1};
+    std::atomic<bool> frame_ready{false};
+
+
+
   // ========== Thread Control ==========
     std::atomic<bool> running{false};
     std::atomic<bool> paused{false};
@@ -84,5 +97,7 @@ struct EmulatorShared {
         return copying_tiles.load(std::memory_order_acquire);
     }
 };
+
+EmulatorShared* get_shared_emulator_state();
 
 int emu_run(int argc,char** argv);

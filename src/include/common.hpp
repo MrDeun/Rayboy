@@ -8,7 +8,8 @@
 #define BIT_GET(a, n) ((a & (1 << n)) ? 1 : 0)
 #define BIT_SET(a, n, on) (on ? a |= (1 << n) : a &= ~(1 << n))
 #define BETWEEN(a, b, c) ((a >= b) && (a <= c))
-
+#define YRES 144
+#define XRES 160
 #define NO_IMPL(err)                                                           \
   {                                                                            \
     printf("");                \

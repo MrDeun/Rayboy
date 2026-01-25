@@ -2,7 +2,45 @@
 
 #include "fmt/core.h"
 #include "raylib.h"
+#include <atomic>
 #include <cstdint>
+#include <cstring>
+
+
+void RayboyUI::drawScreen(){
+  DrawRectangle(
+      screen_x - 4,
+      screen_y - 4,
+      GB_W * SCALE + 8,
+      GB_H * SCALE + 8,
+      PANEL_COLOR);
+
+  DrawRectangleLines(
+      screen_x - 4,
+      screen_y - 4,
+      GB_W * SCALE + 8,
+      GB_H * SCALE + 8,
+      ACCENT_COLOR);
+
+  // Draw LCD
+  DrawTextureEx(
+      screen_texture,
+      {(float)screen_x, (float)screen_y},
+      0.0f,
+      SCALE,
+      WHITE);
+}
+
+void RayboyUI::updateScreenTexture(){
+  if(!shared->frame_ready.load(std::memory_order_acquire)) return;
+
+  int r = shared->read_index.load(std::memory_order_acquire);
+  const auto src = shared->frames[r];
+  std::memcpy(screen_image.data,src,GB_H*GB_W*sizeof(uint32_t));
+
+  UpdateTexture(screen_texture, screen_image.data);
+  shared->frame_ready.store(false,std::memory_order_release);
+}
 
 void RayboyUI::setup(EmulatorShared *shared_ptr) {
   SetTraceLogLevel(LOG_NONE);
@@ -31,11 +69,19 @@ void RayboyUI::setup(EmulatorShared *shared_ptr) {
   tile_image = GenImageColor(tile_viewer_width, tile_viewer_height,
                              (Color){17, 17, 17, 255});
   tile_texture = LoadTextureFromImage(tile_image);
+  screen_x = stats_panel_x + 10;
+  screen_y = stats_panel_y + 40;
+
+  // Create screen image & texture
+  screen_image = GenImageColor(GB_W, GB_H, BLACK);
+  screen_texture = LoadTextureFromImage(screen_image);
 }
 
 void RayboyUI::shutdown() {
   UnloadTexture(tile_texture);
   UnloadImage(tile_image);
+  UnloadTexture(screen_texture);
+  UnloadImage(screen_image);
   CloseWindow();
 }
 
@@ -281,6 +327,7 @@ void RayboyUI::drawHelpOverlay() {
 
 void RayboyUI::update() {
   handleInput();
+  updateScreenTexture();
   updateTileImage();
 
   if (texture_needs_update) {
@@ -294,6 +341,7 @@ void RayboyUI::draw() {
   ClearBackground(BG_COLOR);
 
   // Draw main UI components
+  drawScreen();
   drawStatsPanel();
   drawTileViewer();
   drawStatusBar();
