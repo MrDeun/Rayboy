@@ -30,7 +30,7 @@ uint32_t pixel_fifo_pop() {
 }
 
 bool pipeline_fifo_add() {
-  if (ppu_get_context()->pfc.pixel_fifo.size > 8) {
+  if (ppu_get_context()->pfc.pixel_fifo.size >= 16) {
     return false;
   }
 
@@ -53,10 +53,10 @@ bool pipeline_fifo_add() {
   return true;
 }
 void pipeline_fifo_reset(){
-  while (ppu_get_context()->pfc.pixel_fifo.size) {
-    pixel_fifo_pop();
-  }
-  ppu_get_context()->pfc.pixel_fifo.head = nullptr;
+  auto& fifo = ppu_get_context()->pfc.pixel_fifo;
+  while (fifo.size) pixel_fifo_pop();
+  fifo.head = fifo.tail = nullptr;
+  fifo.size = 0;
 }
 
 void pipeline_fetch() {
@@ -87,7 +87,7 @@ void pipeline_fetch() {
     ppu_get_context()->pfc.bgw_fetch_data[2] = bus_read(
         LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) +
         ppu_get_context()->pfc.tile_y + 1);
-    ppu_get_context()->pfc.cur_fetch_state = FS_TILE;
+    ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
     break;
   }
   case FS_IDLE: {
@@ -103,7 +103,7 @@ void pipeline_fetch() {
   }
 }
 void pipeline_push_pixel() {
-  if (ppu_get_context()->pfc.pixel_fifo.size > 8) {
+  if (ppu_get_context()->pfc.pixel_fifo.size >= 8) {
     uint32_t pixel_data = pixel_fifo_pop();
     if (ppu_get_context()->pfc.line_x >= (lcd_get_context()->scroll_x % 8)) {
       ppu_get_context()->video_buffer[ppu_get_context()->pfc.pushed_x +

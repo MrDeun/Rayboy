@@ -18,3 +18,4 @@
 #include "lcd.hpp"
 #include "ppu_state_machine.hpp"
 #include "ppu_pipeline.hpp"
+#include "emu_stats.hpp"

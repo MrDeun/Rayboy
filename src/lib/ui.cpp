@@ -6,40 +6,28 @@
 #include <cstdint>
 #include <cstring>
 
+void RayboyUI::drawScreen() {
+  DrawRectangle(screen_x - 4, screen_y - 4, GB_W * SCALE + 8, GB_H * SCALE + 8,
+                PANEL_COLOR);
 
-void RayboyUI::drawScreen(){
-  DrawRectangle(
-      screen_x - 4,
-      screen_y - 4,
-      GB_W * SCALE + 8,
-      GB_H * SCALE + 8,
-      PANEL_COLOR);
-
-  DrawRectangleLines(
-      screen_x - 4,
-      screen_y - 4,
-      GB_W * SCALE + 8,
-      GB_H * SCALE + 8,
-      ACCENT_COLOR);
+  DrawRectangleLines(screen_x - 4, screen_y - 4, GB_W * SCALE + 8,
+                     GB_H * SCALE + 8, ACCENT_COLOR);
 
   // Draw LCD
-  DrawTextureEx(
-      screen_texture,
-      {(float)screen_x, (float)screen_y},
-      0.0f,
-      SCALE,
-      WHITE);
+  DrawTextureEx(screen_texture, {(float)screen_x, (float)screen_y}, 0.0f, SCALE,
+                WHITE);
 }
 
-void RayboyUI::updateScreenTexture(){
-  if(!shared->frame_ready.load(std::memory_order_acquire)) return;
+void RayboyUI::updateScreenTexture() {
+  if (!shared->frame_ready.load(std::memory_order_acquire))
+    return;
 
   int r = shared->read_index.load(std::memory_order_acquire);
   const auto src = shared->frames[r];
-  std::memcpy(screen_image.data,src,GB_H*GB_W*sizeof(uint32_t));
+  std::memcpy(screen_image.data, src, GB_H * GB_W * sizeof(uint32_t));
 
   UpdateTexture(screen_texture, screen_image.data);
-  shared->frame_ready.store(false,std::memory_order_release);
+  shared->frame_ready.store(false, std::memory_order_release);
 }
 
 void RayboyUI::setup(EmulatorShared *shared_ptr) {
@@ -49,15 +37,30 @@ void RayboyUI::setup(EmulatorShared *shared_ptr) {
   // Calculate dimensions
   int tile_viewer_width = TILES_PER_ROW * TILE_SIZE * SCALE;
   int tile_viewer_height = TILES_PER_COL * TILE_SIZE * SCALE;
+  int stats_panel_height = 320;
+  
+  // Left side takes tile viewer + stats panel + padding
+  int left_side_width = tile_viewer_width + UI_PADDING * 2;
+  int left_side_height = stats_panel_height + tile_viewer_height + UI_PADDING * 3;
+  
+  // Right side is the screen
+  int screen_area_width = GB_W * SCALE + UI_PADDING * 2 + 8;
+  int screen_area_height = GB_H * SCALE + UI_PADDING * 2 + 8;
 
-  window_width = PANEL_WIDTH + UI_PADDING * 3 + tile_viewer_width;
-  window_height = tile_viewer_height + UI_PADDING * 2 + 30; // 30 for status bar
+  window_width = left_side_width + screen_area_width + UI_PADDING;
+  window_height = std::max(left_side_height, screen_area_height) + 30; // 30 for status bar
 
-  // Layout positions
+  // Layout positions - Left side
   stats_panel_x = UI_PADDING;
   stats_panel_y = UI_PADDING;
-  tile_viewer_x = PANEL_WIDTH + UI_PADDING * 2;
-  tile_viewer_y = UI_PADDING;
+  
+  tile_viewer_x = UI_PADDING;
+  tile_viewer_y = stats_panel_y + stats_panel_height + UI_PADDING;
+
+  // Layout positions - Right side (screen centered vertically)
+  screen_x = left_side_width + UI_PADDING + 4;
+  int available_height = window_height - 30; // Subtract status bar
+  screen_y = (available_height - (GB_H * SCALE + 8)) / 2 + 4;
 
   InitWindow(window_width, window_height, "Rayboy - GameBoy Emulator");
   SetTargetFPS(60);
@@ -69,8 +72,6 @@ void RayboyUI::setup(EmulatorShared *shared_ptr) {
   tile_image = GenImageColor(tile_viewer_width, tile_viewer_height,
                              (Color){17, 17, 17, 255});
   tile_texture = LoadTextureFromImage(tile_image);
-  screen_x = stats_panel_x + 10;
-  screen_y = stats_panel_y + 40;
 
   // Create screen image & texture
   screen_image = GenImageColor(GB_W, GB_H, BLACK);
@@ -190,59 +191,43 @@ void RayboyUI::drawButton(int x, int y, int width, int height, const char *text,
 }
 
 void RayboyUI::drawStatsPanel() {
-  if (!show_stats)
-    return;
+  if (!show_stats) return;
 
   int panel_height = 300;
-  drawPanel(stats_panel_x, stats_panel_y, PANEL_WIDTH, panel_height,
-            "Statistics");
+  int panel_width = TILES_PER_ROW * TILE_SIZE * SCALE;
+  drawPanel(stats_panel_x, stats_panel_y, panel_width, panel_height, "Performance Statistics");
 
   int text_y = stats_panel_y + 40;
-  int line_height = 20;
+  const int line_height = 18;
 
-  // Get stats
-  uint64_t frames = shared->frame_count.load(std::memory_order_relaxed);
-  uint32_t fps = shared->fps.load(std::memory_order_relaxed);
-  bool paused = shared->paused.load(std::memory_order_relaxed);
-  bool running = shared->running.load(std::memory_order_relaxed);
+  // 1. Fetch CPU Stats
+  if (shared->cpu_stats_ready.load(std::memory_order_acquire)) {
+      int r_idx = shared->cpu_stats_read_index.load(std::memory_order_acquire);
+      CPUStats current_stats = shared->cpu_stats[r_idx];
 
-  // Display stats
-  std::string buffer;
-  buffer.reserve(256);
-  buffer = fmt::format("Frame: {}", frames);
-  DrawText(buffer.c_str(), stats_panel_x + 10, text_y, 12, TEXT_COLOR);
-  text_y += line_height;
+      // Calculate MHz: (Cycles / Microseconds)
+      // Original GB: 4,194,304 Hz = ~4.19 MHz
+      double mhz = (double)current_stats.cycles / current_stats.time_us;
+      double percentage = (mhz / 4.194304) * 100.0;
+      
+      // Calculate MIPS (Millions of Instructions Per Second)
+      double mips = (double)current_stats.instructions / current_stats.time_us;
 
-  buffer = fmt::format("FPS {}", fps);
-  DrawText(buffer.c_str(), stats_panel_x + 10, text_y, 12, TEXT_COLOR);
-  text_y += line_height;
+      // Draw CPU Performance
+      DrawText("--- CPU Engine ---", stats_panel_x + 10, text_y, 12, ACCENT_COLOR);
+      text_y += line_height;
 
-  buffer = fmt::format("Status: {}", paused    ? "PAUSED"
-                                     : running ? "RUNNING"
-                                               : "STOPPED");
-  Color status_color = paused ? YELLOW : running ? GREEN : RED;
-  DrawText("Status:", stats_panel_x + 10, text_y, 12, TEXT_COLOR);
-  DrawText(paused    ? "PAUSED"
-           : running ? "RUNNING"
-                     : "STOPPED",
-           stats_panel_x + 70, text_y, 12, status_color);
-  text_y += line_height * 2;
+      DrawText(TextFormat("Speed: %.3f MHz (%.1f%%)", mhz, percentage), 
+               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
+      text_y += line_height;
 
-  // Separator
-  DrawLine(stats_panel_x + 10, text_y - 10, stats_panel_x + PANEL_WIDTH - 10,
-           text_y - 10, ACCENT_COLOR);
-
-  // Controls section
-  DrawText("Controls:", stats_panel_x + 10, text_y, 12, ACCENT_COLOR);
-  text_y += line_height + 5;
-
-  const char *controls[] = {"SPACE - Pause/Resume", "F1 - Toggle Tiles",
-                            "F2 - Toggle Stats", "H - Toggle Help",
-                            "ESC - Exit"};
-
-  for (int i = 0; i < 5; i++) {
-    DrawText(controls[i], stats_panel_x + 15, text_y, 10, TEXT_COLOR);
-    text_y += line_height;
+      DrawText(TextFormat("Throughput: %.2f MIPS", mips), 
+               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
+      text_y += line_height;
+      
+      DrawText(TextFormat("Cycles/Inst: %.2f", (double)current_stats.cycles / current_stats.instructions), 
+               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
+      text_y += line_height * 1.5;
   }
 }
 
@@ -340,10 +325,14 @@ void RayboyUI::draw() {
   BeginDrawing();
   ClearBackground(BG_COLOR);
 
-  // Draw main UI components
-  drawScreen();
+  // Draw left side components
   drawStatsPanel();
   drawTileViewer();
+  
+  // Draw main screen (right side)
+  drawScreen();
+  
+  // Draw bottom status bar
   drawStatusBar();
 
   // Draw overlay last

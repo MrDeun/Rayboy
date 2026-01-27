@@ -37,6 +37,8 @@ private:
   static constexpr int UI_PADDING = 20;
   static constexpr int PANEL_WIDTH = 250;
 
+  static constexpr double EXPECTED_CYCLES_COUNT = 4194304 / 60.0; // Hz of CPU divided by framerate
+
   static constexpr int GB_W = 160;
   static constexpr int GB_H = 144;
   Image screen_image{};

@@ -1,11 +1,11 @@
 #include "../include/all.hpp"
+#include <atomic>
 #include <cstddef>
 
 static ppu_context ctx = {0};
 ppu_context *ppu_get_context() { return &ctx; }
 void ppu_tick() {
   ctx.line_ticks++;
-
   switch (LCDS_MODE) {
   case MODE_OAM:
     ppu_mode_oam();
@@ -20,11 +20,24 @@ void ppu_tick() {
     ppu_mode_hblank();
     break;
   }
+  auto *shared = get_shared_emulator_state();
+  static int tile_update_timer = 0;
+  if (++tile_update_timer >= 60) {
+    tile_update_timer = 0;
+    if (!shared->isCopyingTiles()) {
+      std::vector<uint8_t> &dest = shared->getCpuTileBuffer();
+      std::memcpy(dest.data(), ctx.vram, 0x1800);
+      shared->signalTileDataReady();
+    }
+  }
 }
 void ppu_init() {
+  auto *shared = get_shared_emulator_state();
+  ctx.local_stats = {};
   ctx.current_frame = 0;
   ctx.line_ticks = 0;
-  ctx.video_buffer = get_shared_emulator_state()->frames[get_shared_emulator_state()->write_index];
+  int w = shared->write_index.load(std::memory_order_relaxed);
+  ctx.video_buffer = shared->frames[w];
 
   ctx.pfc.line_x = 0;
   ctx.pfc.pushed_x = 0;
@@ -32,7 +45,6 @@ void ppu_init() {
   ctx.pfc.pixel_fifo.size = 0;
   ctx.pfc.pixel_fifo.head = ctx.pfc.pixel_fifo.tail = nullptr;
   ctx.pfc.cur_fetch_state = FS_TILE;
-
 
   lcd_init();
   LCDS_MODE_SET(MODE_OAM);

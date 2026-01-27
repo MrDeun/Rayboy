@@ -1,6 +1,7 @@
 #pragma once
 
 #include "emu.hpp"
+#include "emu_stats.hpp"
 
 static const int LINES_PER_FRAMES = 154;
 static const int TICKS_PER_LINE = 456;
@@ -62,6 +63,8 @@ struct ppu_context {
   uint32_t current_frame;
   uint32_t line_ticks;
   uint32_t *video_buffer;
+
+  PPUStats local_stats;
 };
 
 ppu_context *ppu_get_context();
