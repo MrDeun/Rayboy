@@ -37,23 +37,25 @@ void RayboyUI::setup(EmulatorShared *shared_ptr) {
   // Calculate dimensions
   int tile_viewer_width = TILES_PER_ROW * TILE_SIZE * SCALE;
   int tile_viewer_height = TILES_PER_COL * TILE_SIZE * SCALE;
-  int stats_panel_height = 320;
-  
+  int stats_panel_height = 300;
+
   // Left side takes tile viewer + stats panel + padding
   int left_side_width = tile_viewer_width + UI_PADDING * 2;
-  int left_side_height = stats_panel_height + tile_viewer_height + UI_PADDING * 3;
-  
+  int left_side_height =
+      stats_panel_height + tile_viewer_height + UI_PADDING * 3;
+
   // Right side is the screen
   int screen_area_width = GB_W * SCALE + UI_PADDING * 2 + 8;
   int screen_area_height = GB_H * SCALE + UI_PADDING * 2 + 8;
 
   window_width = left_side_width + screen_area_width + UI_PADDING;
-  window_height = std::max(left_side_height, screen_area_height) + 30; // 30 for status bar
+  window_height =
+      std::max(left_side_height, screen_area_height) + 30; // 30 for status bar
 
   // Layout positions - Left side
   stats_panel_x = UI_PADDING;
   stats_panel_y = UI_PADDING;
-  
+
   tile_viewer_x = UI_PADDING;
   tile_viewer_y = stats_panel_y + stats_panel_height + UI_PADDING;
 
@@ -191,43 +193,47 @@ void RayboyUI::drawButton(int x, int y, int width, int height, const char *text,
 }
 
 void RayboyUI::drawStatsPanel() {
-  if (!show_stats) return;
+  if (!show_stats)
+    return;
 
   int panel_height = 300;
   int panel_width = TILES_PER_ROW * TILE_SIZE * SCALE;
-  drawPanel(stats_panel_x, stats_panel_y, panel_width, panel_height, "Performance Statistics");
+  drawPanel(stats_panel_x, stats_panel_y, panel_width, panel_height,
+            "Performance Statistics");
 
   int text_y = stats_panel_y + 40;
   const int line_height = 18;
 
   // 1. Fetch CPU Stats
   if (shared->cpu_stats_ready.load(std::memory_order_acquire)) {
-      int r_idx = shared->cpu_stats_read_index.load(std::memory_order_acquire);
-      CPUStats current_stats = shared->cpu_stats[r_idx];
+    int r_idx = shared->cpu_stats_read_index.load(std::memory_order_acquire);
+    CPUStats current_stats = shared->cpu_stats[r_idx];
 
-      // Calculate MHz: (Cycles / Microseconds)
-      // Original GB: 4,194,304 Hz = ~4.19 MHz
-      double mhz = (double)current_stats.cycles / current_stats.time_us;
-      double percentage = (mhz / 4.194304) * 100.0;
-      
-      // Calculate MIPS (Millions of Instructions Per Second)
-      double mips = (double)current_stats.instructions / current_stats.time_us;
+    // Calculate MHz: (Cycles / Microseconds)
+    // Original GB: 4,194,304 Hz = ~4.19 MHz
+    double mhz = (double)current_stats.cycles / current_stats.time_us;
+    double percentage = (mhz / 4.194304) * 100.0;
 
-      // Draw CPU Performance
-      DrawText("--- CPU Engine ---", stats_panel_x + 10, text_y, 12, ACCENT_COLOR);
-      text_y += line_height;
+    // Calculate MIPS (Millions of Instructions Per Second)
+    double mips = (double)current_stats.instructions / current_stats.time_us;
 
-      DrawText(TextFormat("Speed: %.3f MHz (%.1f%%)", mhz, percentage), 
-               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
-      text_y += line_height;
+    // Draw CPU Performance
+    DrawText("--- CPU Engine ---", stats_panel_x + 10, text_y, 12,
+             ACCENT_COLOR);
+    text_y += line_height;
 
-      DrawText(TextFormat("Throughput: %.2f MIPS", mips), 
-               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
-      text_y += line_height;
-      
-      DrawText(TextFormat("Cycles/Inst: %.2f", (double)current_stats.cycles / current_stats.instructions), 
-               stats_panel_x + 15, text_y, 12, TEXT_COLOR);
-      text_y += line_height * 1.5;
+    DrawText(TextFormat("Speed: %.3f MHz (%.1f%%)", mhz, percentage),
+             stats_panel_x + 15, text_y, 12, TEXT_COLOR);
+    text_y += line_height;
+
+    DrawText(TextFormat("Throughput: %.2f MIPS", mips), stats_panel_x + 15,
+             text_y, 12, TEXT_COLOR);
+    text_y += line_height;
+
+    DrawText(TextFormat("Cycles/Inst: %.2f", (double)current_stats.cycles /
+                                                 current_stats.instructions),
+             stats_panel_x + 15, text_y, 12, TEXT_COLOR);
+    text_y += line_height * 1.5;
   }
 }
 
@@ -328,10 +334,10 @@ void RayboyUI::draw() {
   // Draw left side components
   drawStatsPanel();
   drawTileViewer();
-  
+
   // Draw main screen (right side)
   drawScreen();
-  
+
   // Draw bottom status bar
   drawStatusBar();
 

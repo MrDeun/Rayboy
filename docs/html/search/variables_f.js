@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['scale_0',['SCALE',['../classRayboyUI.html#a9bee167ef4b543fc1e2dfc92f77bd18b',1,'RayboyUI']]],
+  ['screen_5fimage_1',['screen_image',['../classRayboyUI.html#a907e852a8c618fec2fca36edd002e43d',1,'RayboyUI']]],
+  ['screen_5ftexture_2',['screen_texture',['../classRayboyUI.html#a90e43a15e9f1cb119af1db1cd87c5cff',1,'RayboyUI']]],
+  ['screen_5fx_3',['screen_x',['../classRayboyUI.html#a711ad030d9202268e9cae3d557543b62',1,'RayboyUI']]],
+  ['screen_5fy_4',['screen_y',['../classRayboyUI.html#a7843050e8b1ff8b7276604e8b5c49c54',1,'RayboyUI']]],
+  ['scroll_5fx_5',['scroll_x',['../structlcd__context.html#a9951968671c948009444196bd30d75f5',1,'lcd_context']]],
+  ['scroll_5fy_6',['scroll_y',['../structlcd__context.html#ad83df5529bba96431830ddc9678869ce',1,'lcd_context']]],
+  ['serial_5fdata_7',['serial_data',['../io_8cpp.html#a9cff200ed89d2bf477b235c34bc7ca94',1,'io.cpp']]],
+  ['sgb_5fflag_8',['sgb_flag',['../structrom__header.html#a14bd3e639ca8e1bae841c97c5e1c2dae',1,'rom_header']]],
+  ['shared_9',['shared',['../classRayboyUI.html#a6b2909cc52efa40280421137203940dd',1,'RayboyUI']]],
+  ['should_5fexit_10',['should_exit',['../structEmulatorShared.html#a019ab09fc0a1cc8df7e937f18d674bdb',1,'EmulatorShared']]],
+  ['should_5fexit_5fflag_11',['should_exit_flag',['../classRayboyUI.html#acd1ee98eb5406c335ab16c44c6884090',1,'RayboyUI']]],
+  ['show_5fhelp_12',['show_help',['../classRayboyUI.html#ae03840294eb86b35383a13163ea3a756',1,'RayboyUI']]],
+  ['show_5fstats_13',['show_stats',['../classRayboyUI.html#ac9654550aba68d344120f622ecf87be5',1,'RayboyUI']]],
+  ['show_5ftile_5fviewer_14',['show_tile_viewer',['../classRayboyUI.html#a54593d18690f892bbd9e958d211e05af',1,'RayboyUI']]],
+  ['size_15',['size',['../structfifo.html#a0f3051ec38b942bc764faa6de7a980bb',1,'fifo']]],
+  ['sp_16',['SP',['../structcpu__registers.html#a4fa24e00ca9e3f0be5630e61614b35af',1,'cpu_registers']]],
+  ['sp1_5fcolors_17',['sp1_colors',['../structlcd__context.html#a8416b07f1027bafb5526395af1006359',1,'lcd_context']]],
+  ['sp2_5fcolors_18',['sp2_colors',['../structlcd__context.html#a555537521602e5fc03812d28d1fba52c',1,'lcd_context']]],
+  ['start_5ftimer_19',['start_timer',['../ppu__state__machine_8cpp.html#ae0d286d1d0ddf365efbc6e27b564c457',1,'ppu_state_machine.cpp']]],
+  ['stats_5fpanel_5fx_20',['stats_panel_x',['../classRayboyUI.html#a9a5d1903e1a12656832cf3aafd5c3187',1,'RayboyUI']]],
+  ['stats_5fpanel_5fy_21',['stats_panel_y',['../classRayboyUI.html#a059cfd9ae949df172ed1fee1a0485307',1,'RayboyUI']]]
+];

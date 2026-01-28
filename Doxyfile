@@ -1,0 +1,12 @@
+PROJECT_NAME           = "Your Project Name"
+OUTPUT_DIRECTORY       = docs
+INPUT                  = src/lib src/include
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+FILE_PATTERNS          = *.cpp *.h *.hpp
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO

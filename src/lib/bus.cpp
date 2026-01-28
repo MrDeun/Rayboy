@@ -1,9 +1,9 @@
 #include "../include/all.hpp"
 
-#include <format>
-#include <print>
 #include <cassert>
 #include <cstdint>
+#include <format>
+#include <print>
 uint8_t bus_read(uint16_t address) {
   auto err = fmt::format("No implementation for bus_read(0x{:X})", address);
   if (address < 0x8000) /*ROM Data*/ {
