@@ -1,6 +1,5 @@
 #pragma once
 
-#include "emu.hpp"
 #include "emu_stats.hpp"
 
 static const int LINES_PER_FRAMES = 154;
@@ -41,6 +40,8 @@ struct pixel_fifo_context {
   uint8_t fifo_x;
 };
 
+
+
 struct oam_entry {
   uint8_t y;
   uint8_t x;
@@ -53,10 +54,20 @@ struct oam_entry {
   unsigned f_y_flip : 1;
   unsigned f_bgp : 1;
 };
-
+struct _oam_line_entry {
+  oam_entry entry;
+  _oam_line_entry* next;
+};
 struct ppu_context {
   oam_entry oam_ram[40];
   uint8_t vram[0x2000];
+
+  uint8_t line_sprite_count;
+  _oam_line_entry* line_sprites;
+  _oam_line_entry line_entry_array[10];
+
+  uint8_t fetch_entry_count;
+  oam_entry fetched_entries[3];
 
   pixel_fifo_context pfc;
 

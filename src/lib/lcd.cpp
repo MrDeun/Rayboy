@@ -74,7 +74,7 @@ void lcd_write(uint16_t address, uint8_t value) {
     update_pallete(value & 0b11111100, 1);
     break;
   case 0xff49:
-    update_pallete(value & 0b11111100, 1);
+    update_pallete(value & 0b11111100, 2);
     break;
   }
 

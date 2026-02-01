@@ -1,6 +1,7 @@
 #pragma once
-#include "all.hpp"
 
+
+#include <cstdint>
 struct CPUStats {
     uint64_t cycles;
     uint64_t instructions;
