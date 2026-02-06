@@ -75,6 +75,8 @@ struct ppu_context {
   uint32_t line_ticks;
   uint32_t *video_buffer;
 
+
+  uint8_t window_line;
   PPUStats local_stats;
 };
 

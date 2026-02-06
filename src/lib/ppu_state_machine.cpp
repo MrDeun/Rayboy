@@ -7,7 +7,13 @@ static int32_t prev_frame_time = 0;
 static int32_t start_timer = 0;
 static int32_t frame_count = 0;
 
+bool window_visible(){return false;}
+
 void increment_ly() {
+  if (window_visible() && lcd_get_context()->ly >= lcd_get_context()->win_y &&
+      lcd_get_context()->ly++ < lcd_get_context()->win_y + YRES) {
+    ppu_get_context()->window_line++;
+  }
   lcd_get_context()->ly++;
   if (lcd_get_context()->ly == lcd_get_context()->ly_compare) {
     LCDS_LYC_SET(1);
@@ -50,31 +56,31 @@ void load_line_sprites() {
     if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 1) {
       _oam_line_entry *entry =
           &ppu_ctx->line_entry_array[ppu_ctx->line_sprite_count++];
-          entry->entry = e;
-          entry->next = NULL;
+      entry->entry = e;
+      entry->next = NULL;
 
-          if(!ppu_ctx->line_sprites || ppu_ctx->line_sprites->entry.x > e.x){
-            entry->next = ppu_ctx->line_sprites;
-            ppu_ctx->line_sprites = entry;
-            continue;
-          }
+      if (!ppu_ctx->line_sprites || ppu_ctx->line_sprites->entry.x > e.x) {
+        entry->next = ppu_ctx->line_sprites;
+        ppu_ctx->line_sprites = entry;
+        continue;
+      }
 
-          _oam_line_entry* entry_list = ppu_ctx->line_sprites;
-          _oam_line_entry* prev = entry_list;
-          
-          while (entry_list) {
-            if(entry_list->entry.x > e.x){
-              prev->next = entry;
-              entry->next = entry_list;
-              break;
-            }
-            if (!entry_list->next) {
-              entry_list->next = entry;
-              break;
-            }
-            prev = entry_list;
-            entry_list = entry_list->next;
-          }
+      _oam_line_entry *entry_list = ppu_ctx->line_sprites;
+      _oam_line_entry *prev = entry_list;
+
+      while (entry_list) {
+        if (entry_list->entry.x > e.x) {
+          prev->next = entry;
+          entry->next = entry_list;
+          break;
+        }
+        if (!entry_list->next) {
+          entry_list->next = entry;
+          break;
+        }
+        prev = entry_list;
+        entry_list = entry_list->next;
+      }
     }
   }
 }
@@ -127,6 +133,7 @@ void ppu_mode_vblank() {
 
       LCDS_MODE_SET(MODE_OAM);
       lcd_get_context()->ly = 0;
+      ppu_get_context()->window_line = 0;
     }
 
     ppu_get_context()->line_ticks = 0;

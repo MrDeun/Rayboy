@@ -4,6 +4,13 @@
 #include "../include/ppu.hpp"
 #include <cstdint>
 #include <sys/types.h>
+
+// bool window_visible() {
+//   return LCDC_WIN_ENABLE && lcd_get_context()->win_x >= 0 &&
+//          lcd_get_context()->win_x < XRES && lcd_get_context()->win_y >= 0 &&
+//          lcd_get_context()->win_y < YRES;
+// }
+
 void pixel_fifo_push(uint32_t value) {
   fifo_entry *next = new fifo_entry;
   auto ppu_ctx = ppu_get_context();
@@ -177,11 +184,19 @@ void pipeline_fetch() {
     ppu_get_context()->pfc.bgw_fetch_data[2] = bus_read(
         LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) +
         ppu_get_context()->pfc.tile_y + 1);
-        pipeline_sprite_data(1);
+    pipeline_sprite_data(1);
     ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
   } break;
   case FS_IDLE: {
     ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
+    if (LCDC_BGW_ENABLE) {
+      ppu_get_context()->pfc.bgw_fetch_data[0] =
+          bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8)) +
+          ((ppu_get_context()->pfc.map_y / 8) * 32);
+      if (LCDC_BGW_DATA_AREA == 0x8800) {
+        ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
+      }
+    }
   } break;
   case FS_PUSH: {
     if (pipeline_fifo_add()) {
