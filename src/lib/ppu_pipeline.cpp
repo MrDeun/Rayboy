@@ -75,9 +75,9 @@ uint32_t fetch_sprite_pixels(uint32_t bit, uint32_t color, uint8_t bg_colors) {
     if (ppu_get_context()->fetched_entries[i].f_x_flip) {
       bit = offset;
     }
-    uint8_t low =
-        !!(ppu_get_context()->pfc.fetch_entry_data[i * 2] & (1 << bit));
     uint8_t high =
+        !!(ppu_get_context()->pfc.fetch_entry_data[i * 2] & (1 << bit));
+    uint8_t low =
         !!(ppu_get_context()->pfc.fetch_entry_data[(i * 2) + 1] & (1 << bit))
         << 1;
 
@@ -98,7 +98,7 @@ uint32_t fetch_sprite_pixels(uint32_t bit, uint32_t color, uint8_t bg_colors) {
   return color;
 }
 bool pipeline_fifo_add() {
-  if (ppu_get_context()->pfc.pixel_fifo.size >= 16) {
+  if (ppu_get_context()->pfc.pixel_fifo.size > 8) {
     return false;
   }
 
@@ -108,7 +108,7 @@ bool pipeline_fifo_add() {
     int bit = 7 - i;
     uint8_t low = !!(ppu_get_context()->pfc.bgw_fetch_data[1] & (1 << bit));
     uint8_t high = !!(ppu_get_context()->pfc.bgw_fetch_data[2] & (1 << bit))
-                   << 1;
+                  << 1;
 
     uint32_t color = lcd_get_context()->bg_colors[high | low];
 
@@ -161,7 +161,7 @@ void pipeline_fetch() {
     if (LCDC_BGW_ENABLE) {
       ppu_get_context()->pfc.bgw_fetch_data[0] =
           bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8) +
-                   ((ppu_get_context()->pfc.map_y / 8)) * 32);
+                   ((ppu_get_context()->pfc.map_y / 8) * 32));
 
       if (LCDC_BGW_DATA_AREA == 0x8800) {
         ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
@@ -185,18 +185,10 @@ void pipeline_fetch() {
         LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) +
         ppu_get_context()->pfc.tile_y + 1);
     pipeline_sprite_data(1);
-    ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
+    ppu_get_context()->pfc.cur_fetch_state = FS_IDLE;
   } break;
   case FS_IDLE: {
     ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
-    if (LCDC_BGW_ENABLE) {
-      ppu_get_context()->pfc.bgw_fetch_data[0] =
-          bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8)) +
-          ((ppu_get_context()->pfc.map_y / 8) * 32);
-      if (LCDC_BGW_DATA_AREA == 0x8800) {
-        ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
-      }
-    }
   } break;
   case FS_PUSH: {
     if (pipeline_fifo_add()) {
@@ -206,7 +198,7 @@ void pipeline_fetch() {
   }
 }
 void pipeline_push_pixel() {
-  if (ppu_get_context()->pfc.pixel_fifo.size >= 8) {
+  if (ppu_get_context()->pfc.pixel_fifo.size > 8) {
     uint32_t pixel_data = pixel_fifo_pop();
     if (ppu_get_context()->pfc.line_x >= (lcd_get_context()->scroll_x % 8)) {
       ppu_get_context()->video_buffer[ppu_get_context()->pfc.pushed_x +

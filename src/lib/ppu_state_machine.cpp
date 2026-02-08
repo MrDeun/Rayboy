@@ -11,7 +11,7 @@ bool window_visible(){return false;}
 
 void increment_ly() {
   if (window_visible() && lcd_get_context()->ly >= lcd_get_context()->win_y &&
-      lcd_get_context()->ly++ < lcd_get_context()->win_y + YRES) {
+      lcd_get_context()->ly < lcd_get_context()->win_y + YRES) {
     ppu_get_context()->window_line++;
   }
   lcd_get_context()->ly++;
@@ -53,7 +53,7 @@ void load_line_sprites() {
     if (ppu_ctx->line_sprite_count >= 10) {
       break; // only 10 sprites per line
     }
-    if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 1) {
+    if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 16) {
       _oam_line_entry *entry =
           &ppu_ctx->line_entry_array[ppu_ctx->line_sprite_count++];
       entry->entry = e;

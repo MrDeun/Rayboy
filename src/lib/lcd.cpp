@@ -18,10 +18,13 @@ void lcd_init() {
 
   ctx.win_y = 0;
   ctx.win_x = 0;
-
+  colors_defaults[0] = 0xFFFFFFFF; // White
+  colors_defaults[1] = 0xFFAAAAAA; // Light gray
+  colors_defaults[2] = 0xFF555555; // Dark gray  
+  colors_defaults[3] = 0xFF000000; // Black
+  
   for (int i = 0; i < 4; i++) {
-    colors_defaults[i] =
-        static_cast<uint32_t>(ColorToInt(RayboyUI::TILE_COLORS[i]));
+
     ctx.bg_colors[i] = colors_defaults[i];
     ctx.sp1_colors[i] = colors_defaults[i];
     ctx.sp2_colors[i] = colors_defaults[i];
@@ -71,10 +74,10 @@ void lcd_write(uint16_t address, uint8_t value) {
     update_pallete(value, 0);
     break;
   case 0xff48:
-    update_pallete(value & 0b11111100, 1);
+    update_pallete(value, 1);
     break;
   case 0xff49:
-    update_pallete(value & 0b11111100, 2);
+    update_pallete(value, 2);
     break;
   }
 
