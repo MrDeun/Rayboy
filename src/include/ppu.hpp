@@ -2,9 +2,11 @@
 
 #include "emu.hpp"
 #include "emu_stats.hpp"
+#include <cstdint>
 
 static const int LINES_PER_FRAMES = 154;
 static const int TICKS_PER_LINE = 456;
+
 
 
 enum fetch_state {
@@ -54,11 +56,25 @@ struct oam_entry {
   unsigned f_bgp : 1;
 };
 
+struct oam_line_entry{
+  oam_entry entry;
+  oam_line_entry* next;
+};
+
+
+
 struct ppu_context {
   oam_entry oam_ram[40];
   uint8_t vram[0x2000];
 
   pixel_fifo_context pfc;
+
+  uint8_t line_sprite_count; // Linked List count
+  oam_line_entry* line_sprites; // Linked List
+  oam_line_entry line_entry_array[10];
+
+  uint8_t fetch_entry_count;
+  oam_entry fetched_entries[3];
 
   uint32_t current_frame;
   uint32_t line_ticks;

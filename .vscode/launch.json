@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${command:cmake.launchTargetPath}",
-      "args": ["${workspaceFolder}/blargg_tests/cpu_instrs/cpu_instrs.gb"],
+      "args": ["/home/mrdeun/Emulation/roms/gb/DrMario.gb"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

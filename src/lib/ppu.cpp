@@ -46,6 +46,9 @@ void ppu_init() {
   ctx.pfc.pixel_fifo.head = ctx.pfc.pixel_fifo.tail = nullptr;
   ctx.pfc.cur_fetch_state = FS_TILE;
 
+  ctx.line_sprites = 0;
+  ctx.fetch_entry_count = 0;
+
   lcd_init();
   LCDS_MODE_SET(MODE_OAM);
   memset(ctx.oam_ram, 0, sizeof(ctx.oam_ram));
