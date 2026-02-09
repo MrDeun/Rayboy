@@ -4,6 +4,7 @@
 #include "common.hpp"
 #include "bus.hpp"
 #include "emu_stats.hpp"
+#include "gamepad.hpp"
 
 #include <mutex>
 #include <thread>
@@ -28,6 +29,11 @@ struct EmulatorShared {
     std::atomic<int> cpu_stats_write_index{0};
     std::atomic<int> cpu_stats_read_index{1};
     std::atomic<bool> cpu_stats_ready{false};
+
+    std::atomic<int> gamepad_state_write_index{0};
+    std::atomic<int> gamepad_state_read_index{1};
+    std::atomic<gamepad_state> gamepad_states{};
+
 
   // ========== Thread Control ==========
     std::atomic<bool> running{false};

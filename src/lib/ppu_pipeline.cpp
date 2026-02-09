@@ -5,11 +5,11 @@
 #include <cstdint>
 #include <sys/types.h>
 
-// bool window_visible() {
-//   return LCDC_WIN_ENABLE && lcd_get_context()->win_x >= 0 &&
-//          lcd_get_context()->win_x < XRES && lcd_get_context()->win_y >= 0 &&
-//          lcd_get_context()->win_y < YRES;
-// }
+bool window_visible() {
+  return LCDC_WIN_ENABLE && lcd_get_context()->win_x >= 0 &&
+         lcd_get_context()->win_x < XRES && lcd_get_context()->win_y >= 0 &&
+         lcd_get_context()->win_y < YRES;
+}
 
 void pixel_fifo_push(uint32_t value) {
   fifo_entry *next = new fifo_entry;
@@ -108,7 +108,7 @@ bool pipeline_fifo_add() {
     int bit = 7 - i;
     uint8_t low = !!(ppu_get_context()->pfc.bgw_fetch_data[1] & (1 << bit));
     uint8_t high = !!(ppu_get_context()->pfc.bgw_fetch_data[2] & (1 << bit))
-                  << 1;
+                   << 1;
 
     uint32_t color = lcd_get_context()->bg_colors[high | low];
 
@@ -154,22 +154,54 @@ void pipeline_load_sprite_line() {
   }
 }
 
-void pipeline_fetch() {
-  switch (ppu_get_context()->pfc.cur_fetch_state) {
-  case FS_TILE: {
-    ppu_get_context()->fetch_entry_count = 0;
-    if (LCDC_BGW_ENABLE) {
-      ppu_get_context()->pfc.bgw_fetch_data[0] =
-          bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8) +
-                   ((ppu_get_context()->pfc.map_y / 8) * 32));
+void pipeline_load_window() {
+  if (!window_visible()) {
+    return;
+  }
+
+  uint8_t window_y = lcd_get_context()->win_y;
+
+  if (ppu_get_context()->pfc.fetch_x + 7 >= lcd_get_context()->win_x &&
+      ppu_get_context()->pfc.fetch_x + 7 <
+          lcd_get_context()->win_x + YRES + 14) {
+    if (lcd_get_context()->ly >= window_y &&
+        lcd_get_context()->ly < window_y + XRES) {
+      uint8_t w_tile_y = ppu_get_context()->window_line / 8;
+
+      ppu_get_context()->pfc.bgw_fetch_data[0] = bus_read(
+          LCDC_WIN_MAP_AREA +
+          ((ppu_get_context()->pfc.fetch_x + 7 - lcd_get_context()->win_x) /
+           8) +
+          (w_tile_y * 32));
 
       if (LCDC_BGW_DATA_AREA == 0x8800) {
         ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
       }
     }
+  }
+}
+
+void pipeline_fetch() {
+  switch (ppu_get_context()->pfc.cur_fetch_state) {
+  case FS_TILE: {
+    ppu_get_context()->fetch_entry_count = 0;
+
+    if (LCDC_BGW_ENABLE) {
+      ppu_get_context()->pfc.bgw_fetch_data[0] =
+          bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8) +
+                   (((ppu_get_context()->pfc.map_y / 8)) * 32));
+
+      if (LCDC_BGW_DATA_AREA == 0x8800) {
+        ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
+      }
+
+      pipeline_load_window();
+    }
+
     if (LCDC_OBJ_ENABLE && ppu_get_context()->line_sprites) {
       pipeline_load_sprite_line();
     }
+
     ppu_get_context()->pfc.cur_fetch_state = FS_DATA0;
     ppu_get_context()->pfc.fetch_x += 8;
   } break;

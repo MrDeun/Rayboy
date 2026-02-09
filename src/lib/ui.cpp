@@ -62,7 +62,7 @@ void RayboyUI::setup(EmulatorShared *shared_ptr) {
   // Layout positions - Right side (screen centered vertically)
   screen_x = left_side_width + UI_PADDING + 4;
   int available_height = window_height - 30; // Subtract status bar
-  screen_y = (available_height - (GB_H * SCALE + 8)) / 2 + 4;
+  screen_y = (available_height - (GB_H * SCALE + 8)) / 16 + 4;
 
   InitWindow(window_width, window_height, "Rayboy - GameBoy Emulator");
   SetTargetFPS(60);
@@ -105,6 +105,18 @@ void RayboyUI::handleInput() {
     show_stats = !show_stats;
   if (IsKeyPressed(KEY_H))
     show_help = !show_help;
+
+  gamepad_state *next = gamepad_get_write_buffer();
+
+  next->A = IsKeyDown(KEY_Z);
+  next->B = IsKeyDown(KEY_X);
+  next->SELECT = IsKeyDown(KEY_RIGHT_SHIFT);
+  next->START = IsKeyDown(KEY_ENTER);
+  next->UP = IsKeyDown(KEY_UP);
+  next->DOWN = IsKeyDown(KEY_DOWN);
+  next->LEFT = IsKeyDown(KEY_LEFT);
+  next->RIGHT = IsKeyDown(KEY_RIGHT);
+  gamepad_swap_buffers();
 }
 
 void RayboyUI::renderTile(const uint8_t *tile_data, int tile_num, int x,

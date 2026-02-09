@@ -7,7 +7,7 @@ static int32_t prev_frame_time = 0;
 static int32_t start_timer = 0;
 static int32_t frame_count = 0;
 
-bool window_visible(){return false;}
+bool window_visible();
 
 void increment_ly() {
   if (window_visible() && lcd_get_context()->ly >= lcd_get_context()->win_y &&

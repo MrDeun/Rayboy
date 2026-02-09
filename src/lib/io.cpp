@@ -9,6 +9,7 @@ void io_write(uint16_t address, uint8_t value) {
   switch (address) {
   case 0xff00:
     // fmt::println("Joypad not supported yet...");
+    gamepad_set_select(value);
     break;
   case 0xff01:
     serial_data[0] = value;
@@ -48,8 +49,7 @@ void io_write(uint16_t address, uint8_t value) {
 uint8_t io_read(uint16_t address) {
   switch (address) {
   case 0xff00:
-    NO_IMPL("Joypad not supported yet...");
-    return 0;
+    return gamepad_get_output();
   case 0xff01:
     return serial_data[0];
     break;
