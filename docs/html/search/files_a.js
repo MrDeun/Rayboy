@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['timer_2ecpp_0',['timer.cpp',['../timer_8cpp.html',1,'']]],
-  ['timer_2ehpp_1',['timer.hpp',['../timer_8hpp.html',1,'']]]
-];
