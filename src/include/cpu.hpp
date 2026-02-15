@@ -51,7 +51,7 @@ struct cpu_context {
   uint16_t mem_destination;
   bool dest_is_mem;
   uint8_t op_code;
-  instruction *cur_instruction;
+  instruction const* cur_instruction;
 
 
   bool int_master_enabled;

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-instruction instructions[0x100] = {
+constexpr instruction instructions[0x100] = {
     // 0x0X
     [0x00] = {.type = IN_NOP, .mode = AM_IMP},
     [0x01] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_BC},
@@ -337,7 +337,7 @@ const std::string &get_reg_name(reg_type reg) { return reg_lookup[reg]; }
 const std::string &get_inst_name(in_type type) { return inst_lookup[type]; }
 
 const std::string inst_toString(cpu_context *ctx) {
-  instruction *cur_instruction = ctx->cur_instruction;
+  auto cur_instruction = ctx->cur_instruction;
   auto ret = fmt::format("Instruction 0x{:X} = (type=\"{}\", "
                          "reg1=\"{}\", reg2=\"{}\")",
                          ctx->op_code, get_inst_name(cur_instruction->type),
@@ -346,7 +346,7 @@ const std::string inst_toString(cpu_context *ctx) {
   return ret;
 }
 
-instruction *get_instruction_by_opcode(uint8_t opcode) {
+instruction const* get_instruction_by_opcode(uint8_t opcode) {
   if (instructions[opcode].type == IN_NONE) {
     return nullptr;
   }

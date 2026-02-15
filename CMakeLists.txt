@@ -76,7 +76,6 @@ FetchContent_MakeAvailable(raylib)
 # # Tells the compiler that one library depends on other
 # target_link_libraries(rlimgui PRIVATE imgui raylib)
 
-
 message(STATUS "Fetching fmt from Github")
 FetchContent_Declare(
   fmt

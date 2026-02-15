@@ -5,7 +5,6 @@
 #include <format>
 #include <print>
 uint8_t bus_read(uint16_t address) {
-  auto err = fmt::format("No implementation for bus_read(0x{:X})", address);
   if (address < 0x8000) /*ROM Data*/ {
     return cart_read(address);
   } else if (address < 0xA000) {
@@ -38,7 +37,6 @@ uint8_t bus_read(uint16_t address) {
   return hram_read(address);
 }
 void bus_write(uint16_t address, uint8_t value) {
-  auto err = fmt::format("No implementation for bus_write(0x{:X})", address);
   if (address < 0x8000) {
     // ROM Data
     cart_write(address, value);

@@ -7,6 +7,9 @@ static lcd_context ctx = {};
 static uint32_t colors_defaults[4];
 lcd_context *lcd_get_context() { return &ctx; }
 void lcd_init() {
+
+  bool is_dmg = false; // Emulate display to fit original LCD or Pocket/Light
+
   ctx.lcdc = 0;
   ctx.scroll_x = 0;
   ctx.scroll_y = 0;
@@ -18,12 +21,22 @@ void lcd_init() {
 
   ctx.win_y = 0;
   ctx.win_x = 0;
-  colors_defaults[0] = 0xFFFFFFFF; // White
-  colors_defaults[1] = 0xFFAAAAAA; // Light gray
-  colors_defaults[2] = 0xFF555555; // Dark gray  
-  colors_defaults[3] = 0xFF000000; // Black
+
+  if (is_dmg) {
+    colors_defaults[0] = 0xFF7F860F; // Black
+    colors_defaults[1] = 0xFF577c44; // Dark gray
+    colors_defaults[2] = 0xFF365d48; // Light gray
+    colors_defaults[3] = 0xFF2A453B; // White
+  } else {
+    colors_defaults[0] = 0xFFFFFFFF; // White
+    colors_defaults[1] = 0xFFAAAAAA; // Light gray
+    colors_defaults[2] = 0xFF555555; // Dark gray
+    colors_defaults[3] = 0xFF000000; // Black
+  }
+
   
-  for (int i = 0; i < 4; i++) {
+
+      for (int i = 0; i < 4; i++) {
 
     ctx.bg_colors[i] = colors_defaults[i];
     ctx.sp1_colors[i] = colors_defaults[i];

@@ -1,0 +1,197 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy}
+\author{Patryk Michalak}
+
+\begin{document}
+	\maketitle
+	
+	\begin{abstract}
+		Your abstract.
+	\end{abstract}
+	
+\clearpage
+	\tableofcontents
+	\clearpage
+\section{Wstęp}
+
+\subsection{Opis Problemu}
+
+Konsola Game Boy została wydana w Japonii 21 kwietnia 1989 roku i od razu odniosła ogromny sukces komercyjny. W ciągu pierwszych dwóch lat sprzedały się ponad 20 milionów egzemplarzy, co czyniło ją jedną z najlepiej sprzedających się konsoli gier wideo w historii. W 1990 roku Game Boy została wydana na zachodzie i odniosła podobny sukces komercyjny. Konsola była dostępna w kilku różnych barwach i wersjach, co dodatkowo zwiększyło jej popularność. Gry były przechowywane na tzw. "Cartridge'ach" lub "Cart'ach" które zawierały kod gry, grafiki i dźwięk a i także dodatkowe element jak dodatkowa pamięc RAM czy bateria do przechowania stanu gry pomiędzy sesjami.
+
+Jednakże, kiedy Nintendo zaprzestała produkcji Game Boya, wiele gier zostało opracowanych tylko dla tej konsoli. Dzisiaj większość tych gier nie jest dostępna na żadnym innym platformie, a gracze muszą szukać innych rozwiązań.
+
+W związku z brakiem dostępności oryginalnej konsoli Game Boya, gracze zaczęli poszukiwać sposobów na zagranie tych klasycznych gier. Jednym z takich rozwiązań są emulatory konsol - oprogramowanie które pozwala na symulację pracy oryginalnej konsoli wirtualnie.
+
+\subsection{Emulatory}
+
+Emulatory to oprogramowanie które pozwala na symulację pracy oryginalnej konsoli wirtualnie. Są one zdolne do wyświetlania grafiki, generowania dźwięku i obsługi sterowników w sposób podobny do oryginalnego sprzętu.
+
+Emulatory są stosowane głównie przez graczy, którzy chcą zagranie klasycznych gier bez potrzeby posiadania oryginalnego sprzętu. Są one również używane przez muzea i archiwalia, które pragną zachować treści konsolowej historii w formie digitalnej.
+
+Emulatory są ważne dla archiwizacji treści z kilku powodów:
+
+\begin{itemize}
+	\item Zachowanie historycznej wartości: Emulatory pozwalają na zachowanie historycznej wartości konsoli i gier, które mogłyby inaczej być utracone.
+	\item Dostępność dla nowej generacji graczy: Emulatory umożliwiają nowej generacji graczom dostęp do klasycznych gier, które mogą nie być dostępne w oryginalnej formie.
+	\item Zachowanie jakości: Emulatory pozwalają na zachowanie jakości grafiki i dźwięku oryginalnej konsoli, co jest ważne dla archiwizacji treści.
+	\item Możliwość dostępu do gier nieopublikowanych: Emulatory umożliwiają dostęp do gier nieopublikowanych lub eksperymentalnych, które mogłyby inaczej pozostać ukryte.
+\end{itemize}
+
+Istnieją dwa rodzaje emulacji:
+
+\begin{itemize}
+	\item Emulacja pełna: Emulacja pełna jest zdolna do symulowania pracy oryginalnej konsoli w całości, w tym wyświetlania grafiki, generowania dźwięku i obsługi sterowników.
+	\item Emulacja częściowa: Emulacja częściowa jest zdolna do symulowania tylko części pracy oryginalnej konsoli, takiej jak grafika lub dźwięk.
+\end{itemize}
+
+\subsection{Założenia pracy}
+
+Cel pracy to stworzenie emulacji konsoli Game Boy w języku programowania C++, wykorzystującej bibliotekę Raylib do obsługi interfejsu graficznego. Użytkownik posiada dostępne w postaci cyfrowej własne kopie gier.
+\begin{itemize}
+\item Emulacja musi być implementowana w języku programowania C++ i wykorzystać bibliotekę Raylib do obsługi interfejsu graficznego. Muszą być zapewnione mechanizmy kontrolne, by użytkownik mógł sterować grą za pomocą klawiatury.
+\item Końcowy program musi być dostępny do uruchomienia na różnych platformach, takich jak Windows, macOS i Linux.
+\item Emulator ma mieć wsparcie dla podstawowego rodzaju cart'a - zawierający jedynie kod gry ROM Only.
+\item Dostępne w postaci cyfrowej własne rzuty gier Game Boy będą używane do testowania emulacji. Muszą być zapewnione możliwości odtwarzania i grania gier Game Boy z własnymi rzutami gier.
+\end{itemize}
+
+Plan realizacji pracy obejmuje zrozumienie architektury konsoli Game Boy, implementację emulacji w języku programowania C++ oraz wykorzystanie biblioteki Raylib do obsługi interfejsu graficznego. Emulacja musi być zweryfikowana poprzez porównanie wyników z testami tworzynymi przez wierną społeczność dokumentującą konsolę Game Boy.
+
+\subsection{Grupa docelowa}
+
+Grupa docelowa dla emulatora Game Boy to gracze, którzy chcą ponownie grać w swoje ulubione gry z lat 80. i 90., ale nie mają dostępu do oryginalnej konsoli lub posiadają sposób na skopiowanie danych ze swoich kartridge'ów bez dostępu do konsoli.
+
+Oni są osobami, które chcą odtworzyć swoje dzieciństwo i ponownie grać w gry, które lubili w młodości. Grupa ta obejmuje również graczy, którzy zakupili cyfrowe gry homebrew i chcieli je zagrać, które bez oryginalnej konsoli i narzędzi do tworzenia własnych kaset z grą.
+
+Emulator Game Boya jest dla nich sposobem na grę w ich ulubione gry bez potrzeby posiadania oryginalnej konsoli lub posiadania specjalistycznych narzędzi.
+
+\section{Analiza architektury systemowej konsoli Game Boy}
+\subsection{Specyfikacja techniczna}
+Nintendo Research And Development 1, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektowało 8-bitową konsolę Game Boya. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże `GamePak`. Zasilany był przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, umożliwił on bardziej tanie i długotrwałe życie baterii. `[Ref: https://en.wikipedia.org/wiki/Game\_Boy, po przetłumaczeniu]`
+\subsection{Procesor i SoC}
+Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. `[Źródło: https://gekkio.fi/files/gb-docs/gbctr.pdf]` . Procesor był mieszanką dwóch innych procesorów - 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 `[Źródło: copetti.org]`. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM). Dokładne specyfikacje procesora bedą opisane w dalszej części tego rozdziału.
+\subsection{Płyta główna}
+	
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{dmg_marked.png}
+		\caption{Zdjęcie płyty głównej oryginalnego GameBoy'a z opisami kompomentów}
+		\label{fig:marked_dmg}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{dmg_chart.png}
+		\caption{}
+		\label{fig:chart_dmg}
+	\end{minipage}
+\end{figure}
+
+\subsection{Rewizje}
+
+
+	\section{Some examples to get started}
+	
+	\subsection{How to create Sections and Subsections}
+	
+	Simply use the section and subsection commands, as in this example document! With Overleaf, all the formatting and numbering is handled automatically according to the template you've chosen. If you're using the Visual Editor, you can also create new section and subsections via the buttons in the editor toolbar.
+	
+	\subsection{How to include Figures}
+	
+	First you have to upload the image file from your computer using the upload link in the file-tree menu. Then use the includegraphics command to include it in your document. Use the figure environment and the caption command to add a number and a caption to your figure. See the code for Figure \ref{fig:frog} in this section for an example.
+	
+	Note that your figure will automatically be placed in the most appropriate place for it, given the surrounding text and taking into account other figures or tables that may be close by. You can find out more about adding images to your documents in this help article on \href{https://www.overleaf.com/learn/how-to/Including_images_on_Overleaf}{including images on Overleaf}.
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.25\linewidth]{dmg_marked.png}
+		\caption{\label{fig:frog}This frog was uploaded via the file-tree menu.}
+	\end{figure}
+	
+	\subsection{How to add Tables}
+	
+	Use the table and tabular environments for basic tables --- see Table~\ref{tab:widgets}, for example. For more information, please see this help article on \href{https://www.overleaf.com/learn/latex/tables}{tables}.
+	
+	\begin{table}
+		\centering
+		\begin{tabular}{l|r}
+			Item & Quantity \\\hline
+			Widgets & 42 \\
+			Gadgets & 13
+		\end{tabular}
+		\caption{\label{tab:widgets}An example table.}
+	\end{table}
+	
+	\subsection{How to add Comments and Track Changes}
+	
+	Comments can be added to your project by highlighting some text and clicking ``Add comment'' in the top right of the editor pane. To view existing comments, click on the Review menu in the toolbar above. To reply to a comment, click on the Reply button in the lower right corner of the comment. You can close the Review pane by clicking its name on the toolbar when you're done reviewing for the time being.
+	
+	Track changes are available on all our \href{https://www.overleaf.com/user/subscription/plans}{premium plans}, and can be toggled on or off using the option at the top of the Review pane. Track changes allow you to keep track of every change made to the document, along with the person making the change.
+	
+	\subsection{How to add Lists}
+	
+	You can make lists with automatic numbering \dots
+	
+	\begin{enumerate}
+		\item Like this,
+		\item and like this.
+	\end{enumerate}
+	\dots or bullet points \dots
+	\begin{itemize}
+		\item Like this,
+		\item and like this.
+	\end{itemize}
+	
+	\subsection{How to write Mathematics}
+	
+	\LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
+	\[S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
+	= \frac{1}{n}\sum_{i}^{n} X_i\]
+	denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
+	
+	
+	\subsection{How to change the margins and paper size}
+	
+	Usually the template you're using will have the page margins and paper size set correctly for that use-case. For example, if you're using a journal article template provided by the journal publisher, that template will be formatted according to their requirements. In these cases, it's best not to alter the margins directly.
+	
+	If however you're using a more general template, such as this one, and would like to alter the margins, a common way to do so is via the geometry package. You can find the geometry package loaded in the preamble at the top of this example file, and if you'd like to learn more about how to adjust the settings, please visit this help article on \href{https://www.overleaf.com/learn/latex/page_size_and_margins}{page size and margins}.
+	
+	\subsection{How to change the document language and spell check settings}
+	
+	Overleaf supports many different languages, including multiple different languages within one document.
+	
+	To configure the document language, simply edit the option provided to the babel package in the preamble at the top of this example project. To learn more about the different options, please visit this help article on \href{https://www.overleaf.com/learn/latex/International_language_support}{international language support}.
+	
+	To change the spell check language, simply open the Overleaf menu at the top left of the editor window, scroll down to the spell check setting, and adjust accordingly.
+	
+	\subsection{How to add Citations and a References List}
+	
+	You can simply upload a \verb|.bib| file containing your BibTeX entries, created with a tool such as JabRef. You can then cite entries from it, like this: \cite{}. Just remember to specify a bibliography style, as well as the filename of the \verb|.bib|. You can find a \href{https://www.overleaf.com/help/97-how-to-include-a-bibliography-using-bibtex}{video tutorial here} to learn more about BibTeX.
+	
+	If you have an \href{https://www.overleaf.com/user/subscription/plans}{upgraded account}, you can also import your Mendeley or Zotero library directly as a \verb|.bib| file, via the upload menu in the file-tree.
+	
+	\subsection{Good luck!}
+	
+	We hope you find Overleaf useful, and do take a look at our \href{https://www.overleaf.com/learn}{help library} for more tutorials and user guides! Please also let us know if you have any feedback using the \textbf{Contact us} link at the bottom of the Overleaf menu --- or use the contact form at \url{https://www.overleaf.com/contact}.
+	
+	\bibliographystyle{alpha}
+	\bibliography{sample}
+	
+	\section{Bibliografia}
+	
+\end{document}

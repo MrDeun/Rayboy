@@ -1,0 +1,11 @@
+\# Analiza architektury systemowej konsoli Game Boy
+\#\# Specyfikacja techniczna
+Nintendo Research \& Development 1, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektowało 8-bitową konsolę Game Boya. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże `GamePak`. Zasilany był przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, umożliwił on bardziej tanie i długotrwałe życie baterii. `[Źródło: https://en.wikipedia.org/wiki/Game\_Boy, po przetłumaczeniu]`
+
+\#\# Procesor i SoC
+Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. `[Źródło: https://gekkio.fi/files/gb-docs/gbctr.pdf]` . Procesor był mieszanką dwóch innych procesorów - 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 `[Źródło: copetti.org]`. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM). Dokładne specyfikacje procesora bedą opisane w dalszej części tego rozdziału.
+
+\#\# Płyta główna
+![Image](./images/gameboy\_marked.webp)
+\#\# Rewizje
+Konsola doczekała się trzech rewizji: GameBoy ``Play it Loud!'' zapowiedziane 14 marca 1994, które miało zmiany czysto kosmetyczne i nie wprowadzało żadnych zmian w architekturze systemowej. GameBoy Pocket, mniejszą i bardziej kompaktową wersją Game Boya, która była zasilana przez 2 baterie AAA zamiast 4 baterii AA. Także finalną rewizją był Game Boy Light, który wymagał tylko dwóch baterii AA, a dodawał do niego podświetlenie ekranu co pozwoliło na bardziej komfortową grę w ciemnych warunkach. Dodatkowe rewizje Pocket i Light używały innego typu SoC niż DMG-CPU nazywanym SGB, charakteryzując się innymy barwami ekranu gdzie DMG-CPU wyświetlał w czterech odcieniach zielonego, a nowe SoC wyświetlały w czterech odcieniach szarości jak i wygrywając pamięć VRAM z płyty głównej bezpośrednio do SoC.
