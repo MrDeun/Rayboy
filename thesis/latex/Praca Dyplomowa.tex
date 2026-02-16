@@ -7,7 +7,10 @@
 % Set page size and margins
 % Replace `letterpaper' with `a4paper' for UK/EU standard size
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{url}
 
+\usepackage[style=numeric]{biblatex}
+\addbibresource{bibliography.bib}
 % Useful packages
 \usepackage{amsmath}
 \usepackage{graphicx}
@@ -30,7 +33,9 @@
 
 \subsection{Opis Problemu}
 
-Konsola Game Boy została wydana w Japonii 21 kwietnia 1989 roku i od razu odniosła ogromny sukces komercyjny. W ciągu pierwszych dwóch lat sprzedały się ponad 20 milionów egzemplarzy, co czyniło ją jedną z najlepiej sprzedających się konsoli gier wideo w historii. W 1990 roku Game Boy została wydana na zachodzie i odniosła podobny sukces komercyjny. Konsola była dostępna w kilku różnych barwach i wersjach, co dodatkowo zwiększyło jej popularność. Gry były przechowywane na tzw. "Cartridge'ach" lub "Cart'ach" które zawierały kod gry, grafiki i dźwięk a i także dodatkowe element jak dodatkowa pamięc RAM czy bateria do przechowania stanu gry pomiędzy sesjami.
+Konsola Game Boy została wydana w Japonii 21 kwietnia 1989 roku i od razu odniosła ogromny sukces komercyjny. W ciągu pierwszych dwóch lat sprzedały się ponad 20 milionów egzemplarzy, co czyniło ją jedną z najlepiej sprzedających się konsoli gier wideo w historii. W 1990 roku Game Boy została wydana na zachodzie i odniosła podobny sukces komercyjny. Konsola była dostępna w kilku różnych barwach i wersjach, co dodatkowo zwiększyło jej popularność. Gry były przechowywane na kartridżach "GamePak." które zawierały kod gry, grafiki i dźwięk a i także dodatkowe element jak dodatkowa pamięc RAM czy bateria do przechowania stanu gry pomiędzy sesjami. \cite{wikipedia-gameboy}
+
+
 
 Jednakże, kiedy Nintendo zaprzestała produkcji Game Boya, wiele gier zostało opracowanych tylko dla tej konsoli. Dzisiaj większość tych gier nie jest dostępna na żadnym innym platformie, a gracze muszą szukać innych rozwiązań.
 
@@ -82,9 +87,21 @@ Emulator Game Boya jest dla nich sposobem na grę w ich ulubione gry bez potrzeb
 \subsection{Specyfikacja techniczna}
 Nintendo Research And Development 1, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektowało 8-bitową konsolę Game Boya. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże `GamePak`. Zasilany był przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, umożliwił on bardziej tanie i długotrwałe życie baterii. `[Ref: https://en.wikipedia.org/wiki/Game\_Boy, po przetłumaczeniu]`
 \subsection{Procesor i SoC}
-Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. `[Źródło: https://gekkio.fi/files/gb-docs/gbctr.pdf]` . Procesor był mieszanką dwóch innych procesorów - 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 `[Źródło: copetti.org]`. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM). Dokładne specyfikacje procesora bedą opisane w dalszej części tego rozdziału.
+Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. `[Źródło: https://gekkio.fi/files/gb-docs/gbctr.pdf]` . Procesor był mieszanką dwóch innych procesorów - 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 \cite{copetti}. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM) jak i łączyła się z innymi kompomentami jak ekran, głośnik czy kontroler. 
+
+Procesor zawiera osiem 8-bitowych rejestrów: A,B,C,D,E,F,H,L. Rejestry mogą łączyć się w 16-bitowe rejestry: AF, BC, DE, HL . Rejestr F jest używany jako flagi procesora w wypadku operacji arymetycznych:
+\begin{itemize}
+	\item Bit 7 - Zero (Z), jeśli operacja zwróciła zero
+	\item Bit 6 -  Negacja (N), używana gdy ostatnia operacją była porównaniem bądź odejmowaniem
+	\item Bit 5 - Half Carry (H), jeśli doszło do przesunięcia na bicie 3
+	\item Bit 4 - Carry (C), jeśli doszło do przesunięcia na bicie 7
+\end{itemize} 
+
+
+
+
+\newpage
 \subsection{Płyta główna}
-	
 \begin{figure}[htbp]
 	\centering
 	\begin{minipage}{0.45\textwidth}
@@ -97,9 +114,10 @@ Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy pro
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{dmg_chart.png}
-		\caption{}
+		\caption{Schemat płyty głównej konsoli GameBoy}
 		\label{fig:chart_dmg}
 	\end{minipage}
+	\caption{Źródło: \cite{copetti}}
 \end{figure}
 
 \subsection{Rewizje}
@@ -179,19 +197,14 @@ Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy pro
 	
 	To change the spell check language, simply open the Overleaf menu at the top left of the editor window, scroll down to the spell check setting, and adjust accordingly.
 	
-	\subsection{How to add Citations and a References List}
-	
-	You can simply upload a \verb|.bib| file containing your BibTeX entries, created with a tool such as JabRef. You can then cite entries from it, like this: \cite{}. Just remember to specify a bibliography style, as well as the filename of the \verb|.bib|. You can find a \href{https://www.overleaf.com/help/97-how-to-include-a-bibliography-using-bibtex}{video tutorial here} to learn more about BibTeX.
-	
-	If you have an \href{https://www.overleaf.com/user/subscription/plans}{upgraded account}, you can also import your Mendeley or Zotero library directly as a \verb|.bib| file, via the upload menu in the file-tree.
 	
 	\subsection{Good luck!}
 	
 	We hope you find Overleaf useful, and do take a look at our \href{https://www.overleaf.com/learn}{help library} for more tutorials and user guides! Please also let us know if you have any feedback using the \textbf{Contact us} link at the bottom of the Overleaf menu --- or use the contact form at \url{https://www.overleaf.com/contact}.
 	
-	\bibliographystyle{alpha}
-	\bibliography{sample}
 	
-	\section{Bibliografia}
+
+	
+\printbibliography
 	
 \end{document}
