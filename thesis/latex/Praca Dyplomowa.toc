@@ -1,21 +1,49 @@
 \babel@toc {polish}{}\relax 
 \contentsline {section}{\numberline {1}Wstęp}{3}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Opis Problemu}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.1}Opis problemu}{3}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Emulatory}{3}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Założenia pracy}{3}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.3}Założenia i cel pracy}{3}{subsection.1.3}%
 \contentsline {subsection}{\numberline {1.4}Grupa docelowa}{4}{subsection.1.4}%
 \contentsline {section}{\numberline {2}Analiza architektury systemowej konsoli Game Boy}{4}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Specyfikacja techniczna}{4}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Procesor i SoC}{4}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Płyta główna}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Rewizje}{5}{subsection.2.4}%
-\contentsline {section}{\numberline {3}Some examples to get started}{5}{section.3}%
-\contentsline {subsection}{\numberline {3.1}How to create Sections and Subsections}{5}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}How to include Figures}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}How to add Tables}{5}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}How to add Comments and Track Changes}{6}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}How to add Lists}{6}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}How to write Mathematics}{6}{subsection.3.6}%
-\contentsline {subsection}{\numberline {3.7}How to change the margins and paper size}{6}{subsection.3.7}%
-\contentsline {subsection}{\numberline {3.8}How to change the document language and spell check settings}{6}{subsection.3.8}%
-\contentsline {subsection}{\numberline {3.9}Good luck!}{7}{subsection.3.9}%
+\contentsline {subsubsection}{\numberline {2.2.1}Model czasowy systemu}{4}{subsubsection.2.2.1}%
+\contentsline {paragraph}{Cykle maszynowe procesora}{4}{section*.2}%
+\contentsline {paragraph}{Synchronizacja z układem graficznym}{4}{section*.3}%
+\contentsline {paragraph}{System timerów sprzętowych}{5}{section*.4}%
+\contentsline {paragraph}{Znaczenie modelu czasowego}{5}{section*.5}%
+\contentsline {subsection}{\numberline {2.3}Zestaw Instrukcji}{5}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Instrukcje transferu danych}{5}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Instrukcje arytmetyczne}{5}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Instrukcje logiczne i bitowe}{7}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}Instrukcje przesunięć i rotacji}{7}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}Instrukcje sterowania przepływem programu}{7}{subsubsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.4}Mapowanie pamięci w konsoli Game Boy}{7}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Ogólny układ przestrzeni adresowej}{8}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Pamięć programu i bankowanie ROM}{8}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Pamięć wideo}{8}{subsubsection.2.4.3}%
+\contentsline {subsubsection}{\numberline {2.4.4}Pamięć robocza i obszar echo}{8}{subsubsection.2.4.4}%
+\contentsline {subsubsection}{\numberline {2.4.5}Mapowanie urządzeń wejścia/wyjścia}{8}{subsubsection.2.4.5}%
+\contentsline {subsubsection}{\numberline {2.4.6}Pamięć wysokiej prędkości}{8}{subsubsection.2.4.6}%
+\contentsline {subsubsection}{\numberline {2.4.7}Znaczenie architektury mapowania pamięci}{8}{subsubsection.2.4.7}%
+\contentsline {subsection}{\numberline {2.5}System przerwań w konsoli Game Boy}{9}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Źródła przerwań}{9}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Rejestry sterujące systemem przerwań}{9}{subsubsection.2.5.2}%
+\contentsline {subsubsection}{\numberline {2.5.3}Mechanizm obsługi przerwania}{9}{subsubsection.2.5.3}%
+\contentsline {subsubsection}{\numberline {2.5.4}Priorytety przerwań}{9}{subsubsection.2.5.4}%
+\contentsline {subsubsection}{\numberline {2.5.5}Rola systemu przerwań w architekturze konsoli}{10}{subsubsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.6}Płyta główna}{10}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Jednostka centralna}{10}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Pamięć operacyjna i pamięć wideo}{10}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {2.6.3}Układ graficzny}{11}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {2.6.4}Układ dźwiękowy}{11}{subsubsection.2.6.4}%
+\contentsline {subsubsection}{\numberline {2.6.5}Interfejs kartridża}{11}{subsubsection.2.6.5}%
+\contentsline {subsubsection}{\numberline {2.6.6}Układy wejścia i wyjścia}{11}{subsubsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.7}Kartridże systemu Game Boy}{11}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}Kartridże bez kontrolera banków pamięci (ROM Only)}{12}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}Kartridże z kontrolerem MBC1}{12}{subsubsection.2.7.2}%
+\contentsline {subsubsection}{\numberline {2.7.3}Kartridże z kontrolerem MBC2}{12}{subsubsection.2.7.3}%
+\contentsline {subsubsection}{\numberline {2.7.4}Kartridże z kontrolerem MBC3}{12}{subsubsection.2.7.4}%
+\contentsline {subsubsection}{\numberline {2.7.5}Kartridże z kontrolerem MBC5}{12}{subsubsection.2.7.5}%
+\contentsline {subsubsection}{\numberline {2.7.6}Kartridże specjalizowane}{12}{subsubsection.2.7.6}%
+\contentsline {subsubsection}{\numberline {2.7.7}Struktura fizyczna kartridża}{12}{subsubsection.2.7.7}%

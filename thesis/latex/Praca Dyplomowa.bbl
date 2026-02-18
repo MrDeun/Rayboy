@@ -1,0 +1,138 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global/global}
+    \entry{copetti}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=1130f1d684efdff4e2935356936df4b5}{%
+           family={Copetti},
+           familyi={C\bibinitperiod},
+           given={Rodrigo},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{fullhash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{fullhashraw}{1130f1d684efdff4e2935356936df4b5}
+      \strng{bibnamehash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{authorbibnamehash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{authornamehash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{authorfullhash}{1130f1d684efdff4e2935356936df4b5}
+      \strng{authorfullhashraw}{1130f1d684efdff4e2935356936df4b5}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Game Boy Architecture - A Practical Analysis}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.copetti.org/writings/consoles/game-boy/
+      \endverb
+      \verb{url}
+      \verb https://www.copetti.org/writings/consoles/game-boy/
+      \endverb
+    \endentry
+    \entry{wikipedia-gameboy}{online}{}{}
+      \list{organization}{1}{%
+        {Wikipedia}%
+      }
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labeltitlesource}{title}
+      \field{title}{Game Boy}
+      \field{urlday}{16}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://en.wikipedia.org/wiki/Game_Boy
+      \endverb
+      \verb{url}
+      \verb https://en.wikipedia.org/wiki/Game_Boy
+      \endverb
+    \endentry
+    \entry{opcodes}{online}{}{}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labeltitlesource}{title}
+      \field{title}{Game Boy Opcode Tables}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://gbdev.io/gb-opcodes/optables/
+      \endverb
+      \verb{url}
+      \verb https://gbdev.io/gb-opcodes/optables/
+      \endverb
+    \endentry
+    \entry{gbctr}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=824ee1420c118faa6211f225e0a278e8}{%
+           family={Gekkio},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{fullhash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{fullhashraw}{824ee1420c118faa6211f225e0a278e8}
+      \strng{bibnamehash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{authorbibnamehash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{authornamehash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{authorfullhash}{824ee1420c118faa6211f225e0a278e8}
+      \strng{authorfullhashraw}{824ee1420c118faa6211f225e0a278e8}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Game Boy: Complete Technical Reference}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://gekkio.fi/files/gb-docs/gbctr.pdf
+      \endverb
+      \verb{url}
+      \verb https://gekkio.fi/files/gb-docs/gbctr.pdf
+      \endverb
+    \endentry
+    \entry{pandocs}{online}{}{}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labeltitlesource}{title}
+      \field{title}{Pan Docs - Game Boy Technical Reference}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://gbdev.io/pandocs/
+      \endverb
+      \verb{url}
+      \verb https://gbdev.io/pandocs/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

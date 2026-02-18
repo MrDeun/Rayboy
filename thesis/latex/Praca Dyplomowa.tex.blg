@@ -1,0 +1,5 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'Praca Dyplomowa.tex.blg'
+[52] biber:342> INFO - === Wed Feb 18, 2026, 17:53:58
+[102] Utils.pm:479> ERROR - Cannot find 'Praca Dyplomowa.tex.bcf'!
+[102] Biber.pm:137> INFO - ERRORS: 1
