@@ -286,7 +286,7 @@ Konsola Game Boy obsługuje pięć podstawowych źródeł przerwań sprzętowych
 		4 & Joypad & Zmiana stanu kontrolera wejściowego \\
 		\hline
 	\end{tabular}
-	\caption{Źródła przerwań w konsoli Game Boy}
+	\caption{Źródła przerwań w konsoli Game Boy\cite{pandocs}}
 	\label{tab:gb_interrupts}
 \end{table}
 
@@ -333,17 +333,16 @@ Płyta główna konsoli Game Boy stanowi podstawowy element konstrukcyjny system
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{dmg_marked.png}
-		\caption{Zdjęcie płyty głównej oryginalnego GameBoy'a z opisami kompomentów}
+		\caption{Zdjęcie płyty głównej oryginalnego GameBoy'a z opisami kompomentów\cite{copetti}}
 		\label{fig:marked_dmg}
 	\end{minipage}
 	\hfill
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{dmg_chart.png}
-		\caption{Schemat płyty głównej konsoli GameBoy}
+		\caption{Schemat płyty głównej konsoli GameBoy\cite{copetti}}
 		\label{fig:chart_dmg}
 	\end{minipage}
-	\caption{Źródło: \cite{copetti}}
 \end{figure}
 
 \subsubsection{Jednostka centralna}
@@ -457,8 +456,197 @@ Oprócz standardowych kontrolerów banków pamięci produkowano kartridże wypos
 
 Typowy kartridż składa się z płytki drukowanej zawierającej układ ROM, opcjonalną pamięć RAM, kontroler banków pamięci oraz element podtrzymania zasilania pamięci zapisu. Komunikacja z konsolą odbywa się za pośrednictwem złącza krawędziowego, które zapewnia dostęp do magistrali adresowej, magistrali danych oraz linii sterujących.
 
+\section{Model działania systemu Game Boy}
+\subsection{Cykl pracy procesora}
 
+Procesor zastosowany w konsoli Game Boy jest 8-bitową jednostką opartą na zmodyfikowanej architekturze zbliżonej do Z80. Jego działanie jest determinowane przez cykl zegara systemowego oraz mechanizm wykonywania instrukcji w modelu sekwencyjnym. Zrozumienie cyklu pracy procesora jest kluczowe dla analizy działania całego systemu, ponieważ CPU koordynuje komunikację pomiędzy pamięcią, układem graficznym oraz urządzeniami wejścia/wyjścia.
 
+\subsubsection{Model cyklu rozkazowego}
+
+Podstawowy cykl pracy procesora można opisać jako powtarzającą się sekwencję trzech etapów:
+\begin{enumerate}
+	\item pobranie instrukcji z pamięci,
+	\item dekodowanie instrukcji,
+	\item wykonanie instrukcji.
+\end{enumerate}
+
+W pierwszym etapie procesor odczytuje kod operacji spod adresu wskazywanego przez licznik programu (PC). Następnie licznik programu zostaje inkrementowany, a pobrana wartość trafia do wewnętrznego rejestru instrukcji.
+
+W drugim etapie następuje interpretacja kodu operacji oraz ustalenie wymaganych operandów. Proces dekodowania determinuje, czy instrukcja wymaga dodatkowych danych z pamięci oraz jakie jednostki funkcjonalne procesora zostaną zaangażowane w jej wykonanie.
+
+Trzeci etap obejmuje właściwe wykonanie operacji arytmetycznej, logicznej lub sterującej. W zależności od typu instrukcji może to obejmować operacje na rejestrach, dostęp do pamięci lub zmianę przepływu sterowania programu.
+
+\subsubsection{Synchronizacja z zegarem systemowym}
+
+Procesor pracuje synchronicznie z zegarem systemowym, którego częstotliwość determinuje tempo wykonywania operacji. Każda instrukcja wymaga określonej liczby cykli zegara do wykonania. Czas realizacji instrukcji nie jest stały i zależy od jej złożoności oraz liczby operacji pamięciowych.
+
+Istotnym elementem synchronizacji jest współdzielenie magistrali danych z innymi komponentami systemu. Dostęp do pamięci jest realizowany w ściśle określonych momentach cyklu zegara, co zapewnia spójność transmisji danych pomiędzy CPU a pozostałymi układami.
+
+\subsubsection{Dostęp do pamięci i operacje magistrali}
+
+Procesor komunikuje się z pamięcią poprzez magistralę adresową i magistralę danych. W trakcie cyklu rozkazowego mogą wystąpić operacje odczytu lub zapisu pamięci. Operacje te są wykonywane sekwencyjnie i blokują dostęp do magistrali dla innych komponentów na czas trwania transferu.
+
+Mapowanie pamięci odgrywa istotną rolę w cyklu pracy procesora, ponieważ różne zakresy adresowe odpowiadają różnym typom zasobów systemowych, takim jak pamięć operacyjna, pamięć wideo oraz rejestry sterujące urządzeń peryferyjnych.
+
+\subsubsection{Obsługa przerwań}
+
+Cykl pracy procesora może zostać przerwany przez mechanizm przerwań sprzętowych. Wystąpienie przerwania powoduje czasowe wstrzymanie wykonywania bieżącego programu oraz zapis aktualnego stanu procesora na stosie.
+
+Po zaakceptowaniu przerwania procesor przechodzi do procedury obsługi przerwania wskazanej w tablicy wektorów przerwań. Po zakończeniu obsługi następuje przywrócenie poprzedniego stanu procesora i kontynuacja wykonywania programu od miejsca przerwania.
+
+\subsubsection{Znaczenie cyklu pracy dla działania systemu}
+
+Deterministyczny charakter cyklu pracy procesora umożliwia precyzyjną synchronizację z układem graficznym oraz pozostałymi komponentami systemu. W szczególności liczba cykli zegara zużywana przez instrukcje wpływa bezpośrednio na generowanie obrazu oraz obsługę zdarzeń wejścia/wyjścia.
+
+Analiza cyklu pracy procesora stanowi podstawę do modelowania działania systemu oraz jest niezbędna przy implementacji oprogramowania emulującego działanie konsoli.
+\subsection{Magistrala pamięciowa i charakterystyka działania pamięci}
+
+System pamięci konsoli Game Boy opiera się na wspólnej przestrzeni adresowej obsługiwanej przez procesor oraz na zestawie wyspecjalizowanych obszarów pamięci o odmiennych funkcjach. Komunikacja pomiędzy jednostką centralną a zasobami pamięciowymi realizowana jest za pomocą magistrali adresowej, magistrali danych oraz sygnałów sterujących, które determinują kierunek i tryb transferu informacji.
+
+\subsubsection{Organizacja magistrali pamięciowej}
+
+Magistrala adresowa umożliwia wskazanie konkretnej komórki pamięci w przestrzeni adresowej systemu. Procesor generuje adres, który identyfikuje zasób, z którego ma nastąpić odczyt danych lub do którego ma zostać wykonany zapis. Magistrala danych służy do przesyłania właściwych informacji pomiędzy procesorem a wskazanym komponentem systemu.
+
+Operacje pamięciowe są synchronizowane z zegarem systemowym. W każdym cyklu dostępu do pamięci następuje ustalenie adresu, aktywacja sygnału sterującego oraz transfer danych. Ze względu na współdzielenie magistrali przez różne komponenty systemu dostęp do niej jest ściśle kontrolowany, co zapobiega konfliktom transmisji.
+
+\subsubsection{Mapowanie przestrzeni adresowej}
+
+Przestrzeń adresowa systemu jest podzielona na logiczne segmenty odpowiadające różnym typom zasobów sprzętowych. Poszczególne zakresy adresów są przypisane do pamięci programu, pamięci operacyjnej, pamięci wideo oraz rejestrów sterujących urządzeń peryferyjnych.
+
+Mapowanie pamięci pełni funkcję mechanizmu integrującego różnorodne komponenty sprzętowe w jednolitą przestrzeń adresową. Dzięki temu procesor może komunikować się z układami systemowymi za pomocą standardowych operacji odczytu i zapisu, bez konieczności stosowania odrębnych instrukcji wejścia/wyjścia.
+
+\subsubsection{Rodzaje pamięci w systemie}
+
+W architekturze systemu można wyróżnić kilka podstawowych typów pamięci:
+
+\begin{itemize}
+	\item pamięć programu (ROM), zawierająca kod wykonywalny oraz dane statyczne,
+	\item pamięć operacyjna (RAM), wykorzystywana do przechowywania danych tymczasowych,
+	\item pamięć wideo (VRAM), przeznaczona do przechowywania danych graficznych,
+	\item rejestry urządzeń peryferyjnych odwzorowane w przestrzeni adresowej.
+\end{itemize}
+
+Każdy z wymienionych typów pamięci charakteryzuje się odmiennym przeznaczeniem funkcjonalnym oraz sposobem dostępu. W szczególności pamięć wideo jest współdzielona z układem graficznym, co wprowadza ograniczenia czasowe w dostępie do niej przez procesor.
+
+\subsubsection{Charakterystyka operacji pamięciowych}
+
+Operacje pamięciowe wykonywane przez procesor obejmują odczyt danych, zapis danych oraz transfery blokowe realizowane sekwencyjnie. Czas trwania operacji zależy od rodzaju pamięci oraz liczby cykli zegara wymaganych do realizacji transferu.
+
+Dostęp do pamięci może być ograniczony przez stan systemu, w szczególności przez aktywność układów współdzielących magistralę. W określonych fazach pracy systemu wybrane obszary pamięci mogą być czasowo niedostępne dla procesora lub dostępne jedynie w określonych warunkach synchronizacji.
+
+\subsubsection{Rola systemu pamięci w działaniu konsoli}
+
+Architektura pamięci stanowi podstawę wymiany informacji pomiędzy wszystkimi komponentami systemu. Determinuje ona sposób wykonywania programu, obsługi grafiki oraz komunikacji z urządzeniami wejścia/wyjścia.
+
+Jednolita przestrzeń adresowa oraz deterministyczny model dostępu do pamięci umożliwiają przewidywalne działanie systemu w czasie rzeczywistym. Właściwości te mają istotne znaczenie zarówno dla analizy architektury sprzętowej, jak i dla implementacji oprogramowania odwzorowującego działanie systemu.
+\subsection{Generowanie klatki obrazu}
+
+Generowanie obrazu w konsoli Game Boy jest realizowane przez układ graficzny (PPU), który współpracuje z pamięcią wideo oraz pamięcią atrybutów obiektów. Proces ten przebiega cyklicznie i jest ściśle zsynchronizowany z zegarem systemowym oraz działaniem procesora. Obraz powstaje poprzez sekwencyjne renderowanie tła, a następnie nakładanie obiektów ruchomych zapisanych w pamięci OAM.
+
+\subsubsection{Format zapisu grafiki w pamięci VRAM}
+
+Podstawową jednostką reprezentacji obrazu w systemie jest tzw. kafel (ang. tile). Każdy kafel reprezentuje fragment obrazu o wymiarach 8×8 pikseli. Dane kafli przechowywane są w pamięci wideo (VRAM) w postaci uporządkowanej tablicy bajtów.
+
+Każdy wiersz kafla kodowany jest przy użyciu dwóch bajtów, które reprezentują dwubitową informację o kolorze każdego piksela w wierszu. Pierwszy bajt zawiera najmniej znaczące bity wartości koloru, natomiast drugi bajt zawiera bity najbardziej znaczące. Odczyt odpowiadających sobie bitów z obu bajtów pozwala określić indeks koloru dla pojedynczego piksela.
+
+Układ graficzny interpretuje dane kafli na podstawie mapy tła, która przechowuje indeksy kafli oraz ich rozmieszczenie na ekranie. Dzięki temu możliwe jest wielokrotne wykorzystanie tych samych danych graficznych w różnych miejscach obrazu.
+
+\subsubsection{Renderowanie tła}
+
+Proces generowania klatki rozpoczyna się od renderowania tła. Układ graficzny przetwarza mapę tła linia po linii, odczytując odpowiednie indeksy kafli oraz ich dane z pamięci VRAM. Dla każdej linii obrazu wyznaczany jest odpowiedni fragment kafla, który następnie przekształcany jest w wartości kolorów pikseli.
+
+Renderowanie odbywa się w sposób deterministyczny i jest zsynchronizowane z aktualną pozycją skanowania ekranu. W wyniku tego procesu powstaje podstawowa warstwa obrazu, która stanowi bazę dla dalszego etapu renderowania.
+
+\subsubsection{Pamięć OAM i reprezentacja obiektów}
+
+OAM (Object Attribute Memory) jest wyspecjalizowanym obszarem pamięci przeznaczonym do przechowywania informacji o obiektach ruchomych, określanych jako sprite'y. Pamięć ta zawiera zestaw rekordów opisujących właściwości graficzne oraz położenie obiektów wyświetlanych na ekranie.
+
+Każdy wpis w pamięci OAM zawiera:
+\begin{itemize}
+	\item współrzędną pionową obiektu na ekranie,
+	\item współrzędną poziomą obiektu,
+	\item indeks kafla opisującego grafikę obiektu,
+	\item zestaw atrybutów określających sposób renderowania.
+\end{itemize}
+
+Atrybuty obiektu mogą obejmować informacje o priorytecie wyświetlania, odbiciu lustrzanym oraz wyborze palety kolorów. Układ graficzny odczytuje zawartość pamięci OAM podczas procesu generowania obrazu i wykorzystuje ją do nałożenia obiektów na wcześniej wyrenderowane tło.
+
+\subsubsection{Renderowanie obiektów}
+
+Po wygenerowaniu warstwy tła układ graficzny przystępuje do renderowania obiektów zapisanych w pamięci OAM. Dla każdej linii obrazu wybierane są obiekty znajdujące się w jej obszarze, a następnie ich dane graficzne są pobierane z pamięci VRAM.
+
+Renderowanie obiektów polega na nałożeniu ich pikseli na istniejący obraz tła zgodnie z regułami priorytetu. W przypadku kolizji pikseli o różnych źródłach decyzja o widoczności zależy od atrybutów obiektu oraz wartości koloru tła.
+
+\subsubsection{DMA i bezpośredni transfer danych do OAM}
+
+W celu usprawnienia transferu danych do pamięci OAM system wykorzystuje mechanizm DMA (Direct Memory Access). Mechanizm ten umożliwia bezpośrednie kopiowanie bloków danych z określonego obszaru pamięci do pamięci OAM bez konieczności wykonywania instrukcji kopiowania przez procesor.
+
+Transfer DMA polega na automatycznym odczycie kolejnych bajtów ze źródłowego obszaru pamięci oraz ich zapisie do kolejnych komórek pamięci OAM. W trakcie operacji DMA procesor ma ograniczony dostęp do magistrali pamięci, co zapewnia spójność przesyłanych danych.
+
+Zastosowanie mechanizmu bezpośredniego transferu bajtów umożliwia szybkie aktualizowanie danych obiektów, co jest szczególnie istotne w systemach czasu rzeczywistego, gdzie konieczna jest synchronizacja zmian graficznych z generowaniem kolejnych klatek obrazu.
+
+\subsubsection{Znaczenie procesu generowania obrazu}
+
+Proces generowania klatki obrazu stanowi wynik ścisłej współpracy pamięci wideo, pamięci OAM oraz układu graficznego. Deterministyczny charakter renderowania oraz uporządkowany dostęp do danych umożliwiają przewidywalne odwzorowanie stanu systemu graficznego w każdej chwili pracy konsoli.
+
+Zrozumienie sposobu generowania obrazu ma istotne znaczenie dla analizy architektury systemu oraz implementacji oprogramowania emulującego działanie układu graficznego.
+\subsection{System przerwań}
+
+Mechanizm przerwań w konsoli Game Boy umożliwia asynchroniczną reakcję procesora na zdarzenia sprzętowe zachodzące w systemie. Zamiast ciągłego odpytywania stanu urządzeń peryferyjnych, procesor może wykonywać program główny, a w momencie wystąpienia określonego zdarzenia przejść do dedykowanej procedury obsługi przerwania. Rozwiązanie to zwiększa efektywność wykorzystania czasu procesora oraz zapewnia deterministyczną obsługę zdarzeń czasowych.
+
+\subsubsection{Warunki występowania przerwań}
+
+Przerwanie może zostać wygenerowane przez układ sprzętowy po spełnieniu określonego warunku logicznego, takiego jak zakończenie operacji wejścia/wyjścia, osiągnięcie zadanego stanu licznika czasowego lub zmiana stanu kontrolera wejściowego. Aby przerwanie zostało obsłużone, muszą zostać spełnione trzy warunki:
+\begin{enumerate}
+	\item źródło przerwania zgłosi żądanie,
+	\item odpowiedni typ przerwania jest odblokowany w rejestrze maskującym,
+	\item globalny mechanizm obsługi przerwań w procesorze jest aktywny.
+\end{enumerate}
+
+Jeżeli wszystkie warunki są spełnione, procesor kończy wykonywanie bieżącej instrukcji, zapisuje aktualny stan wykonania programu oraz przechodzi do procedury obsługi przerwania.
+
+\subsubsection{Rodzaje przerwań}
+
+System przewiduje zestaw sprzętowych źródeł przerwań odpowiadających kluczowym funkcjom konsoli:
+\begin{itemize}
+	\item przerwanie synchronizacji pionowej obrazu (V-Blank),
+	\item przerwanie związane ze stanem układu graficznego (LCD STAT),
+	\item przerwanie licznika czasowego (Timer),
+	\item przerwanie zakończenia transmisji szeregowej,
+	\item przerwanie kontrolera wejścia użytkownika (Joypad).
+\end{itemize}
+
+Każdy typ przerwania posiada przypisany wektor, czyli stały adres w pamięci programu, pod którym rozpoczyna się procedura jego obsługi. Priorytet przerwań jest ustalony sprzętowo i determinuje kolejność ich obsługi w przypadku jednoczesnego wystąpienia kilku zdarzeń.
+
+\subsubsection{Przebieg obsługi przerwania}
+
+Obsługa przerwania przebiega według ściśle określonej sekwencji działań wykonywanych przez procesor:
+\begin{enumerate}
+	\item zakończenie wykonywania bieżącej instrukcji,
+	\item zapis aktualnej wartości licznika programu na stosie,
+	\item czasowe zablokowanie dalszych przerwań,
+	\item przejście do adresu procedury obsługi przerwania,
+	\item wykonanie kodu obsługi zdarzenia,
+	\item przywrócenie poprzedniego stanu programu i kontynuacja wykonania.
+\end{enumerate}
+
+Zapis stanu programu na stosie umożliwia powrót do przerwanego miejsca po zakończeniu obsługi. Instrukcja powrotu z przerwania przywraca licznik programu oraz ponownie aktywuje globalny mechanizm przerwań.
+
+\subsubsection{Funkcje realizowane przez przerwania}
+
+Przerwania pełnią w systemie rolę mechanizmu synchronizującego działanie procesora z procesami zachodzącymi w układach peryferyjnych. Do najważniejszych funkcji realizowanych za ich pomocą należą:
+\begin{itemize}
+	\item synchronizacja zmian graficznych z cyklem generowania obrazu,
+	\item odmierzanie czasu oraz generowanie zdarzeń okresowych,
+	\item obsługa transmisji danych pomiędzy komponentami systemu,
+	\item reagowanie na działania użytkownika.
+\end{itemize}
+
+W szczególności przerwanie synchronizacji pionowej umożliwia bezpieczną aktualizację danych graficznych w pamięci wideo w momentach, gdy układ graficzny nie odczytuje danych do generowania obrazu. Mechanizm przerwań zapewnia tym samym spójność danych oraz stabilność działania systemu w czasie rzeczywistym.
+
+\subsubsection{Znaczenie mechanizmu przerwań}
+
+Zastosowanie przerwań pozwala na efektywne zarządzanie współbieżnymi zdarzeniami w systemie o ograniczonych zasobach sprzętowych. Deterministyczna obsługa zdarzeń oraz priorytetyzacja źródeł przerwań stanowią podstawę prawidłowego działania konsoli oraz umożliwiają implementację oprogramowania wymagającego precyzyjnej synchronizacji czasowej.
 \printbibliography
 	
 

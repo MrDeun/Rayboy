@@ -8,7 +8,7 @@ static uint32_t colors_defaults[4];
 lcd_context *lcd_get_context() { return &ctx; }
 void lcd_init() {
 
-  bool is_dmg = false; // Emulate display to fit original LCD or Pocket/Light
+  bool is_dmg = true; // Emulate display to fit original LCD or Pocket/Light
 
   ctx.lcdc = 0;
   ctx.scroll_x = 0;

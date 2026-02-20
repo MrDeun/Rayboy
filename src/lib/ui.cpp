@@ -87,7 +87,24 @@ void RayboyUI::shutdown() {
   UnloadImage(screen_image);
   CloseWindow();
 }
+void RayboyUI::drawInputViewer() {
+    auto inputPanel_x = screen_x;
+    auto inputPanel_y = screen_y + screen_image.height + 300;
+    auto inputPanel_height = 400;
+    auto inputPanel_width = screen_image.width * SCALE;
 
+  drawPanel(inputPanel_x, inputPanel_y,
+            inputPanel_width, inputPanel_height, "Input Viewer");
+  DrawText(fmt::format("START: {}",local_state.START ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 40, 32, WHITE);
+  DrawText(fmt::format("SELECT: {}",local_state.SELECT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 80, 32, WHITE);
+  DrawText(fmt::format("A: {}",local_state.A ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 120, 32, WHITE);
+  DrawText(fmt::format("B: {}",local_state.B ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 160, 32, WHITE);
+  DrawText(fmt::format("UP: {}",local_state.UP ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 200, 32, WHITE);
+  DrawText(fmt::format("DOWN: {}",local_state.DOWN ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 240, 32, WHITE);
+  DrawText(fmt::format("LEFT: {}",local_state.LEFT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 280, 32, WHITE);
+  DrawText(fmt::format("RIGHT: {}",local_state.RIGHT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 320, 32, WHITE);
+
+}
 void RayboyUI::handleInput() {
   if (IsKeyPressed(KEY_SPACE)) {
     bool current = shared->paused.load(std::memory_order_acquire);
@@ -116,6 +133,8 @@ void RayboyUI::handleInput() {
   next->DOWN = IsKeyDown(KEY_DOWN);
   next->LEFT = IsKeyDown(KEY_LEFT);
   next->RIGHT = IsKeyDown(KEY_RIGHT);
+
+  local_state = *next;
   gamepad_swap_buffers();
 }
 
@@ -349,7 +368,7 @@ void RayboyUI::draw() {
 
   // Draw main screen (right side)
   drawScreen();
-
+  drawInputViewer();
   // Draw bottom status bar
   drawStatusBar();
 

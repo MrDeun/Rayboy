@@ -1,14 +1,14 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Praca Dyplomowa.blg'
-[50] biber:342> INFO - === Wed Feb 18, 2026, 19:49:14
-[60] Biber.pm:421> INFO - Reading 'Praca Dyplomowa.bcf'
-[102] Biber.pm:1002> INFO - Found 5 citekeys in bib section 0
-[109] Biber.pm:4487> INFO - Processing section 0
-[115] Biber.pm:4678> INFO - Looking for bibtex file 'bibblo.bib' for section 0
-[115] bibtex.pm:1713> INFO - LaTeX decoding ...
-[118] bibtex.pm:1519> INFO - Found BibTeX data source 'bibblo.bib'
-[147] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'variable = shifted' with 'variable = non-ignorable'
-[147] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[147] Biber.pm:4307> INFO - Sorting list 'nty/global//global/global/global' of type 'entry' with template 'nty' and locale 'pl-PL'
-[152] bbl.pm:676> INFO - Writing 'Praca Dyplomowa.bbl' with encoding 'UTF-8'
-[152] bbl.pm:779> INFO - Output to Praca Dyplomowa.bbl
+[54] biber:342> INFO - === Fri Feb 20, 2026, 19:40:22
+[66] Biber.pm:421> INFO - Reading 'Praca Dyplomowa.bcf'
+[110] Biber.pm:1002> INFO - Found 5 citekeys in bib section 0
+[118] Biber.pm:4487> INFO - Processing section 0
+[124] Biber.pm:4678> INFO - Looking for bibtex file 'bibblo.bib' for section 0
+[125] bibtex.pm:1713> INFO - LaTeX decoding ...
+[127] bibtex.pm:1519> INFO - Found BibTeX data source 'bibblo.bib'
+[160] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'variable = shifted' with 'variable = non-ignorable'
+[160] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[160] Biber.pm:4307> INFO - Sorting list 'nty/global//global/global/global' of type 'entry' with template 'nty' and locale 'pl-PL'
+[165] bbl.pm:676> INFO - Writing 'Praca Dyplomowa.bbl' with encoding 'UTF-8'
+[166] bbl.pm:779> INFO - Output to Praca Dyplomowa.bbl

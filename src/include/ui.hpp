@@ -1,6 +1,7 @@
 #pragma once
 
 #include "all.hpp"
+#include "gamepad.hpp"
 #include "raylib.h"
 #include <array>
 #include <cstdint>
@@ -28,7 +29,7 @@ public:
 private:
   EmulatorShared *shared = nullptr;
   bool should_exit_flag = false;
-
+  gamepad_state local_state{};
   // Display constants
   static constexpr int SCALE = 3;
   static constexpr int TILE_SIZE = 8;
@@ -81,6 +82,7 @@ private:
   void renderTile(const uint8_t *tile_data, int tile_num, int x, int y);
   void drawStatsPanel();
   void drawTileViewer();
+  void drawInputViewer();
   void drawHelpOverlay();
   void drawStatusBar();
 
