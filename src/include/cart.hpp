@@ -1,6 +1,6 @@
 #pragma once
 #include "common.hpp"
-typedef struct {
+struct rom_header {
     uint8_t entry[4];
     uint8_t nintendo_logo[0x30];
 
@@ -15,7 +15,7 @@ typedef struct {
     uint8_t version;
     uint8_t checksum;
     uint16_t global_checksum;
-} rom_header;
+};
 
 bool cart_load(const std::string& card);
 rom_header* getROMHeader();

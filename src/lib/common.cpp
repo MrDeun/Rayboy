@@ -5,7 +5,7 @@
 #include <cstdint>
 
 void ERROR(std::string err) {
-  fmt::println("FATAL ERROR: {} (you fucked up)", err);
+  fmt::println("FATAL ERROR: {}", err);
   exit(-1);
 }
 

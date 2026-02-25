@@ -95,14 +95,14 @@ void RayboyUI::drawInputViewer() {
 
   drawPanel(inputPanel_x, inputPanel_y,
             inputPanel_width, inputPanel_height, "Input Viewer");
-  DrawText(fmt::format("START: {}",local_state.START ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 40, 32, WHITE);
-  DrawText(fmt::format("SELECT: {}",local_state.SELECT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 80, 32, WHITE);
-  DrawText(fmt::format("A: {}",local_state.A ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 120, 32, WHITE);
-  DrawText(fmt::format("B: {}",local_state.B ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 160, 32, WHITE);
-  DrawText(fmt::format("UP: {}",local_state.UP ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 200, 32, WHITE);
-  DrawText(fmt::format("DOWN: {}",local_state.DOWN ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 240, 32, WHITE);
-  DrawText(fmt::format("LEFT: {}",local_state.LEFT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 280, 32, WHITE);
-  DrawText(fmt::format("RIGHT: {}",local_state.RIGHT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 320, 32, WHITE);
+  DrawText(fmt::format("START: {}",local_state.START ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 40, 32, TEXT_COLOR);
+  DrawText(fmt::format("SELECT: {}",local_state.SELECT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 80, 32, TEXT_COLOR);
+  DrawText(fmt::format("A: {}",local_state.A ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 120, 32, TEXT_COLOR);
+  DrawText(fmt::format("B: {}",local_state.B ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 160, 32, TEXT_COLOR);
+  DrawText(fmt::format("UP: {}",local_state.UP ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 200, 32, TEXT_COLOR);
+  DrawText(fmt::format("DOWN: {}",local_state.DOWN ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 240, 32, TEXT_COLOR);
+  DrawText(fmt::format("LEFT: {}",local_state.LEFT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 280, 32, TEXT_COLOR);
+  DrawText(fmt::format("RIGHT: {}",local_state.RIGHT ? "true" : "false").c_str(), inputPanel_x + 10, inputPanel_y + 320, 32, TEXT_COLOR);
 
 }
 void RayboyUI::handleInput() {
@@ -198,7 +198,7 @@ void RayboyUI::drawPanel(int x, int y, int width, int height,
 
   // Title bar
   DrawRectangle(x, y, width, 30, ACCENT_COLOR);
-  DrawText(title, x + 10, y + 8, 14, WHITE);
+  DrawText(title, x + 10, y + 8, 14, TEXT_COLOR);
 }
 
 void RayboyUI::drawButton(int x, int y, int width, int height, const char *text,
@@ -320,7 +320,7 @@ void RayboyUI::drawHelpOverlay() {
 
   // Help panel
   int help_width = 400;
-  int help_height = 300;
+  int help_height = 600;
   int help_x = (window_width - help_width) / 2;
   int help_y = (window_height - help_height) / 2;
 
@@ -335,11 +335,15 @@ void RayboyUI::drawHelpOverlay() {
                              "F1        - Toggle tile viewer",
                              "F2        - Toggle statistics panel",
                              "H         - Toggle this help screen",
-                             "ESC       - Exit emulator",
+                             "Z       - A Button",
+                             "X       - B Button",
+                             "Arrow Keys       - D-Pad",
+                             "Enter       - Start button",
+                             "Right Shift       - Select button",
                              "",
                              "Press H to close this help screen"};
 
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < 13; i++) {
     int font_size = (i == 0 || i == 8) ? 14 : 12;
     Color color = (i == 0) ? ACCENT_COLOR : TEXT_COLOR;
     DrawText(help_text[i], help_x + 20, text_y, font_size, color);

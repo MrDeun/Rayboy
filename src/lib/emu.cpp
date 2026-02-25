@@ -4,15 +4,9 @@
 #include <print>
 
 EmulatorShared* g_shared;
-
 EmulatorShared* get_shared_emulator_state(){
     return g_shared;
 }
-
-
-
-
-
 
 int emu_run(int argc, char **argv) {
     if (argc < 2) {
@@ -27,9 +21,9 @@ int emu_run(int argc, char **argv) {
     
     EmulatorShared shared;
     RayboyUI ui;
-    ui.setup(&shared);
     g_shared = &shared;
-    std::thread cpu_thread(cpu_run_threaded, &shared);
+    ui.setup(g_shared);
+    std::thread cpu_thread(cpu_run_threaded, g_shared);
     
     while (!ui.shouldExit()) {
         ui.update();
