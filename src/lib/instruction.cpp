@@ -1,4 +1,6 @@
-#include "../include/all.hpp"
+#include "../include/instruction.hpp"
+#include "../include/cpu.hpp"
+
 
 #include <cstdint>
 

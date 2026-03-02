@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../include/all.hpp"
+#include "../include/bus.hpp"
+
+#include "fmt/core.h"
 #include <cstdint>
 #include <iostream>
 #include <format>

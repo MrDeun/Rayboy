@@ -1,4 +1,6 @@
-#include "../include/all.hpp"
+#include "../include/timer.hpp"
+#include "../include/interupt.hpp"
+
 
 static timer_context ctx = {0};
 timer_context *timer_get_context() { return &ctx; }

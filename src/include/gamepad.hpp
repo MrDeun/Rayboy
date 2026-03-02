@@ -1,6 +1,5 @@
 // gamepad.hpp
 #pragma once
-#include "all.hpp"
 #include <atomic>
 
 struct gamepad_state {

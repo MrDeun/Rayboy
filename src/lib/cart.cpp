@@ -14,7 +14,7 @@ struct cart_context {
 };
 
 static cart_context ctx;
-rom_header* getROMHeader(){
+rom_header* get_rom_header(){
   return ctx.header;
 }
 const std::map<uint8_t, const std::string> ROM_TYPES = {

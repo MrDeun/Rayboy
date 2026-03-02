@@ -1,4 +1,10 @@
-#include "../include/all.hpp"
+#include "../include/ppu.hpp"
+#include "../include/emu.hpp"
+#include "../include/ppu_state_machine.hpp"
+#include "../include/lcd.hpp"
+
+
+
 #include <atomic>
 #include <cstddef>
 

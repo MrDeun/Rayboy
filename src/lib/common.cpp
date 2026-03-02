@@ -1,4 +1,4 @@
-#include "../include/all.hpp"
+#include "../include/common.hpp"
 #include "raylib.h"
 #include <chrono>
 #include <thread>

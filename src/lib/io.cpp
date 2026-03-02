@@ -1,4 +1,10 @@
-#include "../include/all.hpp"
+#include "../include/gamepad.hpp"
+#include "../include/timer.hpp"
+#include "../include/interupt.hpp"
+#include "../include/lcd.hpp"
+
+
+
 #include "fmt/core.h"
 
 #include <cstdint>

@@ -1,6 +1,12 @@
-#include "../include/all.hpp"
+#include "../include/cpu.hpp"
+#include "../include/interupt.hpp"
+#include "../include/ram.hpp"
+#include "../include/timer.hpp"
+#include "../include/dma.hpp"
+#include "../include/ppu.hpp"
+#include "../include/dbg.hpp"
 
-#include "raylib.h"
+
 #include <cstdint>
 #include <thread>
 
@@ -58,7 +64,7 @@ void emu_cycles(int cycles) {
   }
 }
 
-std::string currentCPUState() {
+std::string current_cpu_state() {
   auto flags = fmt::format(
       "{:c}{:c}{:c}{:c}", ctx.regs.F & (1 << 7) ? 'Z' : '-',
       ctx.regs.F & (1 << 6) ? 'N' : '-', ctx.regs.F & (1 << 5) ? 'H' : '-',
@@ -75,9 +81,9 @@ void cpu_run_threaded(EmulatorShared* shared) {
     timer_init();
     cpu_init();
     ppu_init();
-    
+
     shared->running.store(true, std::memory_order_release);
-    
+
     // Stats Tracking
     auto last_stats_update = std::chrono::steady_clock::now();
     uint64_t last_cycle_count = ctx.ticks;
@@ -88,7 +94,7 @@ void cpu_run_threaded(EmulatorShared* shared) {
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
             continue;
         }
-        
+
         // 1. Execute step and track instruction count
         if (!cpu_step()) {
             break;
@@ -101,15 +107,15 @@ void cpu_run_threaded(EmulatorShared* shared) {
 
         if (elapsed_ms >= 1000) { // Update every second
             uint64_t current_cycles = ctx.ticks;
-            
+
             // Calculate deltas
             uint64_t delta_cycles = current_cycles - last_cycle_count;
-            uint64_t delta_inst = last_instruction_count; 
+            uint64_t delta_inst = last_instruction_count;
             uint64_t delta_us = std::chrono::duration_cast<std::chrono::microseconds>(now - last_stats_update).count();
 
             // 3. Write to the double-buffered stats
             int w_idx = shared->cpu_stats_write_index.load(std::memory_order_relaxed);
-            
+
             shared->cpu_stats[w_idx].cycles = delta_cycles;
             shared->cpu_stats[w_idx].instructions = delta_inst;
             shared->cpu_stats[w_idx].time_us = delta_us;
@@ -123,12 +129,12 @@ void cpu_run_threaded(EmulatorShared* shared) {
             last_stats_update = now;
             last_cycle_count = current_cycles;
             last_instruction_count = 0;
-            
+
             // Also update the legacy FPS for compatibility
             shared->fps.store(shared->frame_count.exchange(0), std::memory_order_relaxed);
         }
     }
-    
+
     shared->running.store(false, std::memory_order_release);
 }
 uint8_t cpu_get_int_flags() { return ctx.int_flags; }

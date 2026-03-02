@@ -1,5 +1,5 @@
 // gamepad.cpp
-#include "../include/all.hpp"
+#include "../include/gamepad.hpp"
 #include <cstdint>
 #include <atomic>
 
@@ -47,22 +47,22 @@ void gamepad_swap_buffers() {
 uint8_t gamepad_get_output() {
     int idx = ctx.read_index.load(std::memory_order_acquire);
     gamepad_state* state = &ctx.buffers[idx];
-    
+
     uint8_t res = 0xCF;
-    
+
     if (!gamepad_button_select()) {
         if (state->START) res &= ~(1 << 3);
-        else if (state->SELECT) res &= ~(1 << 2);
-        else if (state->B) res &= ~(1 << 1);
-        else if (state->A) res &= ~(1 << 0);
+         if (state->SELECT) res &= ~(1 << 2);
+         if (state->B) res &= ~(1 << 1);
+         if (state->A) res &= ~(1 << 0);
     }
-    
+
     if (!gamepad_direction_select()) {
         if (state->DOWN) res &= ~(1 << 3);
-        else if (state->UP) res &= ~(1 << 2);
-        else if (state->LEFT) res &= ~(1 << 1);
-        else if (state->RIGHT) res &= ~(1 << 0);
+        if (state->UP) res &= ~(1 << 2);
+         if (state->LEFT) res &= ~(1 << 1);
+         if (state->RIGHT) res &= ~(1 << 0);
     }
-    
+
     return res;
 }

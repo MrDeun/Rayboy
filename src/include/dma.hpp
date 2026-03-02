@@ -1,7 +1,6 @@
 #pragma once
 
-#include "all.hpp"
-
+#include "common.hpp"
 void dma_start(uint8_t start);
 void dma_tick();
 

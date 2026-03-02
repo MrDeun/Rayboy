@@ -1,5 +1,5 @@
 #pragma once
-#include "all.hpp"
+#include "cpu.hpp"
 enum interrupt_type {
     IT_VBLANK = 1,
     IT_LCD_STAT = 2,

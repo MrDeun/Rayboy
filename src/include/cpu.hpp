@@ -15,32 +15,7 @@ struct cpu_registers {
     uint8_t L;
     uint16_t PC;
     uint16_t SP;
-} ;
-// namespace Rayboy {
-// class CPU {
-//   private:
-//     cpu_registers m_regs;
-//     uint32_t m_ticks;
-    
-//     uint16_t m_fetched_data;
-//     uint16_t mem_destination;
-//     bool destination_is_mem;
-//     uint8_t m_op_code;
-//     instruction* cur_instruction;
-
-//     bool int_master_enabled;
-//     bool enabling_ime;
-//     bool halted;
-//     bool paused;
-//     bool running;
-
-//     uint8_t int_flags;
-//     uint8_t ie_register;
-//   public:
-//     cpu_registers* getRegs() {return &m_regs;}
-//     void setIERegister(uint8_t value) {ie_register = value;}
-// };
-// }
+};
 
 
 struct cpu_context {
@@ -72,7 +47,7 @@ IN_PROC inst_get_processor(in_type type);
 #define CPU_FLAG_H BIT_GET(ctx->regs.F, 5)
 #define CPU_FLAG_C BIT_GET(ctx->regs.F, 4)
 
-std::string currentCPUState();
+std::string current_cpu_state();
 
 cpu_registers* cpu_get_regs();
 

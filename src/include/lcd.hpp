@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-
+#include "common.hpp"
 struct lcd_context {
   uint8_t lcdc;
   uint8_t lcds;

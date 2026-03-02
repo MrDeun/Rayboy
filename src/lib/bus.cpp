@@ -1,4 +1,14 @@
-#include "../include/all.hpp"
+#include "../include/bus.hpp"
+#include "../include/ppu.hpp"
+#include "../include/cart.hpp"
+#include "../include/ram.hpp"
+#include "../include/ppu.hpp"
+#include "../include/lcd.hpp"
+#include "../include/dma.hpp"
+#include "../include/cpu.hpp"
+#include "../include/io.hpp"
+
+
 
 #include <cassert>
 #include <cstdint>

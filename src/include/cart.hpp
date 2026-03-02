@@ -18,7 +18,7 @@ struct rom_header {
 };
 
 bool cart_load(const std::string& card);
-rom_header* getROMHeader();
+rom_header* get_rom_header();
 void dump_cart();
 
 uint8_t cart_read(uint16_t address);

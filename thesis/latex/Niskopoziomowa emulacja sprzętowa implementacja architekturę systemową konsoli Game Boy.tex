@@ -89,7 +89,7 @@ Procesor zawiera osiem 8-bitowych rejestrów: A,B,C,D,E,F,H,L. Rejestry mogą ł
 	\item Bit 5 - Half Carry (H), jeśli doszło do przesunięcia na bicie 3
 	\item Bit 4 - Carry (C), jeśli doszło do przesunięcia na bicie 7
 \end{itemize} 
-
+Bity od 3 do 0 są nieużywane i zawsze powinny być zerowane. Rejestr A jest używany jako akumulator w operacja arytmetcznych.
 \subsubsection{Model czasowy systemu}
 
 Działanie konsoli Game Boy oparte jest na synchronicznym modelu czasowym, w którym wszystkie główne komponenty systemu --- procesor, układ graficzny oraz timery sprzętowe --- pracują w oparciu o wspólne źródło taktowania. Nominalna częstotliwość zegara systemowego wynosi $4{,}194304$~MHz, co determinuje tempo wykonywania instrukcji procesora oraz przebieg cykli pracy pozostałych bloków funkcjonalnych.
@@ -106,14 +106,8 @@ Układ graficzny pracuje równolegle z procesorem i cyklicznie przechodzi przez 
 
 Konsola wyposażona jest w sprzętowe układy odmierzania czasu, których działanie jest bezpośrednio powiązane z zegarem systemowym. Timery te generują zdarzenia okresowe wykorzystywane do synchronizacji logiki programu, pomiaru czasu oraz inicjowania przerwań sprzętowych. Ich konfiguracja pozwala na wybór różnych częstotliwości zliczania poprzez dzielenie sygnału zegarowego.
 
-\paragraph{Znaczenie modelu czasowego}
-
-Ścisłe powiązanie pracy wszystkich komponentów z jednym źródłem taktowania zapewnia deterministyczny charakter działania systemu. W konsekwencji poprawność działania oprogramowania zależy nie tylko od sekwencji wykonywanych instrukcji, lecz również od ich dokładnego rozmieszczenia w czasie względem zdarzeń sprzętowych. Model czasowy stanowi zatem istotny element architektury systemowej konsoli i odgrywa kluczową rolę w implementacji wiernych emulatorów platformy.
-%
 
 
-
-Bity od 3 do 0 są nieużywane i zawsze powinny być zerowane. Rejestr A jest używany jako akumulator w operacja arytmetcznych.
 
 \subsection{Zestaw Instrukcji}
 
@@ -121,16 +115,16 @@ Zestaw rozkazów (instruction set architecture, ISA) stanowi rozwinięcie koncep
 
 \begin{figure}[htbp]
 	\centering
-	\begin{minipage}{0.9\textwidth}
+	\begin{minipage}{\textwidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{gbobtables.png}
+		\includegraphics[width=\linewidth]{gbobtables.png}
 		\caption{Tablica rozmieszczenia instrukcji: \cite{opcodes}}
 		\label{fig:op_table}
 	\end{minipage}
 	\hfill
-	\begin{minipage}{0.9\textwidth}
+	\begin{minipage}{\textwidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{gbobtables_cb.png}
+		\includegraphics[width=\linewidth]{gbobtables_cb.png}
 		\caption{Tablica rozmieszczenia instrukcji po opcodzie 0xCB: \cite{opcodes}}
 		\label{fig:opcb_table}
 	\end{minipage}
@@ -266,9 +260,6 @@ Zakres \texttt{FF00--FF7F} zawiera rejestry sterujące sprzętem, w tym kontrole
 
 Obszar \texttt{FF80--FFFE}, określany jako HRAM (High RAM), to niewielki fragment szybkiej pamięci roboczej o krótkim czasie dostępu. Ze względu na swoje właściwości jest on często wykorzystywany do przechowywania zmiennych o krytycznym znaczeniu czasowym.
 
-\subsubsection{Znaczenie architektury mapowania pamięci}
-
-Przyjęty model mapowania pamięci umożliwia efektywne współdzielenie przestrzeni adresowej przez kod programu, dane oraz układy sprzętowe. Rozwiązanie to upraszcza konstrukcję systemu, lecz jednocześnie wymaga ścisłej kontroli dostępu do poszczególnych segmentów pamięci przez oprogramowanie systemowe i aplikacyjne.
 \subsection{System przerwań w konsoli Game Boy}
 
 System przerwań w konsoli Game Boy realizuje mechanizm asynchronicznej obsługi zdarzeń sprzętowych, umożliwiając procesorowi reagowanie na zdarzenia wewnętrzne i zewnętrzne bez konieczności ciągłego odpytywania urządzeń peryferyjnych. Architektura ta stanowi kluczowy element synchronizacji pracy jednostki centralnej z układami graficznymi, licznikami czasu oraz interfejsem wejściowym.
@@ -719,24 +710,348 @@ Struktura \texttt{Texture} reprezentuje teksturę przechowywaną w pamięci kart
 \subsubsection{Funkcje biblioteki fmt}
 
 Biblioteka fmt dostarcza funkcje formatowania tekstu wykorzystywane do generowania komunikatów informacyjnych oraz diagnostycznych. Funkcja \texttt{print()} wyświetla sformatowany tekst na standardowym wyjściu, natomiast \texttt{println()} dodatkowo kończy wypowiedź znakiem nowej linii. Funkcja \texttt{format()} zwraca sformatowany ciąg znaków bez jego wyświetlania, co umożliwia dalsze przetwarzanie tekstu w programie.
-\subsection{Implementacja ROM Only kart'a}
+Implementacja modułu obsługi kartridża
 
-Każdy wydany kartridż do Game Boy'a zawierał tak zwany nagłówek który zawierał informacje o tytule gry, kodzie producenta, jakim typem kartridża jest i rozmiarach pamięci ROM i RAM jeśli owy kart zawiera. Na potrzeby tego projektu, przyjmiemy że obsługiejemy tylko ROMy kartidźy które nie mają żadnych dodatkowych kompomentów (ROM Only).
+\subsection{Implementacja modułu obsługi kartridża}
 
-\begin{figure}[htbp]
-	\centering
-	\begin{minipage}{0.9\textwidth}
-		\centering
-		\includegraphics[width=0.9\linewidth]{rom_header_code.png}
-		\caption{Struktura nagłówka }
-		\label{fig:code_rom_header}
-	\end{minipage}
-\end{figure}
+Moduł kartridża odpowiada za wczytanie obrazu ROM z pliku binarnego, interpretację jego nagłówka oraz udostępnienie danych pamięci programu pozostałym komponentom emulatora. Implementacja została wykonana w języku C++ z wykorzystaniem standardowej biblioteki wejścia--wyjścia.
+
+Stan kartridża przechowywany jest w strukturze \texttt{cart\_context}, która zawiera rozmiar pamięci ROM, wskaźnik na dane ROM, wskaźnik na strukturę nagłówka oraz nazwę pliku źródłowego. Dane ROM są ładowane do dynamicznie alokowanego bufora pamięci, natomiast nagłówek interpretowany jest poprzez rzutowanie fragmentu bufora na strukturę \texttt{rom\_header}. Zgodnie ze specyfikacją formatu ROM, nagłówek znajduje się pod adresem \texttt{0x100}.
+
+\subsubsection{Struktura nagłówka ROM}
+
+Informacje identyfikacyjne oraz parametry konfiguracyjne kartridża przechowywane są w nagłówku ROM. W implementacji nagłówek odwzorowano bezpośrednio jako strukturę języka C++, której układ odpowiada rozmieszczeniu danych w obrazie pamięci kartridża.
+
+Struktura \texttt{rom\_header} zawiera następujące pola:
+
 \begin{itemize}
-\item \textit{}
+	\item \texttt{entry[4]} -- kod startowy wykonywany po uruchomieniu programu,
+	\item \texttt{nintendo\_logo[0x30]} -- dane graficzne logo producenta wykorzystywane w procesie weryfikacji kartridża,
+	\item \texttt{title[16]} -- nazwa programu zapisana w postaci tekstowej,
+	\item \texttt{license\_code} -- kod producenta oprogramowania,
+	\item \texttt{new\_license\_code} -- rozszerzony kod producenta,
+	\item \texttt{sgb\_flag} -- flaga zgodności z rozszerzeniem sprzętowym,
+	\item \texttt{type} -- typ kartridża oraz zastosowany kontroler pamięci,
+	\item \texttt{rom\_size} -- rozmiar pamięci ROM,
+	\item \texttt{ram\_size} -- rozmiar pamięci RAM kartridża,
+	\item \texttt{dest\_code} -- kod regionu dystrybucji,
+	\item \texttt{version} -- wersja programu,
+	\item \texttt{checksum} -- suma kontrolna nagłówka,
+	\item \texttt{global\_checksum} -- suma kontrolna całego obrazu ROM.
 \end{itemize}
 
+Nagłówek znajduje się w pamięci ROM pod stałym adresem \texttt{0x100}. W implementacji dostęp do niego realizowany jest poprzez rzutowanie odpowiedniego fragmentu bufora pamięci na strukturę \texttt{rom\_header}. Takie podejście umożliwia bezpośredni odczyt pól nagłówka bez konieczności ręcznej interpretacji poszczególnych bajtów.
 
+\paragraph{Interfejs dostępu}
+
+Moduł kartridża udostępnia funkcję \texttt{get\_rom\_header()}, która zwraca wskaźnik na strukturę nagłówka. Pozwala to pozostałym komponentom emulatora na odczyt parametrów kartridża bez konieczności bezpośredniego dostępu do bufora pamięci ROM.
+
+\subsubsection{Proces ładowania obrazu ROM}
+
+Funkcja \texttt{cart\_load()} realizuje proces inicjalizacji kartridża. W pierwszym etapie plik otwierany jest w trybie binarnym, a następnie jego zawartość wczytywana jest w całości do pamięci operacyjnej. Po załadowaniu danych wyznaczany jest wskaźnik na strukturę nagłówka, z której odczytywane są podstawowe informacje identyfikacyjne.
+
+W trakcie inicjalizacji prezentowane są następujące parametry kartridża:
+\begin{itemize}
+	\item tytuł programu,
+	\item typ kartridża,
+	\item rozmiar pamięci ROM,
+	\item rozmiar pamięci RAM,
+	\item kod licencyjny producenta,
+	\item wersja ROM.
+\end{itemize}
+
+Interpretacja typu kartridża oraz kodu licencyjnego realizowana jest przy użyciu statycznych map odwzorowujących identyfikatory numeryczne na ich reprezentacje tekstowe.
+
+\subsubsection{Dostęp do danych kartridża}
+
+Moduł udostępnia interfejs umożliwiający dostęp do danych pamięci ROM przez pozostałe komponenty emulatora. Funkcja \texttt{cart\_read(uint16\_t address)} zwraca wartość bajtu znajdującego się pod wskazanym adresem pamięci kartridża. Dodatkowo moduł udostępnia funkcję \texttt{get\_rom\_header()}, umożliwiającą odczyt informacji nagłówkowych przez inne podsystemy emulatora.
+
+Aktualna implementacja obsługuje wyłącznie kartridże typu \texttt{ROM ONLY}, bez mechanizmu bankowania pamięci.
+
+\subsubsection{Weryfikacja poprawności nagłówka}
+
+Poprawność nagłówka weryfikowana jest poprzez obliczenie sumy kontrolnej na podstawie danych znajdujących się w zakresie adresów \texttt{0x0134--0x014C}. Obliczona wartość porównywana jest z sumą kontrolną zapisaną w nagłówku ROM. Wynik weryfikacji prezentowany jest w postaci komunikatu diagnostycznego podczas inicjalizacji kartridża.
+
+\subsubsection{Ograniczenia implementacji}
+
+Obecna wersja modułu stanowi uproszczoną implementację mechanizmu obsługi kartridża. Nie zaimplementowano mechanizmów bankowania pamięci ani obsługi dodatkowych kontrolerów pamięci (MBC). Przyjęte podejście umożliwia jednak poprawne działanie programów wykorzystujących podstawowy model pamięci ROM.
+
+\subsection{Implementacja magistrali systemowej}
+
+Magistrala systemowa stanowi warstwę pośrednią pomiędzy procesorem a komponentami sprzętowymi emulatora. Jej zadaniem jest odwzorowanie przestrzeni adresowej systemu oraz przekierowanie operacji odczytu i zapisu do właściwych modułów funkcjonalnych. Implementacja magistrali realizuje zatem logiczne mapowanie adresów pamięci na odpowiadające im urządzenia peryferyjne lub obszary pamięci.
+
+\subsubsection{Operacje odczytu z magistrali}
+
+Podstawową funkcją magistrali jest procedura \texttt{bus\_read(uint16\_t address)}, która realizuje odczyt pojedynczego bajtu z przestrzeni adresowej. Funkcja analizuje wartość adresu i na tej podstawie deleguje operację do odpowiedniego komponentu emulatora.
+
+Mapowanie przestrzeni adresowej jest opisana wcześniej w rozdziale 3.4
+
+W przypadku trwającego transferu DMA dostęp do pamięci OAM jest blokowany, a magistrala zwraca wartość neutralną. Takie zachowanie odwzorowuje ograniczenia sprzętowe rzeczywistego systemu.
+
+\subsubsection{Operacje zapisu do magistrali}
+
+Procedura \texttt{bus\_write(uint16\_t address, uint8\_t value)} realizuje zapis danych do przestrzeni adresowej. Mechanizm działania jest analogiczny do operacji odczytu — adres determinuje komponent docelowy operacji zapisu.
+
+Zapis do pamięci ROM przekazywany jest do kontrolera kartridża, co umożliwia obsługę mechanizmów bankowania pamięci. Operacje zapisu do pamięci wideo oraz pamięci roboczej przekierowywane są do odpowiednich modułów pamięciowych. W obszarach zarezerwowanych lub nieużywanych operacja zapisu jest ignorowana.
+
+Szczególnym przypadkiem jest zapis do adresu \texttt{0xFFFF}, który modyfikuje rejestr maski przerwań procesora. Mechanizm ten pozwala na dynamiczne sterowanie systemem przerwań w trakcie działania programu.
+
+\subsubsection{Operacje na słowach 16-bitowych}
+
+Magistrala udostępnia również funkcje operujące na danych 16-bitowych:
+\begin{itemize}
+	\item \texttt{bus\_read16(address)} — odczyt dwóch kolejnych bajtów i ich złożenie w słowo 16-bitowe,
+	\item \texttt{bus\_write16(address, value)} — zapis wartości 16-bitowej w postaci dwóch bajtów.
+\end{itemize}
+
+Operacje te wykorzystują konwencję zapisu w porządku little-endian, w której młodszy bajt przechowywany jest pod niższym adresem pamięci.
+
+\subsubsection{Znaczenie architektoniczne magistrali}
+
+Zastosowanie scentralizowanej warstwy magistrali zapewnia:
+\begin{itemize}
+	\item jednoznaczne odwzorowanie przestrzeni adresowej systemu,
+	\item izolację procesora od szczegółów implementacyjnych urządzeń peryferyjnych,
+	\item możliwość łatwej rozbudowy emulatora o nowe komponenty,
+	\item spójne modelowanie ograniczeń sprzętowych.
+\end{itemize}
+
+Magistrala stanowi zatem kluczowy element architektury emulatora, integrujący wszystkie moduły systemu w jednolitą strukturę komunikacyjną oraz zapewniający deterministyczne odwzorowanie zachowania sprzętu.
+\subsection{Implementacja pamięci operacyjnej RAM}
+
+Pamięć operacyjna systemu została odwzorowana w postaci struktury kontekstu zawierającej dwa fizycznie odrębne obszary pamięci: roboczą pamięć wewnętrzną WRAM oraz szybką pamięć wysoką HRAM. Oba segmenty reprezentowane są jako statyczne tablice bajtowe o stałym rozmiarze, co zapewnia deterministyczne odwzorowanie przestrzeni adresowej systemu.
+
+Pamięć WRAM obejmuje zakres adresów od \texttt{0xC000} do \texttt{0xDFFF} i posiada rozmiar 8\,KB. Z kolei HRAM zajmuje obszar od \texttt{0xFF80} do \texttt{0xFFFF} z efektywnym rozmiarem 128\,B. Funkcja inicjalizacyjna ustawia wszystkie komórki obu obszarów na wartość początkową \texttt{0xFF}, co odpowiada stanowi pamięci po resecie systemu.
+
+Dostęp do pamięci realizowany jest przez wyspecjalizowane funkcje odczytu i zapisu. Każda operacja dokonuje translacji adresu logicznego na indeks wewnętrznej tablicy poprzez odjęcie adresu bazowego segmentu. W celu zapewnienia poprawności działania systemu implementacja zawiera kontrolę zakresu adresów. Próba dostępu poza dozwolony obszar skutkuje zgłoszeniem błędu i przerwaniem działania emulatora. Mechanizm ten zabezpiecza integralność modelu pamięci oraz ułatwia diagnostykę nieprawidłowych operacji.
+
+\subsection{Implementacja stosu procesora}
+
+Stos procesora został zaimplementowany jako struktura danych działająca w przestrzeni pamięci systemowej i zarządzana przez rejestr wskaźnika stosu SP. Operacje na stosie wykorzystują interfejs magistrali systemowej, co zapewnia pełną zgodność z architekturą pamięci emulatora.
+
+Operacja zapisu na stos realizowana jest poprzez dekrementację wskaźnika stosu, a następnie zapis wartości pod nowym adresem. Takie podejście odwzorowuje rzeczywiste działanie sprzętowego stosu, który rośnie w kierunku malejących adresów pamięci. Dla danych 16-bitowych stosowane są dwie kolejne operacje zapisu, rozpoczynające się od bajtu starszego, co zapewnia zgodność z reprezentacją little-endian.
+
+Operacja odczytu ze stosu przebiega w odwrotnej kolejności. Najpierw odczytywana jest wartość spod adresu wskazywanego przez rejestr SP, a następnie wskaźnik stosu jest inkrementowany. W przypadku wartości 16-bitowych odczytywane są dwa kolejne bajty, które następnie łączone są w jedną wartość słowa maszynowego.
+
+Takie podejście zapewnia pełną zgodność mechanizmu stosu z wymaganiami architektury procesora oraz umożliwia poprawną realizację instrukcji wywołań podprogramów, powrotów oraz obsługi przerwań.
+
+\subsection{Implementacja systemowego licznika czasowego}
+
+System liczników czasowych odwzorowuje sprzętowy mechanizm synchronizacji działania procesora i urządzeń peryferyjnych. Implementacja oparta jest na strukturze kontekstu zawierającej cztery rejestry funkcjonalne: licznik dzielnika czasu DIV, licznik TIMA, rejestr przeładowania TMA oraz rejestr sterujący TAC.
+
+Rejestr DIV pełni rolę głównego licznika systemowego inkrementowanego w każdym cyklu pracy emulatora. Na podstawie wybranych bitów tego rejestru generowany jest sygnał taktujący dla licznika TIMA. Częstotliwość aktualizacji wybierana jest przez bity sterujące rejestru TAC, które definiują jeden z kilku możliwych preskalerów.
+
+Aktualizacja licznika TIMA następuje przy wykryciu opadającego zbocza wybranego bitu licznika DIV, pod warunkiem że licznik jest aktywny. Po przepełnieniu TIMA następuje automatyczne załadowanie wartości z rejestru TMA oraz zgłoszenie przerwania systemowego. Mechanizm ten umożliwia precyzyjne generowanie zdarzeń czasowych wymaganych przez architekturę systemu.
+
+Interfejs dostępu do timerów realizowany jest poprzez funkcje odczytu i zapisu mapowane na odpowiednie adresy przestrzeni wejścia-wyjścia. Operacje te umożliwiają zarówno konfigurację parametrów pracy licznika, jak i odczyt jego bieżącego stanu. Implementacja zapewnia pełną zgodność z semantyką sprzętową oraz integralność modelu czasowego emulatora.
+\subsection{Implementacja procesora}
+\subsubsection{Reprezentacja i przechowywanie instrukcji procesora}
+
+Najprostszym podejściem do implementacji zestawu rozkazów procesora jest naiwna metoda polegająca na ręcznym definiowaniu logiki wykonania dla każdego kodu operacji (\textit{opcode}). W takim rozwiązaniu stosuje się zazwyczaj rozbudowaną instrukcję warunkową lub konstrukcję \texttt{switch-case}, w której każdemu kodowi operacji odpowiada bezpośrednia implementacja jego działania.
+
+Podejście to, mimo swojej prostoty koncepcyjnej, prowadzi do szeregu problemów projektowych. Przede wszystkim skutkuje silnym powiązaniem informacji o instrukcji (typ operacji, tryb adresowania, używane rejestry, warunki wykonania) z jej implementacją wykonawczą. W efekcie kod staje się trudny do utrzymania, podatny na błędy oraz mało skalowalny. Dodanie nowej instrukcji lub modyfikacja istniejącej wymaga ingerencji w wiele fragmentów kodu, co zwiększa ryzyko regresji. Ponadto powtarzalność wzorców implementacyjnych utrudnia analizę oraz optymalizację emulatora.
+
+W celu rozwiązania tych problemów zastosowano podejście oparte na rozdzieleniu opisu instrukcji od mechanizmu jej wykonania. Każdy rozkaz procesora reprezentowany jest przez strukturę danych zawierającą komplet informacji niezbędnych do jego obsługi, takich jak:
+\begin{itemize}
+	\item typ operacji,
+	\item tryb adresowania,
+	\item rejestry źródłowe i docelowe,
+	\item warunek wykonania,
+	\item parametr dodatkowy.
+\end{itemize}
+
+Struktury te przechowywane są w tablicy indeksowanej bezpośrednio kodem operacji. Dzięki temu etap dekodowania instrukcji sprowadza się do odczytu odpowiedniej struktury na podstawie wartości \texttt{opcode}. Mechanizm wykonania korzysta następnie z tych informacji w sposób uogólniony, delegując właściwą logikę do funkcji przypisanej do typu instrukcji.
+
+Takie podejście wprowadza wyraźną separację odpowiedzialności pomiędzy:
+\begin{enumerate}
+	\item \textbf{opis semantyki instrukcji} — przechowywany w strukturach danych,
+	\item \textbf{mechanizm dekodowania} — wybór instrukcji na podstawie kodu operacji,
+	\item \textbf{mechanizm wykonania} — implementacja operacji procesora.
+\end{enumerate}
+
+Rozdzielenie danych opisujących instrukcję od jej implementacji przynosi istotne korzyści architektoniczne. Kod staje się bardziej czytelny, łatwiejszy do rozszerzania oraz odporny na błędy wynikające z duplikacji logiki. Ponadto możliwe jest jednolite przetwarzanie różnych klas instrukcji, co upraszcza implementację trybów adresowania oraz mechanizmów debugowania.
+
+Zastosowana reprezentacja stanowi zatem warstwę abstrakcji pomiędzy kodem maszynowym a logiką emulatora, umożliwiając elastyczne i skalowalne odwzorowanie zestawu rozkazów procesora.
+
+\subsubsection{Struktura procesora oraz organizacja cyklu wykonawczego}
+
+Implementacja procesora emulatora opiera się na centralnej strukturze kontekstu wykonania, która przechowuje kompletny stan jednostki CPU oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji. Takie podejście umożliwia jednoznaczne odwzorowanie stanu procesora w dowolnym momencie działania emulatora oraz zapewnia spójny interfejs komunikacji pomiędzy modułami systemu.
+
+\subsubsection{Struktura rejestrów procesora}
+
+Stan architektoniczny procesora przechowywany jest w strukturze \texttt{cpu\_registers}, zawierającej rejestry ogólnego przeznaczenia oraz rejestry sterujące:
+\begin{itemize}
+	\item rejestry 8-bitowe: \texttt{A, F, B, C, D, E, H, L},
+	\item licznik rozkazów \texttt{PC} (Program Counter),
+	\item wskaźnik stosu \texttt{SP} (Stack Pointer).
+\end{itemize}
+
+Rejestr \texttt{F} pełni funkcję rejestru flag procesora i przechowuje bity statusowe operacji arytmetyczno-logicznych, takie jak:
+\begin{itemize}
+	\item flaga zera (Z),
+	\item flaga odejmowania (N),
+	\item flaga półprzeniesienia (H),
+	\item flaga przeniesienia (C).
+\end{itemize}
+
+\subsubsection{Kontekst wykonania procesora}
+
+Pełny stan wykonawczy przechowywany jest w strukturze \texttt{cpu\_context}. Oprócz rejestrów zawiera ona:
+\begin{itemize}
+	\item licznik taktów \texttt{ticks} wykorzystywany do synchronizacji z pozostałymi komponentami emulatora,
+	\item pole \texttt{fetch\_data} przechowujące operand pobrany z pamięci lub rejestru,
+	\item pole \texttt{mem\_destination} określające adres docelowy operacji zapisu,
+	\item flagę \texttt{dest\_is\_mem} informującą, czy wynik operacji powinien zostać zapisany do pamięci,
+	\item aktualny kod operacji \texttt{op\_code},
+	\item wskaźnik na aktualnie wykonywaną instrukcję \texttt{cur\_instruction}.
+\end{itemize}
+
+Struktura zawiera również pola sterujące pracą procesora:
+\begin{itemize}
+	\item globalne zezwolenie na przerwania,
+	\item flagę aktywacji przerwań po wykonaniu instrukcji,
+	\item stan zatrzymania procesora,
+	\item flagi zgłoszeń przerwań oraz rejestr maskujący przerwania.
+\end{itemize}
+
+\subsubsection{Inicjalizacja procesora}
+
+Funkcja \texttt{cpu\_init()} odpowiada za ustawienie początkowego stanu procesora zgodnego z oczekiwanym stanem systemu po uruchomieniu. Inicjalizowane są wartości rejestrów, licznik rozkazów, wskaźnik stosu oraz rejestry systemu przerwań. Funkcja ta inicjuje również pamięć operacyjną emulatora.
+
+\subsubsection{Pobieranie i dekodowanie instrukcji}
+
+Funkcja \texttt{fetch\_instruction()} realizuje etap pobrania instrukcji. Kod operacji odczytywany jest z pamięci pod adresem wskazywanym przez licznik rozkazów, po czym następuje jego inkrementacja. Następnie wykonywane jest wyszukanie struktury opisującej instrukcję, zawierającej informacje o jej semantyce oraz trybie adresowania.
+
+\subsubsection{Pobieranie operandów}
+
+Funkcja \texttt{fetch\_data()} odpowiada za odczyt operandów wymaganych przez instrukcję. W zależności od trybu adresowania operandy mogą pochodzić z:
+\begin{itemize}
+	\item rejestrów procesora,
+	\item pamięci operacyjnej,
+	\item bezpośrednich wartości zapisanych w kodzie programu.
+\end{itemize}
+
+Podczas tego etapu przygotowywane są również informacje o miejscu zapisu wyniku operacji.
+
+\subsubsection{Wykonanie instrukcji}
+
+Funkcja \texttt{execute()} realizuje właściwe wykonanie instrukcji. Na podstawie typu operacji wybierana jest odpowiednia funkcja wykonawcza, której przekazywany jest kontekst procesora. Rozdzielenie logiki wykonawczej od etapu dekodowania umożliwia modularną organizację kodu emulatora.
+
+\subsubsection{Symulacja cykli zegarowych}
+
+Funkcja \texttt{emu\_cycles()} odwzorowuje upływ czasu w systemie. Każdy cykl powoduje:
+\begin{itemize}
+	\item inkrementację licznika taktów procesora,
+	\item aktualizację timera systemowego,
+	\item aktualizację układu graficznego,
+	\item obsługę kontrolera DMA.
+\end{itemize}
+
+Mechanizm ten zapewnia synchronizację CPU z pozostałymi komponentami emulatora.
+
+\subsubsection{Główny cykl pracy procesora}
+
+Funkcja \texttt{cpu\_step()} realizuje pojedynczy krok pracy procesora. Obejmuje ona:
+\begin{enumerate}
+	\item pobranie instrukcji,
+	\item symulację cyklu zegarowego,
+	\item pobranie operandów,
+	\item wykonanie instrukcji,
+	\item obsługę przerwań,
+	\item aktualizację transferów DMA.
+\end{enumerate}
+
+W przypadku zatrzymania procesora wykonywane są jedynie cykle zegarowe do momentu wystąpienia przerwania.
+
+\subsubsection{Dostęp do rejestrów procesora: operacje get/set}
+
+Warstwa dostępu do rejestrów procesora realizuje ujednolicony interfejs odczytu i zapisu zarówno dla rejestrów 8-bitowych, jak i 16-bitowych. Rozwiązanie to abstrahuje fizyczną reprezentację rejestrów w strukturze kontekstu CPU i umożliwia jednolite operowanie na nich przez mechanizmy dekodowania oraz wykonania instrukcji.
+
+\paragraph{Odczyt rejestrów 16-bitowych}
+
+Funkcja \texttt{cpu\_read\_reg(reg\_type rt)} zwraca wartość wskazanego rejestru. Dla rejestrów 8-bitowych operacja sprowadza się do bezpośredniego odczytu pola struktury kontekstu. W przypadku rejestrów złożonych (AF, BC, DE, HL) stosowana jest interpretacja dwóch sąsiadujących rejestrów 8-bitowych jako jednej wartości 16-bitowej.
+
+Zastosowanie funkcji pomocniczej realizującej odwrócenie kolejności bajtów zapewnia zgodność z reprezentacją little-endian stosowaną w systemie.
+
+\paragraph{Zapis rejestrów 16-bitowych}
+
+Funkcja \texttt{cpu\_set\_reg(reg\_type rt, uint16\_t value)} umożliwia zapis wartości do rejestru wskazanego typu. W przypadku rejestrów złożonych zapis realizowany jest poprzez bezpośrednią modyfikację odpowiednich par rejestrów 8-bitowych. Mechanizm ten zapewnia spójność reprezentacji stanu procesora oraz minimalizuje koszt operacji zapisu.
+
+\paragraph{Operacje na rejestrach 8-bitowych}
+
+Dodatkowe funkcje \texttt{cpu\_read\_reg8} oraz \texttt{cpu\_set\_reg8} umożliwiają bezpośredni dostęp do rejestrów bajtowych. Szczególnym przypadkiem jest rejestr logiczny wskazujący adres pamięci (\texttt{HL}), dla którego odczyt i zapis realizowane są poprzez operacje magistrali systemowej.
+
+\paragraph{Zarządzanie flagami procesora}
+
+Funkcja \texttt{cpu\_set\_flags} odpowiada za kontrolowaną modyfikację bitów statusowych. Wprowadzenie wartości specjalnej oznaczającej brak modyfikacji pozwala instrukcjom zmieniać jedynie wybrane flagi bez ingerencji w pozostałe. Na końcu operacji maskowane są młodsze bity rejestru flag, co zapewnia zgodność z architekturą procesora.
+
+\subsubsection{Procedury wykonawcze instrukcji}
+
+Wykonanie instrukcji realizowane jest poprzez zestaw wyspecjalizowanych procedur przypisanych do typów operacji. Mechanizm wyboru procedury oparty jest na tablicy wskaźników funkcji, co umożliwia szybkie mapowanie typu instrukcji na jej implementację.
+
+\paragraph{Operacje arytmetyczne i logiczne}
+
+Instrukcje takie jak dodawanie, odejmowanie, operacje logiczne oraz porównania manipulują rejestrami procesora oraz odpowiednio aktualizują flagi statusowe. Implementacja uwzględnia rozróżnienie operacji 8-bitowych i 16-bitowych, a także szczególne przypadki wymagane przez specyfikację architektury.
+
+\paragraph{Operacje przepływu sterowania}
+
+Instrukcje skoków, wywołań procedur oraz powrotów wykorzystują mechanizm warunków wykonania oparty na stanie flag procesora. W przypadku wywołań podprogramów wykorzystywany jest stos procesora, który przechowuje adres powrotu.
+
+\paragraph{Instrukcje bitowe i rotacyjne}
+
+Rozkazy prefiksowane implementują operacje manipulacji pojedynczymi bitami, przesunięcia oraz rotacje. Procedury te działają zarówno na rejestrach, jak i na danych znajdujących się w pamięci wskazywanej przez rejestry adresowe.
+
+\paragraph{Instrukcje systemowe}
+
+Instrukcje sterujące stanem procesora obejmują operacje zarządzania przerwaniami, zatrzymania procesora oraz operacje specjalne związane z reprezentacją danych dziesiętnych.
+
+\subsubsection{Mechanizm pobierania operandów}
+
+Pobieranie operandów realizowane jest przez funkcję \texttt{fetch\_data()}, która interpretuje tryb adresowania aktualnej instrukcji i przygotowuje dane wejściowe dla etapu wykonania.
+
+\paragraph{Tryby rejestrowe}
+
+W najprostszym przypadku operand pobierany jest bezpośrednio z rejestru wskazanego w opisie instrukcji.
+
+\paragraph{Tryby natychmiastowe}
+
+W trybach z danymi natychmiastowymi operand odczytywany jest z pamięci programu pod adresem wskazywanym przez licznik rozkazów, który następnie zostaje odpowiednio zwiększony.
+
+\paragraph{Tryby pamięciowe}
+
+Instrukcja może wskazywać adres pamięci jako źródło lub miejsce docelowe operacji. W takim przypadku mechanizm pobierania zapisuje adres docelowy oraz oznacza operację jako zapis do pamięci.
+
+\paragraph{Tryby z autoinkrementacją i autodekrementacją}
+
+Specjalne tryby adresowania wykorzystujące rejestr adresowy umożliwiają automatyczną modyfikację jego wartości po operacji odczytu lub zapisu. Mechanizm ten jest wykorzystywany w operacjach blokowych oraz przy pracy ze strukturami danych w pamięci.
+
+\paragraph{Znaczenie warstwy pobierania danych}
+
+Rozdzielenie etapu pobierania operandów od etapu wykonania instrukcji upraszcza implementację logiki procesora, umożliwia ponowne wykorzystanie kodu oraz zapewnia jednoznaczne odwzorowanie semantyki trybów adresowania w architekturze emulatora.
+
+\subsubsection{Wykonanie w środowisku wielowątkowym}
+
+Funkcja \texttt{cpu\_run\_threaded()} realizuje ciągłą pracę procesora w pętli wykonawczej działającej w osobnym wątku. Funkcja:
+\begin{itemize}
+	\item inicjalizuje komponenty systemowe,
+	\item wykonuje kolejne kroki procesora,
+	\item zbiera statystyki wydajności,
+	\item synchronizuje stan z modułem graficznym.
+\end{itemize}
+
+Oddzielenie cyklu CPU do dedykowanego wątku pozwala zachować stabilną prędkość emulacji oraz umożliwia równoległą obsługę warstwy prezentacji i interfejsu użytkownika.
+
+\subsubsection{Podsumowanie}
+
+Zastosowana organizacja procesora opiera się na jednoznacznym rozdzieleniu:
+\begin{itemize}
+	\item stanu architektonicznego,
+	\item mechanizmu dekodowania instrukcji,
+	\item mechanizmu wykonania,
+	\item symulacji czasu systemowego.
+\end{itemize}
+
+Takie podejście zapewnia wysoką czytelność implementacji, umożliwia precyzyjne odwzorowanie działania sprzętu oraz stanowi solidną podstawę do dalszej rozbudowy emulatora.
 
 \printbibliography
 \end{document}

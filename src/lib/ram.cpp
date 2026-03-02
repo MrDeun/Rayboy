@@ -1,4 +1,6 @@
-#include "../include/all.hpp"
+#include "../include/ram.hpp"
+
+#include "fmt/core.h"
 
 #include <array>
 #include <cassert>
@@ -9,13 +11,9 @@ struct ram_context {
 };
 
 static ram_context ctx;
-
-bool writeToFF03 = false;
-
 void init_ram() {
   ctx.wram.fill(0xff);
   ctx.hram.fill(0xff);
-  
 }
 
 uint8_t wram_read(uint16_t address) {

@@ -1,4 +1,8 @@
-#include "../include/all.hpp"
+#include "../include/cpu.hpp"
+#include "../include/interupt.hpp"
+#include "../include/stack.hpp"
+
+
 
 
 void int_handle(cpu_context *ctx, uint16_t address) {
@@ -12,7 +16,7 @@ bool int_check(cpu_context *ctx, uint16_t address, interrupt_type it) {
     ctx->int_flags &= ~it;
     ctx->halted = false;
     ctx->int_master_enabled = false;
-    
+
     return true;
   }
   return false;

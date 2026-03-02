@@ -1,4 +1,6 @@
-#include "../include/all.hpp"
+#include "../include/stack.hpp"
+#include "../include/cpu.hpp"
+
 #include <cstdint>
 void stack_push(uint8_t data) {
   cpu_get_regs()->SP--;

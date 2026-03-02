@@ -1,4 +1,4 @@
-#include "../include/all.hpp"
+#include "../include/cpu.hpp"
 
 extern cpu_context ctx;
 

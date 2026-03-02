@@ -1,4 +1,9 @@
-#include "../include/all.hpp"
+#include "../include/lcd.hpp"
+#include "../include/ppu.hpp"
+#include "../include/interupt.hpp"
+#include "../include/ppu_pipeline.hpp"
+
+
 #include <cstdint>
 #include <cstring>
 
