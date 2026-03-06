@@ -1,10 +1,10 @@
 #include "../include/cart.hpp"
 
 #include <cstdint>
+#include <format>
 #include <fstream>
 #include <map>
 #include <print>
-#include <format>
 
 struct cart_context {
   char filename[1024];
@@ -14,9 +14,7 @@ struct cart_context {
 };
 
 static cart_context ctx;
-rom_header* get_rom_header(){
-  return ctx.header;
-}
+rom_header *get_rom_header() { return ctx.header; }
 const std::map<uint8_t, const std::string> ROM_TYPES = {
     {0x00, "ROM ONLY"},
     {0x01, "MBC1"},
@@ -200,13 +198,19 @@ const std::map<const uint8_t, const std::string> LICENSE_CODES = {
 
 const std::string getCartLicenseName() {
   std::string res = "Not found!";
-  if (ctx.header->license_code != 0x33) {
+  if (ctx.header->license_code != 0x33 &&
+      LICENSE_CODES.find(ctx.header->license_code) != LICENSE_CODES.end()) {
     res = LICENSE_CODES.at(ctx.header->license_code);
   }
   return res;
 }
 
-const std::string getROMType() { return ROM_TYPES.at(ctx.header->type); }
+const std::string getROMType() {
+  if (LICENSE_CODES.find(ctx.header->license_code) != LICENSE_CODES.end()) {
+    return ROM_TYPES.at(ctx.header->type);
+  }
+  return "Unknown Type!";
+}
 
 void dump_cart() {
   if (ctx.rom_size == 0) {
@@ -260,7 +264,8 @@ bool cart_load(const std::string &card_name) {
   fmt::println("\t Checksum : {0:02X} ({1})", ctx.header->checksum,
                (x & 0xFF) ? "PASSED" : "FAILED");
 
-  // fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}", ctx.rom_data[0x100],
+  // fmt::println("DUMPED CART: 0x100 = {:X}, 0x101 = {:X}",
+  // ctx.rom_data[0x100],
   //              ctx.rom_data[0x101]);
   // dump_cart();
 

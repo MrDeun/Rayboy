@@ -99,31 +99,48 @@
 \contentsline {subsection}{\numberline {4.5}Implementacja stosu procesora}{22}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Implementacja systemowego licznika czasowego}{23}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}Implementacja procesora}{23}{subsection.4.7}%
-\contentsline {subsubsection}{\numberline {4.7.1}Reprezentacja i przechowywanie instrukcji procesora}{23}{subsubsection.4.7.1}%
-\contentsline {subsubsection}{\numberline {4.7.2}Struktura procesora oraz organizacja cyklu wykonawczego}{24}{subsubsection.4.7.2}%
-\contentsline {subsubsection}{\numberline {4.7.3}Struktura rejestrów procesora}{24}{subsubsection.4.7.3}%
-\contentsline {subsubsection}{\numberline {4.7.4}Kontekst wykonania procesora}{24}{subsubsection.4.7.4}%
-\contentsline {subsubsection}{\numberline {4.7.5}Inicjalizacja procesora}{25}{subsubsection.4.7.5}%
-\contentsline {subsubsection}{\numberline {4.7.6}Pobieranie i dekodowanie instrukcji}{25}{subsubsection.4.7.6}%
-\contentsline {subsubsection}{\numberline {4.7.7}Pobieranie operandów}{25}{subsubsection.4.7.7}%
-\contentsline {subsubsection}{\numberline {4.7.8}Wykonanie instrukcji}{25}{subsubsection.4.7.8}%
-\contentsline {subsubsection}{\numberline {4.7.9}Symulacja cykli zegarowych}{25}{subsubsection.4.7.9}%
-\contentsline {subsubsection}{\numberline {4.7.10}Główny cykl pracy procesora}{25}{subsubsection.4.7.10}%
-\contentsline {subsubsection}{\numberline {4.7.11}Dostęp do rejestrów procesora: operacje get/set}{26}{subsubsection.4.7.11}%
-\contentsline {paragraph}{Odczyt rejestrów 16-bitowych}{26}{section*.6}%
-\contentsline {paragraph}{Zapis rejestrów 16-bitowych}{26}{section*.7}%
-\contentsline {paragraph}{Operacje na rejestrach 8-bitowych}{26}{section*.8}%
-\contentsline {paragraph}{Zarządzanie flagami procesora}{26}{section*.9}%
-\contentsline {subsubsection}{\numberline {4.7.12}Procedury wykonawcze instrukcji}{26}{subsubsection.4.7.12}%
-\contentsline {paragraph}{Operacje arytmetyczne i logiczne}{26}{section*.10}%
-\contentsline {paragraph}{Operacje przepływu sterowania}{26}{section*.11}%
-\contentsline {paragraph}{Instrukcje bitowe i rotacyjne}{26}{section*.12}%
-\contentsline {paragraph}{Instrukcje systemowe}{26}{section*.13}%
-\contentsline {subsubsection}{\numberline {4.7.13}Mechanizm pobierania operandów}{26}{subsubsection.4.7.13}%
-\contentsline {paragraph}{Tryby rejestrowe}{26}{section*.14}%
-\contentsline {paragraph}{Tryby natychmiastowe}{27}{section*.15}%
-\contentsline {paragraph}{Tryby pamięciowe}{27}{section*.16}%
-\contentsline {paragraph}{Tryby z autoinkrementacją i autodekrementacją}{27}{section*.17}%
-\contentsline {paragraph}{Znaczenie warstwy pobierania danych}{27}{section*.18}%
-\contentsline {subsubsection}{\numberline {4.7.14}Wykonanie w środowisku wielowątkowym}{27}{subsubsection.4.7.14}%
-\contentsline {subsubsection}{\numberline {4.7.15}Podsumowanie}{27}{subsubsection.4.7.15}%
+\contentsline {subsubsection}{\numberline {4.7.1}Reprezentacja i przechowywanie instrukcji}{23}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {4.7.2}Struktura procesora i organizacja cyklu wykonawczego}{24}{subsubsection.4.7.2}%
+\contentsline {paragraph}{Struktura rejestrów procesora}{24}{section*.6}%
+\contentsline {paragraph}{Kontekst wykonania procesora}{24}{section*.7}%
+\contentsline {subsubsection}{\numberline {4.7.3}Organizacja cyklu wykonawczego}{24}{subsubsection.4.7.3}%
+\contentsline {paragraph}{Inicjalizacja}{24}{section*.8}%
+\contentsline {paragraph}{Pobieranie i dekodowanie instrukcji}{24}{section*.9}%
+\contentsline {paragraph}{Pobieranie operandów}{25}{section*.10}%
+\contentsline {paragraph}{Wykonanie instrukcji}{25}{section*.11}%
+\contentsline {paragraph}{Klasy procedur wykonawczych}{25}{section*.12}%
+\contentsline {paragraph}{Symulacja cykli zegarowych}{25}{section*.13}%
+\contentsline {paragraph}{Główny krok procesora}{25}{section*.14}%
+\contentsline {subsubsection}{\numberline {4.7.4}Warstwa dostępu do rejestrów}{26}{subsubsection.4.7.4}%
+\contentsline {paragraph}{Odczyt rejestrów}{26}{section*.15}%
+\contentsline {paragraph}{Zapis rejestrów}{26}{section*.16}%
+\contentsline {paragraph}{Zarządzanie flagami}{26}{section*.17}%
+\contentsline {subsubsection}{\numberline {4.7.5}Wykonanie w środowisku wielowątkowym}{26}{subsubsection.4.7.5}%
+\contentsline {subsection}{\numberline {4.8}Implementacja przetwarzania grafiki}{26}{subsection.4.8}%
+\contentsline {subsubsection}{\numberline {4.8.1}Reprezentacja rejestrów LCD i obsługa palet}{26}{subsubsection.4.8.1}%
+\contentsline {paragraph}{Makra dostępu do bitów sterujących}{27}{section*.18}%
+\contentsline {paragraph}{Inicjalizacja kontekstu LCD}{27}{section*.19}%
+\contentsline {paragraph}{Aktualizacja palet kolorów}{27}{section*.20}%
+\contentsline {paragraph}{Obsługa odczytu i zapisu rejestrów}{27}{section*.21}%
+\contentsline {subsubsection}{\numberline {4.8.2}Renderowanie tła oraz obiektów OAM}{27}{subsubsection.4.8.2}%
+\contentsline {paragraph}{Renderowanie tła}{28}{section*.22}%
+\contentsline {paragraph}{Renderowanie obiektów OAM}{28}{section*.23}%
+\contentsline {subparagraph}{Selekcja sprite'ów dla linii}{28}{section*.24}%
+\contentsline {subparagraph}{Łączenie warstw}{28}{section*.25}%
+\contentsline {subsubsection}{\numberline {4.8.3}Maszyna stanów kontrolera LCD}{29}{subsubsection.4.8.3}%
+\contentsline {paragraph}{Tryb OAM}{29}{section*.26}%
+\contentsline {paragraph}{Tryb transferu pikseli}{29}{section*.27}%
+\contentsline {paragraph}{Tryb HBLANK}{29}{section*.28}%
+\contentsline {paragraph}{Tryb VBLANK}{29}{section*.29}%
+\contentsline {paragraph}{Synchronizacja z rejestrem LYC}{29}{section*.30}%
+\contentsline {paragraph}{Podsumowanie}{29}{section*.31}%
+\contentsline {subsection}{\numberline {4.9}Implementacja interfejsu graficznego emulatora}{29}{subsection.4.9}%
+\contentsline {subsubsection}{\numberline {4.9.1}Struktura klasy}{29}{subsubsection.4.9.1}%
+\contentsline {subsubsection}{\numberline {4.9.2}Główna pętla interfejsu}{30}{subsubsection.4.9.2}%
+\contentsline {subsubsection}{\numberline {4.9.3}Inicjalizacja interfejsu}{30}{subsubsection.4.9.3}%
+\contentsline {subsubsection}{\numberline {4.9.4}Aktualizacja obrazu ekranu}{30}{subsubsection.4.9.4}%
+\contentsline {subsubsection}{\numberline {4.9.5}Renderowanie obrazu emulatora}{31}{subsubsection.4.9.5}%
+\contentsline {subsubsection}{\numberline {4.9.6}Obsługa wejścia użytkownika}{31}{subsubsection.4.9.6}%
+\contentsline {subsubsection}{\numberline {4.9.7}Podgląd kafelków graficznych}{32}{subsubsection.4.9.7}%
+\contentsline {subsubsection}{\numberline {4.9.8}Panel statystyk}{32}{subsubsection.4.9.8}%
+\contentsline {subsubsection}{\numberline {4.9.9}Podsumowanie}{33}{subsubsection.4.9.9}%

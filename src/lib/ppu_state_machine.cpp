@@ -29,19 +29,6 @@ void increment_ly() {
     LCDS_LYC_SET(0);
   }
 }
-void ppu_publish_stats(EmulatorShared *shared) {
-  int w = shared->ppu_stats_write_index.load(std::memory_order_relaxed);
-  int r = shared->ppu_stats_read_index.load(std::memory_order_relaxed);
-
-  // Copy local → shared
-  shared->ppu_stats[w] = ppu_get_context()->local_stats;
-
-  // Swap
-  shared->ppu_stats_read_index.store(w, std::memory_order_release);
-  shared->ppu_stats_write_index.store(r, std::memory_order_relaxed);
-
-  shared->ppu_stats_ready.store(true, std::memory_order_release);
-}
 
 void load_line_sprites() {
   auto ppu_ctx = ppu_get_context();
@@ -123,19 +110,6 @@ void ppu_mode_vblank() {
     increment_ly();
 
     if (lcd_get_context()->ly >= LINES_PER_FRAMES) {
-      int write_idx =
-          shared->ppu_stats_write_index.load(std::memory_order_relaxed);
-      shared->ppu_stats[write_idx] = ctx->local_stats;
-
-      // 3. Signal to UI thread
-      shared->ppu_stats_read_index.store(write_idx, std::memory_order_release);
-      shared->ppu_stats_write_index.store(1 - write_idx,
-                                          std::memory_order_relaxed);
-      shared->ppu_stats_ready.store(true, std::memory_order_release);
-
-      // 4. RESET local stats for the next frame
-      memset(&ctx->local_stats, 0, sizeof(PPUStats));
-
       LCDS_MODE_SET(MODE_OAM);
       lcd_get_context()->ly = 0;
       ppu_get_context()->window_line = 0;
@@ -169,7 +143,6 @@ void ppu_mode_hblank() {
         cpu_request_interupts(IT_LCD_STAT);
       }
       ppu_present_frame(get_shared_emulator_state());
-      ppu_publish_stats(get_shared_emulator_state());
       ppu_get_context()->current_frame++;
 
       uint32_t end = get_ticks();

@@ -77,7 +77,6 @@ struct ppu_context {
 
 
   uint8_t window_line;
-  PPUStats local_stats;
 };
 
 ppu_context *ppu_get_context();

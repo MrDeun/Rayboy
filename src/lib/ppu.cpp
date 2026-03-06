@@ -39,7 +39,6 @@ void ppu_tick() {
 }
 void ppu_init() {
   auto *shared = get_shared_emulator_state();
-  ctx.local_stats = {};
   ctx.current_frame = 0;
   ctx.line_ticks = 0;
   int w = shared->write_index.load(std::memory_order_relaxed);

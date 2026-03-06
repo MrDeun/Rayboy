@@ -87,6 +87,4 @@ private:
   void drawStatusBar();
 
   void drawPanel(int x, int y, int width, int height, const char *title);
-  void drawButton(int x, int y, int width, int height, const char *text,
-                  bool *state);
 };

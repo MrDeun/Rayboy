@@ -806,7 +806,8 @@ Magistrala udostępnia również funkcje operujące na danych 16-bitowych:
 
 Operacje te wykorzystują konwencję zapisu w porządku little-endian, w której młodszy bajt przechowywany jest pod niższym adresem pamięci.
 
-\subsubsection{Znaczenie architektoniczne magistrali}
+\subsubsection{Znaczenie architektoniczne magistrali}el
+
 
 Zastosowanie scentralizowanej warstwy magistrali zapewnia:
 \begin{itemize}
@@ -845,13 +846,27 @@ Aktualizacja licznika TIMA następuje przy wykryciu opadającego zbocza wybraneg
 
 Interfejs dostępu do timerów realizowany jest poprzez funkcje odczytu i zapisu mapowane na odpowiednie adresy przestrzeni wejścia-wyjścia. Operacje te umożliwiają zarówno konfigurację parametrów pracy licznika, jak i odczyt jego bieżącego stanu. Implementacja zapewnia pełną zgodność z semantyką sprzętową oraz integralność modelu czasowego emulatora.
 \subsection{Implementacja procesora}
-\subsubsection{Reprezentacja i przechowywanie instrukcji procesora}
 
-Najprostszym podejściem do implementacji zestawu rozkazów procesora jest naiwna metoda polegająca na ręcznym definiowaniu logiki wykonania dla każdego kodu operacji (\textit{opcode}). W takim rozwiązaniu stosuje się zazwyczaj rozbudowaną instrukcję warunkową lub konstrukcję \texttt{switch-case}, w której każdemu kodowi operacji odpowiada bezpośrednia implementacja jego działania.
+\subsubsection{Reprezentacja i przechowywanie instrukcji}
 
-Podejście to, mimo swojej prostoty koncepcyjnej, prowadzi do szeregu problemów projektowych. Przede wszystkim skutkuje silnym powiązaniem informacji o instrukcji (typ operacji, tryb adresowania, używane rejestry, warunki wykonania) z jej implementacją wykonawczą. W efekcie kod staje się trudny do utrzymania, podatny na błędy oraz mało skalowalny. Dodanie nowej instrukcji lub modyfikacja istniejącej wymaga ingerencji w wiele fragmentów kodu, co zwiększa ryzyko regresji. Ponadto powtarzalność wzorców implementacyjnych utrudnia analizę oraz optymalizację emulatora.
+Najprostszym sposobem implementacji zestawu rozkazów procesora jest podejście naiwne, polegające na bezpośrednim powiązaniu każdego kodu operacji (\textit{opcode}) z jego implementacją przy użyciu rozbudowanej instrukcji warunkowej lub konstrukcji \texttt{switch-case}.
 
-W celu rozwiązania tych problemów zastosowano podejście oparte na rozdzieleniu opisu instrukcji od mechanizmu jej wykonania. Każdy rozkaz procesora reprezentowany jest przez strukturę danych zawierającą komplet informacji niezbędnych do jego obsługi, takich jak:
+Choć metoda ta jest koncepcyjnie prosta, prowadzi do istotnych problemów projektowych:
+\begin{itemize}
+	\item silnego powiązania opisu instrukcji z jej implementacją,
+	\item duplikacji logiki,
+	\item ograniczonej skalowalności,
+	\item utrudnionej rozbudowy i utrzymania kodu.
+\end{itemize}
+
+W celu eliminacji powyższych problemów zastosowano podejście rozdzielające:
+\begin{enumerate}
+	\item opis semantyki instrukcji,
+	\item mechanizm dekodowania,
+	\item mechanizm wykonania.
+\end{enumerate}
+
+Każda instrukcja reprezentowana jest przez strukturę danych zawierającą:
 \begin{itemize}
 	\item typ operacji,
 	\item tryb adresowania,
@@ -860,98 +875,133 @@ W celu rozwiązania tych problemów zastosowano podejście oparte na rozdzieleni
 	\item parametr dodatkowy.
 \end{itemize}
 
-Struktury te przechowywane są w tablicy indeksowanej bezpośrednio kodem operacji. Dzięki temu etap dekodowania instrukcji sprowadza się do odczytu odpowiedniej struktury na podstawie wartości \texttt{opcode}. Mechanizm wykonania korzysta następnie z tych informacji w sposób uogólniony, delegując właściwą logikę do funkcji przypisanej do typu instrukcji.
+Struktury te przechowywane są w tablicy indeksowanej bezpośrednio kodem operacji. Proces dekodowania sprowadza się do odczytu odpowiedniej struktury na podstawie wartości \texttt{opcode}, natomiast wykonanie delegowane jest do wyspecjalizowanej procedury przypisanej do typu instrukcji.
 
-Takie podejście wprowadza wyraźną separację odpowiedzialności pomiędzy:
-\begin{enumerate}
-	\item \textbf{opis semantyki instrukcji} — przechowywany w strukturach danych,
-	\item \textbf{mechanizm dekodowania} — wybór instrukcji na podstawie kodu operacji,
-	\item \textbf{mechanizm wykonania} — implementacja operacji procesora.
-\end{enumerate}
+Takie rozwiązanie zapewnia wyraźną separację odpowiedzialności, upraszcza rozszerzanie zestawu rozkazów oraz ułatwia implementację mechanizmów debugowania i trybów adresowania.
 
-Rozdzielenie danych opisujących instrukcję od jej implementacji przynosi istotne korzyści architektoniczne. Kod staje się bardziej czytelny, łatwiejszy do rozszerzania oraz odporny na błędy wynikające z duplikacji logiki. Ponadto możliwe jest jednolite przetwarzanie różnych klas instrukcji, co upraszcza implementację trybów adresowania oraz mechanizmów debugowania.
+\subsubsection{Struktura procesora i organizacja cyklu wykonawczego}
 
-Zastosowana reprezentacja stanowi zatem warstwę abstrakcji pomiędzy kodem maszynowym a logiką emulatora, umożliwiając elastyczne i skalowalne odwzorowanie zestawu rozkazów procesora.
+Implementacja CPU opiera się na centralnej strukturze kontekstu wykonania, przechowującej pełny stan procesora oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji.
 
-\subsubsection{Struktura procesora oraz organizacja cyklu wykonawczego}
+\paragraph{Struktura rejestrów procesora}
 
-Implementacja procesora emulatora opiera się na centralnej strukturze kontekstu wykonania, która przechowuje kompletny stan jednostki CPU oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji. Takie podejście umożliwia jednoznaczne odwzorowanie stanu procesora w dowolnym momencie działania emulatora oraz zapewnia spójny interfejs komunikacji pomiędzy modułami systemu.
+Stan architektoniczny przechowywany jest w strukturze \texttt{cpu\_registers}, zawierającej:
 
-\subsubsection{Struktura rejestrów procesora}
-
-Stan architektoniczny procesora przechowywany jest w strukturze \texttt{cpu\_registers}, zawierającej rejestry ogólnego przeznaczenia oraz rejestry sterujące:
+\textbf{Rejestry 8-bitowe:}
 \begin{itemize}
-	\item rejestry 8-bitowe: \texttt{A, F, B, C, D, E, H, L},
-	\item licznik rozkazów \texttt{PC} (Program Counter),
-	\item wskaźnik stosu \texttt{SP} (Stack Pointer).
+	\item \texttt{A, F, B, C, D, E, H, L}
 \end{itemize}
 
-Rejestr \texttt{F} pełni funkcję rejestru flag procesora i przechowuje bity statusowe operacji arytmetyczno-logicznych, takie jak:
+\textbf{Rejestry sterujące:}
 \begin{itemize}
-	\item flaga zera (Z),
-	\item flaga odejmowania (N),
-	\item flaga półprzeniesienia (H),
-	\item flaga przeniesienia (C).
+	\item \texttt{PC} --- licznik rozkazów (Program Counter),
+	\item \texttt{SP} --- wskaźnik stosu (Stack Pointer).
 \end{itemize}
 
-\subsubsection{Kontekst wykonania procesora}
-
-Pełny stan wykonawczy przechowywany jest w strukturze \texttt{cpu\_context}. Oprócz rejestrów zawiera ona:
+Rejestr \texttt{F} pełni funkcję rejestru flag i zawiera bity statusowe:
 \begin{itemize}
-	\item licznik taktów \texttt{ticks} wykorzystywany do synchronizacji z pozostałymi komponentami emulatora,
-	\item pole \texttt{fetch\_data} przechowujące operand pobrany z pamięci lub rejestru,
-	\item pole \texttt{mem\_destination} określające adres docelowy operacji zapisu,
-	\item flagę \texttt{dest\_is\_mem} informującą, czy wynik operacji powinien zostać zapisany do pamięci,
-	\item aktualny kod operacji \texttt{op\_code},
-	\item wskaźnik na aktualnie wykonywaną instrukcję \texttt{cur\_instruction}.
+	\item Z --- flaga zera,
+	\item N --- flaga odejmowania,
+	\item H --- flaga półprzeniesienia,
+	\item C --- flaga przeniesienia.
 \end{itemize}
 
-Struktura zawiera również pola sterujące pracą procesora:
+\paragraph{Kontekst wykonania procesora}
+
+Pełny stan wykonawczy przechowywany jest w strukturze \texttt{cpu\_context}, która oprócz rejestrów zawiera:
+
+\textbf{Dane operacyjne:}
+\begin{itemize}
+	\item \texttt{ticks} --- licznik taktów procesora,
+	\item \texttt{fetch\_data} --- pobrany operand,
+	\item \texttt{mem\_destination} --- adres docelowy zapisu,
+	\item \texttt{dest\_is\_mem} --- flaga zapisu do pamięci,
+	\item \texttt{op\_code} --- aktualny kod operacji,
+	\item \texttt{cur\_instruction} --- wskaźnik na strukturę instrukcji.
+\end{itemize}
+
+\textbf{Pola sterujące:}
 \begin{itemize}
 	\item globalne zezwolenie na przerwania,
-	\item flagę aktywacji przerwań po wykonaniu instrukcji,
+	\item opóźnioną aktywację przerwań,
 	\item stan zatrzymania procesora,
-	\item flagi zgłoszeń przerwań oraz rejestr maskujący przerwania.
+	\item rejestry zgłoszeń i masek przerwań.
 \end{itemize}
 
-\subsubsection{Inicjalizacja procesora}
+\subsubsection{Organizacja cyklu wykonawczego}
 
-Funkcja \texttt{cpu\_init()} odpowiada za ustawienie początkowego stanu procesora zgodnego z oczekiwanym stanem systemu po uruchomieniu. Inicjalizowane są wartości rejestrów, licznik rozkazów, wskaźnik stosu oraz rejestry systemu przerwań. Funkcja ta inicjuje również pamięć operacyjną emulatora.
+\paragraph{Inicjalizacja}
 
-\subsubsection{Pobieranie i dekodowanie instrukcji}
+Funkcja \texttt{cpu\_init()} ustawia stan początkowy procesora: inicjalizuje rejestry, ustawia wartości \texttt{PC} i \texttt{SP}, konfiguruje system przerwań oraz inicjalizuje pamięć emulatora.
 
-Funkcja \texttt{fetch\_instruction()} realizuje etap pobrania instrukcji. Kod operacji odczytywany jest z pamięci pod adresem wskazywanym przez licznik rozkazów, po czym następuje jego inkrementacja. Następnie wykonywane jest wyszukanie struktury opisującej instrukcję, zawierającej informacje o jej semantyce oraz trybie adresowania.
+\paragraph{Pobieranie i dekodowanie instrukcji}
 
-\subsubsection{Pobieranie operandów}
+Funkcja \texttt{fetch\_instruction()}:
+\begin{enumerate}
+	\item odczytuje kod operacji z pamięci pod adresem wskazywanym przez \texttt{PC},
+	\item inkrementuje licznik rozkazów,
+	\item wyszukuje strukturę opisującą instrukcję.
+\end{enumerate}
 
-Funkcja \texttt{fetch\_data()} odpowiada za odczyt operandów wymaganych przez instrukcję. W zależności od trybu adresowania operandy mogą pochodzić z:
+\paragraph{Pobieranie operandów}
+
+Funkcja \texttt{fetch\_data()} interpretuje tryb adresowania i przygotowuje dane dla etapu wykonania. Operandy mogą pochodzić z:
 \begin{itemize}
 	\item rejestrów procesora,
 	\item pamięci operacyjnej,
-	\item bezpośrednich wartości zapisanych w kodzie programu.
+	\item danych natychmiastowych zapisanych w kodzie programu.
 \end{itemize}
 
-Podczas tego etapu przygotowywane są również informacje o miejscu zapisu wyniku operacji.
+Obsługiwane są także tryby autoinkrementacji i autodekrementacji.
 
-\subsubsection{Wykonanie instrukcji}
+\paragraph{Wykonanie instrukcji}
 
-Funkcja \texttt{execute()} realizuje właściwe wykonanie instrukcji. Na podstawie typu operacji wybierana jest odpowiednia funkcja wykonawcza, której przekazywany jest kontekst procesora. Rozdzielenie logiki wykonawczej od etapu dekodowania umożliwia modularną organizację kodu emulatora.
+Funkcja \texttt{execute()} wybiera procedurę wykonawczą na podstawie typu operacji i przekazuje do niej kontekst procesora. Wykorzystanie tablicy wskaźników funkcji umożliwia szybkie mapowanie typu instrukcji na jej implementację.
 
-\subsubsection{Symulacja cykli zegarowych}
+\paragraph{Klasy procedur wykonawczych}
 
-Funkcja \texttt{emu\_cycles()} odwzorowuje upływ czasu w systemie. Każdy cykl powoduje:
+\textbf{Operacje arytmetyczne i logiczne:}
 \begin{itemize}
-	\item inkrementację licznika taktów procesora,
-	\item aktualizację timera systemowego,
+	\item dodawanie, odejmowanie,
+	\item operacje bitowe,
+	\item porównania,
+	\item aktualizacja flag statusowych.
+\end{itemize}
+
+\textbf{Operacje przepływu sterowania:}
+\begin{itemize}
+	\item skoki warunkowe i bezwarunkowe,
+	\item wywołania i powroty,
+	\item operacje na stosie.
+\end{itemize}
+
+\textbf{Instrukcje bitowe i rotacyjne:}
+\begin{itemize}
+	\item manipulacja pojedynczymi bitami,
+	\item przesunięcia,
+	\item rotacje.
+\end{itemize}
+
+\textbf{Instrukcje systemowe:}
+\begin{itemize}
+	\item zarządzanie przerwaniami,
+	\item zatrzymanie procesora,
+	\item operacje specjalne.
+\end{itemize}
+
+\paragraph{Symulacja cykli zegarowych}
+
+Funkcja \texttt{emu\_cycles()} odpowiada za synchronizację systemu. Każdy cykl powoduje:
+\begin{itemize}
+	\item inkrementację \texttt{ticks},
+	\item aktualizację timera,
 	\item aktualizację układu graficznego,
 	\item obsługę kontrolera DMA.
 \end{itemize}
 
-Mechanizm ten zapewnia synchronizację CPU z pozostałymi komponentami emulatora.
+\paragraph{Główny krok procesora}
 
-\subsubsection{Główny cykl pracy procesora}
-
-Funkcja \texttt{cpu\_step()} realizuje pojedynczy krok pracy procesora. Obejmuje ona:
+Funkcja \texttt{cpu\_step()} realizuje pojedynczy krok pracy CPU:
 \begin{enumerate}
 	\item pobranie instrukcji,
 	\item symulację cyklu zegarowego,
@@ -961,97 +1011,411 @@ Funkcja \texttt{cpu\_step()} realizuje pojedynczy krok pracy procesora. Obejmuje
 	\item aktualizację transferów DMA.
 \end{enumerate}
 
-W przypadku zatrzymania procesora wykonywane są jedynie cykle zegarowe do momentu wystąpienia przerwania.
+W stanie zatrzymania wykonywane są wyłącznie cykle zegarowe do momentu zgłoszenia przerwania.
 
-\subsubsection{Dostęp do rejestrów procesora: operacje get/set}
+\subsubsection{Warstwa dostępu do rejestrów}
 
-Warstwa dostępu do rejestrów procesora realizuje ujednolicony interfejs odczytu i zapisu zarówno dla rejestrów 8-bitowych, jak i 16-bitowych. Rozwiązanie to abstrahuje fizyczną reprezentację rejestrów w strukturze kontekstu CPU i umożliwia jednolite operowanie na nich przez mechanizmy dekodowania oraz wykonania instrukcji.
+Wprowadzono ujednoliconą warstwę dostępu do rejestrów 8- i 16-bitowych.
 
-\paragraph{Odczyt rejestrów 16-bitowych}
+\paragraph{Odczyt rejestrów}
 
-Funkcja \texttt{cpu\_read\_reg(reg\_type rt)} zwraca wartość wskazanego rejestru. Dla rejestrów 8-bitowych operacja sprowadza się do bezpośredniego odczytu pola struktury kontekstu. W przypadku rejestrów złożonych (AF, BC, DE, HL) stosowana jest interpretacja dwóch sąsiadujących rejestrów 8-bitowych jako jednej wartości 16-bitowej.
+Funkcja \texttt{cpu\_read\_reg(reg\_type rt)}:
+\begin{itemize}
+	\item dla rejestrów 8-bitowych wykonuje bezpośredni odczyt,
+	\item dla rejestrów złożonych (AF, BC, DE, HL) interpretuje pary rejestrów jako wartości 16-bitowe.
+\end{itemize}
 
-Zastosowanie funkcji pomocniczej realizującej odwrócenie kolejności bajtów zapewnia zgodność z reprezentacją little-endian stosowaną w systemie.
+\paragraph{Zapis rejestrów}
 
-\paragraph{Zapis rejestrów 16-bitowych}
+Funkcja \texttt{cpu\_set\_reg(reg\_type rt, uint16\_t value)} umożliwia zapis wartości do wskazanego rejestru z zachowaniem spójności reprezentacji.
 
-Funkcja \texttt{cpu\_set\_reg(reg\_type rt, uint16\_t value)} umożliwia zapis wartości do rejestru wskazanego typu. W przypadku rejestrów złożonych zapis realizowany jest poprzez bezpośrednią modyfikację odpowiednich par rejestrów 8-bitowych. Mechanizm ten zapewnia spójność reprezentacji stanu procesora oraz minimalizuje koszt operacji zapisu.
+Dodatkowe funkcje \texttt{cpu\_read\_reg8} oraz \texttt{cpu\_set\_reg8} zapewniają bezpośredni dostęp do rejestrów bajtowych.
 
-\paragraph{Operacje na rejestrach 8-bitowych}
+\paragraph{Zarządzanie flagami}
 
-Dodatkowe funkcje \texttt{cpu\_read\_reg8} oraz \texttt{cpu\_set\_reg8} umożliwiają bezpośredni dostęp do rejestrów bajtowych. Szczególnym przypadkiem jest rejestr logiczny wskazujący adres pamięci (\texttt{HL}), dla którego odczyt i zapis realizowane są poprzez operacje magistrali systemowej.
-
-\paragraph{Zarządzanie flagami procesora}
-
-Funkcja \texttt{cpu\_set\_flags} odpowiada za kontrolowaną modyfikację bitów statusowych. Wprowadzenie wartości specjalnej oznaczającej brak modyfikacji pozwala instrukcjom zmieniać jedynie wybrane flagi bez ingerencji w pozostałe. Na końcu operacji maskowane są młodsze bity rejestru flag, co zapewnia zgodność z architekturą procesora.
-
-\subsubsection{Procedury wykonawcze instrukcji}
-
-Wykonanie instrukcji realizowane jest poprzez zestaw wyspecjalizowanych procedur przypisanych do typów operacji. Mechanizm wyboru procedury oparty jest na tablicy wskaźników funkcji, co umożliwia szybkie mapowanie typu instrukcji na jej implementację.
-
-\paragraph{Operacje arytmetyczne i logiczne}
-
-Instrukcje takie jak dodawanie, odejmowanie, operacje logiczne oraz porównania manipulują rejestrami procesora oraz odpowiednio aktualizują flagi statusowe. Implementacja uwzględnia rozróżnienie operacji 8-bitowych i 16-bitowych, a także szczególne przypadki wymagane przez specyfikację architektury.
-
-\paragraph{Operacje przepływu sterowania}
-
-Instrukcje skoków, wywołań procedur oraz powrotów wykorzystują mechanizm warunków wykonania oparty na stanie flag procesora. W przypadku wywołań podprogramów wykorzystywany jest stos procesora, który przechowuje adres powrotu.
-
-\paragraph{Instrukcje bitowe i rotacyjne}
-
-Rozkazy prefiksowane implementują operacje manipulacji pojedynczymi bitami, przesunięcia oraz rotacje. Procedury te działają zarówno na rejestrach, jak i na danych znajdujących się w pamięci wskazywanej przez rejestry adresowe.
-
-\paragraph{Instrukcje systemowe}
-
-Instrukcje sterujące stanem procesora obejmują operacje zarządzania przerwaniami, zatrzymania procesora oraz operacje specjalne związane z reprezentacją danych dziesiętnych.
-
-\subsubsection{Mechanizm pobierania operandów}
-
-Pobieranie operandów realizowane jest przez funkcję \texttt{fetch\_data()}, która interpretuje tryb adresowania aktualnej instrukcji i przygotowuje dane wejściowe dla etapu wykonania.
-
-\paragraph{Tryby rejestrowe}
-
-W najprostszym przypadku operand pobierany jest bezpośrednio z rejestru wskazanego w opisie instrukcji.
-
-\paragraph{Tryby natychmiastowe}
-
-W trybach z danymi natychmiastowymi operand odczytywany jest z pamięci programu pod adresem wskazywanym przez licznik rozkazów, który następnie zostaje odpowiednio zwiększony.
-
-\paragraph{Tryby pamięciowe}
-
-Instrukcja może wskazywać adres pamięci jako źródło lub miejsce docelowe operacji. W takim przypadku mechanizm pobierania zapisuje adres docelowy oraz oznacza operację jako zapis do pamięci.
-
-\paragraph{Tryby z autoinkrementacją i autodekrementacją}
-
-Specjalne tryby adresowania wykorzystujące rejestr adresowy umożliwiają automatyczną modyfikację jego wartości po operacji odczytu lub zapisu. Mechanizm ten jest wykorzystywany w operacjach blokowych oraz przy pracy ze strukturami danych w pamięci.
-
-\paragraph{Znaczenie warstwy pobierania danych}
-
-Rozdzielenie etapu pobierania operandów od etapu wykonania instrukcji upraszcza implementację logiki procesora, umożliwia ponowne wykorzystanie kodu oraz zapewnia jednoznaczne odwzorowanie semantyki trybów adresowania w architekturze emulatora.
+Funkcja \texttt{cpu\_set\_flags} umożliwia selektywną modyfikację flag statusowych oraz maskowanie niedozwolonych bitów rejestru \texttt{F}.
 
 \subsubsection{Wykonanie w środowisku wielowątkowym}
 
-Funkcja \texttt{cpu\_run\_threaded()} realizuje ciągłą pracę procesora w pętli wykonawczej działającej w osobnym wątku. Funkcja:
+Funkcja \texttt{cpu\_run\_threaded()} realizuje pracę procesora w dedykowanym wątku. Odpowiada za:
 \begin{itemize}
-	\item inicjalizuje komponenty systemowe,
-	\item wykonuje kolejne kroki procesora,
-	\item zbiera statystyki wydajności,
-	\item synchronizuje stan z modułem graficznym.
+	\item inicjalizację komponentów,
+	\item ciągłe wykonywanie \texttt{cpu\_step()},
+	\item zbieranie statystyk wydajności,
+	\item synchronizację z modułem graficznym.
 \end{itemize}
 
 Oddzielenie cyklu CPU do dedykowanego wątku pozwala zachować stabilną prędkość emulacji oraz umożliwia równoległą obsługę warstwy prezentacji i interfejsu użytkownika.
+\subsection{Implementacja przetwarzania grafiki}
+
+Moduł przetwarzania grafiki odpowiada za emulację działania kontrolera LCD konsoli Game Boy. Jego zadaniem jest odwzorowanie rejestrów sterujących układu graficznego, zarządzanie paletami kolorów oraz obsługa komunikacji z magistralą pamięci emulatora. Implementacja została zaprojektowana w sposób modularny, tak aby możliwe było jednoznaczne odwzorowanie stanu sprzętowego w strukturze kontekstu oraz zapewnienie spójnego interfejsu dostępu do rejestrów.
+
+\subsubsection{Reprezentacja rejestrów LCD i obsługa palet}
+
+Stan kontrolera LCD przechowywany jest w strukturze \texttt{lcd\_context}. Struktura ta stanowi programowe odwzorowanie zestawu rejestrów sprzętowych oraz danych pomocniczych wykorzystywanych podczas procesu renderowania obrazu. W szczególności zawiera ona:
+
+\begin{itemize}
+	\item rejestry kontrolne \texttt{lcdc} oraz \texttt{lcds},
+	\item rejestry przewijania obrazu \texttt{scroll\_x} oraz \texttt{scroll\_y},
+	\item licznik aktualnie renderowanej linii \texttt{ly} oraz rejestr porównania \texttt{ly\_compare},
+	\item rejestr odpowiedzialny za transfer DMA,
+	\item rejestry palet kolorów dla tła oraz sprite'ów,
+	\item współrzędne okna renderowania,
+	\item tablice kolorów wykorzystywane podczas rasteryzacji.
+\end{itemize}
+
+Zastosowanie pojedynczej struktury kontekstu umożliwia bezpośrednie odwzorowanie przestrzeni adresowej rejestrów LCD w pamięci programu. Funkcja \texttt{lcd\_get\_context()} zwraca wskaźnik do globalnej instancji tej struktury, co upraszcza dostęp do aktualnego stanu układu graficznego w pozostałych modułach emulatora.
+
+\paragraph{Makra dostępu do bitów sterujących}
+
+W celu uproszczenia interpretacji bitów rejestrów sterujących zdefiniowano zestaw makr umożliwiających wykonywanie najczęściej wykorzystywanych operacji logicznych. Makra te pozwalają między innymi na:
+
+\begin{itemize}
+	\item odczyt flag kontrolnych rejestru \texttt{LCDC},
+	\item wybór odpowiednich obszarów pamięci wykorzystywanych podczas renderowania,
+	\item ustawianie oraz odczyt aktualnego trybu pracy kontrolera LCD,
+	\item obsługę źródeł przerwań rejestru statusowego.
+\end{itemize}
+
+Zastosowanie warstwy abstrakcji w postaci makr poprawia czytelność kodu oraz ogranicza ryzyko błędów wynikających z bezpośredniej manipulacji maskami bitowymi.
+
+\paragraph{Inicjalizacja kontekstu LCD}
+
+Funkcja \texttt{lcd\_init()} odpowiada za inicjalizację kontekstu kontrolera LCD. W trakcie jej wykonywania ustawiany jest początkowy stan rejestrów oraz domyślne wartości palet kolorów. W implementacji wykorzystano tablicę \texttt{colors\_defaults}, zawierającą cztery podstawowe kolory wykorzystywane podczas renderowania obrazu.
+
+Podczas inicjalizacji wykonywane są następujące operacje:
+
+\begin{itemize}
+	\item wyzerowanie rejestrów sterujących,
+	\item ustawienie domyślnych wartości rejestrów palet,
+	\item inicjalizacja tablic kolorów tła oraz obiektów.
+\end{itemize}
+
+\paragraph{Aktualizacja palet kolorów}
+
+Dekodowanie zawartości rejestrów palet realizowane jest przez funkcję \texttt{update\_pallete()}. Zadaniem tej funkcji jest przekształcenie wartości zapisanej w rejestrze palety w zestaw czterech rzeczywistych wartości kolorów wykorzystywanych podczas generowania pikseli.
+
+Każde dwa bity rejestru palety reprezentują indeks koloru w tablicy domyślnej. Funkcja:
+
+\begin{itemize}
+	\item wybiera odpowiednią tablicę kolorów (tła lub sprite'ów),
+	\item dekoduje kolejne pary bitów,
+	\item przypisuje im odpowiadające wartości 32-bitowych kolorów.
+\end{itemize}
+
+Oddzielenie reprezentacji rejestru palety od rzeczywistych wartości kolorów eliminuje konieczność wykonywania operacji dekodowania podczas zapisu każdego piksela, co pozytywnie wpływa na wydajność renderowania.
+
+\paragraph{Obsługa odczytu i zapisu rejestrów}
+
+Dostęp do rejestrów LCD realizowany jest poprzez funkcje \texttt{lcd\_read()} oraz \texttt{lcd\_write()}, które odwzorowują pamięciowe mapowanie rejestrów kontrolera graficznego.
+
+Funkcja \texttt{lcd\_read()} oblicza przesunięcie względem bazowego adresu przestrzeni rejestrów i zwraca odpowiednią wartość z kontekstu LCD. 
+
+Z kolei funkcja \texttt{lcd\_write()} obsługuje zapis do rejestrów, uwzględniając przy tym szczególne przypadki, takie jak uruchomienie transferu DMA lub aktualizacja rejestrów palet kolorów. Po wykryciu zapisu do rejestru palety funkcja wywołuje mechanizm aktualizacji tablic kolorów wykorzystywanych podczas rasteryzacji.
+
+\subsubsection{Renderowanie tła oraz obiektów OAM}
+
+Proces generowania obrazu realizowany jest w trybie transferu pikseli (\texttt{MODE\_XFER}) i opiera się na mechanizmie potoku przetwarzania współpracującego z kolejką FIFO pikseli. Implementacja odwzorowuje sprzętowy model działania kontrolera graficznego, w którym dane tła oraz sprite'ów są pobierane, dekodowane i łączone przed zapisaniem do bufora ramki.
+
+\paragraph{Renderowanie tła}
+
+Renderowanie tła realizowane jest przez strukturę \texttt{pixel\_fifo\_context} oraz funkcję \texttt{pipeline\_process()}, wywoływaną cyklicznie podczas pracy trybu transferu pikseli.
+
+Dla każdej linii obrazu wyznaczane są następujące parametry:
+
+\begin{itemize}
+	\item współrzędne mapy tła (\texttt{map\_x}, \texttt{map\_y}),
+	\item przesunięcie w obrębie kafelka (\texttt{tile\_y}),
+	\item aktualna pozycja piksela w linii obrazu.
+\end{itemize}
+
+Pobieranie danych z pamięci VRAM realizowane jest przy użyciu maszyny stanów \texttt{fetch\_state}, obejmującej następujące etapy:
+
+\begin{enumerate}
+	\item \texttt{FS\_TILE} — odczyt indeksu kafelka z mapy tła,
+	\item \texttt{FS\_DATA0} — odczyt młodszego bajtu opisującego linię pikseli kafelka,
+	\item \texttt{FS\_DATA1} — odczyt starszego bajtu linii pikseli,
+	\item \texttt{FS\_PUSH} — dekodowanie ośmiu pikseli i zapis ich do kolejki FIFO.
+\end{enumerate}
+
+Każdy kafelek reprezentowany jest przez dwa bajty opisujące jedną linię pikseli. Dla każdego z ośmiu pikseli wyznaczana jest dwubitowa wartość koloru poprzez ekstrakcję odpowiednich bitów z obu bajtów. Wartość ta mapowana jest następnie na rzeczywisty kolor przy użyciu aktualnej palety tła.
+
+Wygenerowane piksele zapisywane są do kolejki FIFO przy użyciu funkcji \texttt{pixel\_fifo\_push()}. Następnie funkcja \texttt{pipeline\_push\_pixel()} usuwa piksele z kolejki i zapisuje je do bufora ramki, uwzględniając:
+
+\begin{itemize}
+	\item poziome przewijanie obrazu (\texttt{scroll\_x}),
+	\item numer aktualnej linii (\texttt{ly}),
+	\item bieżącą pozycję piksela w linii.
+\end{itemize}
+
+Takie podejście umożliwia przyrostowe generowanie obrazu zgodnie z kolejnymi cyklami pracy jednostki PPU.
+
+\paragraph{Renderowanie obiektów OAM}
+
+Renderowanie sprite'ów realizowane jest równolegle z generowaniem warstwy tła i polega na odpowiednim łączeniu obu warstw z uwzględnieniem priorytetów.
+
+\subparagraph{Selekcja sprite'ów dla linii}
+
+W trybie \texttt{MODE\_OAM} wykonywana jest funkcja \texttt{load\_line\_sprites()}, której zadaniem jest:
+
+\begin{itemize}
+	\item przeszukanie pamięci OAM,
+	\item wybór sprite'ów przecinających aktualną linię obrazu,
+	\item ograniczenie ich liczby do maksymalnie dziesięciu obiektów,
+	\item posortowanie ich według współrzędnej poziomej.
+\end{itemize}
+
+Wybrane sprite'y zapisywane są w strukturze pomocniczej \texttt{line\_sprites}, wykorzystywanej podczas dalszego procesu renderowania.
+
+\subparagraph{Łączenie warstw}
+
+Podczas generowania pikseli wykonywana jest funkcja \texttt{fetch\_sprite\_pixels()}, która sprawdza, czy sprite pokrywa aktualnie renderowaną pozycję X. Jeżeli tak, wykonywane są następujące operacje:
+
+\begin{itemize}
+	\item uwzględnienie odbicia poziomego i pionowego,
+	\item dekodowanie wartości koloru sprite'a,
+	\item sprawdzenie przezroczystości piksela,
+	\item porównanie priorytetu względem tła.
+\end{itemize}
+
+Jeżeli warunki priorytetu są spełnione, kolor piksela tła zostaje zastąpiony kolorem sprite'a wybranym z odpowiedniej palety obiektów.
+
+\subsubsection{Maszyna stanów kontrolera LCD}
+
+Przetwarzanie obrazu realizowane jest w postaci deterministycznej maszyny stanów zsynchronizowanej z licznikiem cykli. Aktualny tryb pracy kontrolera przechowywany jest w dwóch najmłodszych bitach rejestru statusowego i może przyjmować jedną z czterech wartości: \texttt{MODE\_OAM}, \texttt{MODE\_XFER}, \texttt{MODE\_HBLANK} oraz \texttt{MODE\_VBLANK}.
+
+\paragraph{Tryb OAM}
+
+W trybie OAM analizowana jest pamięć obiektów w celu wyznaczenia sprite'ów widocznych w bieżącej linii obrazu.
+
+\paragraph{Tryb transferu pikseli}
+
+W trybie \texttt{MODE\_XFER} realizowany jest właściwy proces generowania pikseli, obejmujący pobieranie danych kafelków, dekodowanie pikseli oraz łączenie warstw tła i sprite'ów.
+
+\paragraph{Tryb HBLANK}
+
+Tryb \texttt{MODE\_HBLANK} stanowi okres wygaszania poziomego, w którym nie są generowane nowe piksele, a procesor uzyskuje dostęp do pamięci wideo.
+
+\paragraph{Tryb VBLANK}
+
+Tryb \texttt{MODE\_VBLANK} obejmuje linie poza obszarem widocznym. W tej fazie generowane jest przerwanie synchronizacji pionowej oraz możliwa jest aktualizacja bufora ramki.
+
+\paragraph{Synchronizacja z rejestrem LYC}
+
+Dodatkowym elementem działania kontrolera jest mechanizm porównania rejestru \texttt{LY} z rejestrem \texttt{LYC}. W przypadku zgodności ustawiana jest flaga statusowa, która może generować przerwanie, jeżeli odpowiednie źródło zostało wcześniej włączone.
+
+\paragraph{Podsumowanie}
+
+Zaproponowana architektura renderowania oparta na maszynie stanów oraz potoku przetwarzania pikseli umożliwia wierne odwzorowanie działania sprzętowego kontrolera LCD. Jednocześnie zachowana została modularność implementacji, co ułatwia dalszy rozwój emulatora oraz analizę jego działania.
+
+Zastosowanie jawnej maszyny stanów:
+
+\begin{itemize}
+	\item zapewnia zgodność czasową z przebiegiem generowania linii,
+	\item rozdziela logicznie poszczególne etapy renderowania,
+	\item upraszcza obsługę przerwań i synchronizacji z procesorem,
+	\item umożliwia deterministyczne odwzorowanie przebiegu całej ramki.
+\end{itemize}
+
+\subsection{Implementacja interfejsu graficznego emulatora}
+
+Interfejs użytkownika emulatora został zaimplementowany w postaci klasy \texttt{RayboyUI}. 
+Klasa ta odpowiada za wizualizację działania emulatora, obsługę wejścia użytkownika 
+oraz prezentację informacji diagnostycznych dotyczących pracy systemu emulacji. 
+Warstwa graficzna została zrealizowana z wykorzystaniem biblioteki raylib, która 
+umożliwia tworzenie aplikacji graficznych 2D oraz obsługę urządzeń wejścia takich 
+jak klawiatura.
+
+\subsubsection{Struktura klasy}
+
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{rayboy_ui.png}
+		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\label{fig:rayboy_ui}
+	\end{minipage}
+\end{figure}
+
+
+Klasa \texttt{RayboyUI} zarządza wszystkimi elementami graficznymi interfejsu użytkownika. 
+Przechowuje ona wskaźnik do struktury współdzielonej \texttt{EmulatorShared}, która 
+umożliwia wymianę danych pomiędzy rdzeniem emulatora a warstwą graficzną. 
+Struktura ta zawiera między innymi:
+
+\begin{itemize}
+	\item bufor klatek obrazu generowanych przez emulator,
+	\item dane graficzne kafelków zapisanych w pamięci wideo,
+	\item statystyki pracy procesora emulowanego systemu,
+	\item flagi sterujące stanem emulatora (np. pauza lub zakończenie pracy).
+\end{itemize}
+
+Klasa przechowuje również zmienne opisujące aktualny stan interfejsu, takie jak 
+widoczność poszczególnych paneli, w tym podglądu kafelków graficznych, panelu 
+statystyk oraz ekranu pomocy.
+
+Dodatkowo zdefiniowane zostały stałe określające parametry wyświetlania, takie jak 
+rozdzielczość ekranu oryginalnej konsoli Game Boy (160$\times$144 piksele), 
+współczynnik skalowania obrazu oraz liczba wyświetlanych kafelków w podglądzie pamięci 
+graficznej.
+\subsubsection{Główna pętla interfejsu}
+
+Działanie interfejsu użytkownika opiera się na dwóch podstawowych metodach: 
+\texttt{update()} oraz \texttt{draw()}.
+
+Metoda \texttt{update()} odpowiada za aktualizację stanu interfejsu, w tym 
+obsługę wejścia użytkownika oraz aktualizację danych graficznych. 
+Natomiast metoda \texttt{draw()} realizuje renderowanie wszystkich elementów 
+interfejsu, takich jak ekran emulatora, panel statystyk, podgląd kafelków 
+oraz pasek statusu.
+\subsubsection{Inicjalizacja interfejsu}
+
+Proces inicjalizacji interfejsu realizowany jest przez metodę \texttt{setup()}. 
+W trakcie jej wykonywania obliczane są wymiary okna aplikacji na podstawie 
+rozmiarów poszczególnych paneli interfejsu. Następnie wyznaczane są pozycje 
+elementów graficznych, takich jak panel statystyk, podgląd kafelków oraz ekran 
+emulatora.
+
+Kolejnym krokiem jest utworzenie okna aplikacji oraz ustawienie docelowej liczby 
+klatek na sekundę. Następnie tworzone są struktury danych typu \texttt{Image} 
+oraz \texttt{Texture2D}, które przechowują obraz ekranu emulatora oraz dane 
+graficzne podglądu kafelków. Obrazy te są następnie przesyłane do pamięci karty 
+graficznej w postaci tekstur, co umożliwia ich szybkie renderowanie.
+
+\subsubsection{Aktualizacja obrazu ekranu}
+
+Aktualizacja obrazu wyświetlanego przez emulator realizowana jest w metodzie 
+\texttt{updateScreenTexture()}. W pierwszej kolejności sprawdzana jest flaga 
+\texttt{frame\_ready}, która informuje o dostępności nowej klatki obrazu 
+wygenerowanej przez rdzeń emulatora.
+
+W przypadku dostępności nowej klatki wykonywane są następujące operacje:
+
+\begin{enumerate}
+	\item odczyt indeksu bufora zawierającego aktualną klatkę obrazu,
+	\item skopiowanie danych pikseli do lokalnego obrazu interfejsu,
+	\item aktualizacja tekstury znajdującej się w pamięci karty graficznej,
+	\item wyzerowanie flagi informującej o gotowości klatki.
+\end{enumerate}
+
+Zastosowanie takiego mechanizmu pozwala na bezpieczną komunikację pomiędzy 
+wątkiem emulatora a wątkiem odpowiedzialnym za renderowanie interfejsu użytkownika.
+\newpage
+\subsubsection{Renderowanie obrazu emulatora}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{screen.png}
+		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\label{fig:gameboy_screen}
+	\end{minipage}
+\end{figure}
+
+Wyświetlanie obrazu generowanego przez emulator realizowane jest w metodzie 
+\texttt{drawScreen()}. W pierwszej kolejności rysowana jest ramka otaczająca 
+ekran emulatora. Następnie wyświetlana jest tekstura zawierająca aktualną klatkę 
+obrazu.
+
+Ponieważ rozdzielczość oryginalnej konsoli Game Boy jest stosunkowo niewielka, 
+obraz jest skalowany podczas renderowania. Dzięki temu możliwe jest jego 
+czytelne wyświetlenie na ekranie komputera.
+
+
+
+
+\subsubsection{Obsługa wejścia użytkownika}
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{input_viewer.png}
+		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\label{fig:input_viewer}
+	\end{minipage}
+\end{figure}
+Obsługa wejścia z klawiatury realizowana jest w metodzie \texttt{handleInput()}. 
+W metodzie tej zdefiniowano zestaw skrótów klawiszowych umożliwiających sterowanie 
+pracą emulatora.
+
+Do najważniejszych funkcji należą:
+
+\begin{itemize}
+	\item wstrzymanie lub wznowienie emulacji,
+	\item zakończenie działania programu,
+	\item włączenie lub wyłączenie panelu statystyk,
+	\item włączenie lub wyłączenie podglądu kafelków,
+	\item wyświetlenie ekranu pomocy.
+\end{itemize}
+
+Dodatkowo klawisze klawiatury mapowane są na przyciski kontrolera konsoli Game Boy. 
+Stan przycisków zapisywany jest w strukturze \texttt{gamepad\_state}, która 
+następnie przekazywana jest do rdzenia emulatora.
+
+\subsubsection{Podgląd kafelków graficznych}
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{tile_viewer.png}
+		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\label{fig:input_viewer}
+	\end{minipage}
+\end{figure}
+Konsola Game Boy wykorzystuje system grafiki oparty na tzw. kafelkach 
+(\textit{tiles}), które są niewielkimi obrazami o rozmiarze 8$\times$8 pikseli. 
+Metoda \texttt{updateTileImage()} odpowiada za generowanie obrazu zawierającego 
+podgląd wszystkich kafelków zapisanych w pamięci graficznej emulatora.
+
+Dla każdego kafelka wywoływana jest funkcja \texttt{renderTile()}, która 
+odczytuje dane pikseli z pamięci wideo, oblicza identyfikator koloru dla 
+poszczególnych pikseli oraz rysuje je w odpowiednim miejscu obrazu podglądu.
+
+Podgląd ten jest następnie wyświetlany w interfejsie przy użyciu metody 
+\texttt{drawTileViewer()}, która dodatkowo rysuje siatkę ułatwiającą 
+identyfikację poszczególnych kafelków.
+
+\subsubsection{Panel statystyk}
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{performance.png}
+		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\label{fig:input_viewer}
+	\end{minipage}
+\end{figure}
+
+
+Interfejs zawiera również panel statystyk wydajności emulatora, który 
+wyświetlany jest przez metodę \texttt{drawStatsPanel()}. Panel ten prezentuje 
+informacje dotyczące pracy rdzenia emulatora, takie jak:
+
+\begin{itemize}
+	\item aktualna prędkość emulowanego procesora wyrażona w MHz,
+	\item procentowa zgodność prędkości z oryginalnym sprzętem,
+	\item liczba wykonywanych instrukcji na sekundę (MIPS),
+	\item średnia liczba cykli procesora przypadających na jedną instrukcję.
+\end{itemize}
+
+Informacje te są pomocne podczas analizy wydajności implementacji emulatora 
+oraz w procesie jego optymalizacji.
+
+
 
 \subsubsection{Podsumowanie}
 
-Zastosowana organizacja procesora opiera się na jednoznacznym rozdzieleniu:
-\begin{itemize}
-	\item stanu architektonicznego,
-	\item mechanizmu dekodowania instrukcji,
-	\item mechanizmu wykonania,
-	\item symulacji czasu systemowego.
-\end{itemize}
-
-Takie podejście zapewnia wysoką czytelność implementacji, umożliwia precyzyjne odwzorowanie działania sprzętu oraz stanowi solidną podstawę do dalszej rozbudowy emulatora.
+Klasa \texttt{RayboyUI} stanowi warstwę prezentacji emulatora i pełni rolę 
+pośrednika pomiędzy użytkownikiem a rdzeniem systemu emulacji. 
+Odpowiada ona zarówno za wizualizację obrazu generowanego przez emulator, 
+jak i za obsługę wejścia użytkownika oraz prezentację informacji 
+diagnostycznych. Zastosowanie biblioteki raylib pozwoliło na stosunkowo 
+prostą implementację graficznego interfejsu użytkownika przy jednoczesnym 
+zachowaniu dobrej wydajności renderowania.
 
 \printbibliography
 \end{document}

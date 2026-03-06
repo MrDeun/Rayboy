@@ -19,12 +19,6 @@ struct EmulatorShared {
     std::atomic<int> read_index{1};
     std::atomic<bool> frame_ready{false};
 
-    PPUStats ppu_stats[2];
-    std::atomic<int> ppu_stats_write_index{0};
-    std::atomic<int> ppu_stats_read_index{1};
-    std::atomic<bool> ppu_stats_ready{false};
-
-
     CPUStats cpu_stats[2];
     std::atomic<int> cpu_stats_write_index{0};
     std::atomic<int> cpu_stats_read_index{1};

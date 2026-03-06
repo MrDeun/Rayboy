@@ -201,28 +201,6 @@ void RayboyUI::drawPanel(int x, int y, int width, int height,
   DrawText(title, x + 10, y + 8, 14, TEXT_COLOR);
 }
 
-void RayboyUI::drawButton(int x, int y, int width, int height, const char *text,
-                          bool *state) {
-  Rectangle rect = {(float)x, (float)y, (float)width, (float)height};
-  bool hovered = CheckCollisionPointRec(GetMousePosition(), rect);
-
-  Color bg = *state ? ACCENT_COLOR : PANEL_COLOR;
-  if (hovered && !*state) {
-    bg = (Color){50, 50, 55, 255};
-  }
-
-  DrawRectangleRec(rect, bg);
-  DrawRectangleLinesEx(rect, 1, ACCENT_COLOR);
-
-  int text_width = MeasureText(text, 10);
-  DrawText(text, x + (width - text_width) / 2, y + (height - 10) / 2, 10,
-           TEXT_COLOR);
-
-  if (hovered && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    *state = !*state;
-  }
-}
-
 void RayboyUI::drawStatsPanel() {
   if (!show_stats)
     return;
