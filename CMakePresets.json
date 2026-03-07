@@ -1,0 +1,181 @@
+{
+  "version": 8,
+  "configurePresets": [
+    {
+      "name": "base-debug",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "base-release",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+    {
+      "name": "clang-debug",
+      "displayName": "Clang 21.1.8 x86_64-redhat-linux-gnu (Debug)",
+      "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+      "inherits": "base-debug",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Clang 21.1.8 x86_64-redhat-linux-gnu (Release)",
+      "description": "Using compilers: C = /usr/bin/clang, CXX = /usr/bin/clang++",
+      "inherits": "base-release",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+      }
+    },
+
+    {
+      "name": "clang-windows-debug",
+      "displayName": "Clang Windows (Debug)",
+      "description": "LLVM Clang — run from Developer Command Prompt. Requires: winget install LLVM.LLVM Ninja-build.Ninja",
+      "inherits": "base-debug",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "C:/Program Files/LLVM/bin/clang.exe",
+        "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "environment": {
+        "CC": "C:/Program Files/LLVM/bin/clang.exe",
+        "CXX": "C:/Program Files/LLVM/bin/clang++.exe"
+      }
+    },
+    {
+      "name": "clang-windows-release",
+      "displayName": "Clang Windows (Release)",
+      "description": "LLVM Clang — run from Developer Command Prompt. Requires: winget install LLVM.LLVM Ninja-build.Ninja",
+      "inherits": "base-release",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "C:/Program Files/LLVM/bin/clang.exe",
+        "CMAKE_CXX_COMPILER": "C:/Program Files/LLVM/bin/clang++.exe",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "environment": {
+        "CC": "C:/Program Files/LLVM/bin/clang.exe",
+        "CXX": "C:/Program Files/LLVM/bin/clang++.exe"
+      }
+    },
+
+    {
+      "name": "clang-macos-debug",
+      "displayName": "Clang macOS (Debug)",
+      "description": "Homebrew LLVM Clang. Requires: brew install llvm ninja. For Apple Clang swap paths to /usr/bin/clang.",
+      "inherits": "base-debug",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
+        "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "environment": {
+        "CC": "/opt/homebrew/opt/llvm/bin/clang",
+        "CXX": "/opt/homebrew/opt/llvm/bin/clang++"
+      }
+    },
+    {
+      "name": "clang-macos-release",
+      "displayName": "Clang macOS (Release)",
+      "description": "Homebrew LLVM Clang. Requires: brew install llvm ninja. For Apple Clang swap paths to /usr/bin/clang.",
+      "inherits": "base-release",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
+        "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "environment": {
+        "CC": "/opt/homebrew/opt/llvm/bin/clang",
+        "CXX": "/opt/homebrew/opt/llvm/bin/clang++"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
+      "displayName": "Build — Linux Debug"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release",
+      "displayName": "Build — Linux Release"
+    },
+    {
+      "name": "clang-windows-debug",
+      "configurePreset": "clang-windows-debug",
+      "displayName": "Build — Windows Debug"
+    },
+    {
+      "name": "clang-windows-release",
+      "configurePreset": "clang-windows-release",
+      "displayName": "Build — Windows Release"
+    },
+    {
+      "name": "clang-macos-debug",
+      "configurePreset": "clang-macos-debug",
+      "displayName": "Build — macOS Debug"
+    },
+    {
+      "name": "clang-macos-release",
+      "configurePreset": "clang-macos-release",
+      "displayName": "Build — macOS Release"
+    }
+  ]
+}

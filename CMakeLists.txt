@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.17.0)
 project(Rayboy VERSION 0.1.0 LANGUAGES C CXX)
 include(FetchContent)
 
-set(CXX_STANDARD_REQUIRED 23)
+set(CXX_STANDARD_REQUIRED 17)
 
 if(UNIX)
-# set(CMAKE_C_COMPILER clang)
-# set(CMAKE_CXX_COMPILER clang++)
+    # set(CMAKE_C_COMPILER clang)
+    # set(CMAKE_CXX_COMPILER clang++)
 endif()
 
 set(FETCHCONTENT_QUIET OFF)
