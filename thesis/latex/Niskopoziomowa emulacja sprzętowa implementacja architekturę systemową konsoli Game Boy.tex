@@ -1234,7 +1234,7 @@ jak klawiatura.
 	\begin{minipage}{0.65\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{rayboy_ui.png}
-		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\caption{Okno emulatora. Źródło: Własnoręczna implementacja}
 		\label{fig:rayboy_ui}
 	\end{minipage}
 \end{figure}
@@ -1322,10 +1322,7 @@ obrazu.
 
 Ponieważ rozdzielczość oryginalnej konsoli Game Boy jest stosunkowo niewielka, 
 obraz jest skalowany podczas renderowania. Dzięki temu możliwe jest jego 
-czytelne wyświetlenie na ekranie komputera.
-
-
-
+czytelne wyświetlenie na ekranie komputera
 
 \subsubsection{Obsługa wejścia użytkownika}
 \begin{figure}[htbp]
@@ -1333,7 +1330,7 @@ czytelne wyświetlenie na ekranie komputera.
 	\begin{minipage}{0.65\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{input_viewer.png}
-		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
+		\caption{Okienko stanu wirtualnych urządeń wejścia konsoli. Źródło: Własnoręczna implementacja}
 		\label{fig:input_viewer}
 	\end{minipage}
 \end{figure}
@@ -1361,8 +1358,8 @@ następnie przekazywana jest do rdzenia emulatora.
 	\begin{minipage}{0.65\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{tile_viewer.png}
-		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
-		\label{fig:input_viewer}
+		\caption{Podgląd kafelków przechowywanych w pamięci VRAM. Źródło: Własnoręczna implementacja}
+		\label{fig:tile_viewer}
 	\end{minipage}
 \end{figure}
 Konsola Game Boy wykorzystuje system grafiki oparty na tzw. kafelkach 
@@ -1385,8 +1382,8 @@ identyfikację poszczególnych kafelków.
 	\begin{minipage}{0.65\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{performance.png}
-		\caption{Zrzut emulowanego ekranu. Źródło: Własnoręczna implementacja}
-		\label{fig:input_viewer}
+		\caption{Okienko statystyk emulacji. Źródło: Własnoręczna implementacja}
+		\label{fig:perfomance_viewer}
 	\end{minipage}
 \end{figure}
 
@@ -1405,7 +1402,17 @@ informacje dotyczące pracy rdzenia emulatora, takie jak:
 Informacje te są pomocne podczas analizy wydajności implementacji emulatora 
 oraz w procesie jego optymalizacji.
 
+\subsubsection{Ekran Pomocy}
 
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.65\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{help_screen.png}
+		\caption{Ekran pomocy. Źródło: Własnoręczna implementacja}
+		\label{fig:help_screen}
+	\end{minipage}
+\end{figure}
 
 \subsubsection{Podsumowanie}
 
@@ -1417,5 +1424,20 @@ diagnostycznych. Zastosowanie biblioteki raylib pozwoliło na stosunkowo
 prostą implementację graficznego interfejsu użytkownika przy jednoczesnym 
 zachowaniu dobrej wydajności renderowania.
 
+\section{Weryfikacja implementacji emulatora}
+
+Proces weryfikacji implementacji emulatora jest kluczowym etapem w procesie jego rozwoju. Ze względu na złożoność architektury konsoli oraz dużą liczbę szczegółowych zachowań sprzętowych, nawet niewielkie odstępstwa od specyfikacji mogą prowadzić do niepoprawnego działania programów. Celem weryfikacji jest zatem potwierdzenie zgodności implementacji z rzeczywistym zachowaniem sprzętu oraz wykrycie błędów w implementacji poszczególnych komponentów emulatora, takich jak procesor, system pamięci czy układ graficzny.
+
+W celu przeprowadzenia weryfikacji zastosowano zestaw powszechnie wykorzystywanych w społeczności emulatorów testów diagnostycznych. Podstawowym narzędziem były testy autorstwa \textit{blargg}, które służą do sprawdzania poprawności implementacji instrukcji procesora, obsługi przerwań, timerów oraz innych mechanizmów sprzętowych. Testy te uruchamiane są bezpośrednio w emulatorze, a ich wynik sygnalizowany jest poprzez komunikaty wyświetlane w pamięci wideo lub poprzez określony kod zakończenia programu. Poprawne przejście wszystkich testów stanowi silną przesłankę, że implementacja podstawowych elementów architektury jest zgodna ze specyfikacją.
+
+W przypadku niepowodzenia testów przeprowadzana jest dodatkowa analiza przy użyciu narzędzia \textit{gameboy-doctor}. Narzędzie to umożliwia generowanie szczegółowych logów zawierających stan rejestrów procesora oraz wykonywane instrukcje w kolejnych cyklach. Następnie logi te porównywane są z referencyjnymi logami generowanymi przez poprawną implementację. Pozwala to na precyzyjne zidentyfikowanie miejsca, w którym zachowanie emulatora zaczyna odbiegać od oczekiwanego, co znacząco ułatwia proces lokalizacji i usuwania błędów.
+
+Dodatkowo przeprowadzono weryfikację poprawności działania układu graficznego przy użyciu testu \textit{dmg-acid2}. Jest to specjalnie przygotowany program testowy, którego celem jest sprawdzenie zgodności implementacji mechanizmów renderowania grafiki, takich jak obsługa sprite'ów, priorytetów warstw czy maskowania pikseli. Poprawna implementacja emulatora powinna wygenerować na ekranie obraz identyczny z referencyjnym wynikiem testu.
+
+Ostatnim etapem weryfikacji było porównanie działania emulatora z dojrzałym, referencyjnym emulatorem. W tym celu wykorzystano emulator \textit{SameBoy}, który jest uznawany za jedną z najbardziej dokładnych implementacji emulatora konsoli Game Boy. Porównanie polegało na uruchomieniu tej samej aplikacji typu homebrew w obu emulatorach. Jako program testowy wykorzystano implementację gry \textit{2048}. Analizie poddano zarówno poprawność działania logiki gry, jak i zgodność wyświetlanej grafiki oraz reakcji na dane wejściowe użytkownika. Zgodność zachowania obu emulatorów stanowi dodatkowe potwierdzenie poprawności implementacji.
+
+Zastosowanie opisanych metod pozwoliło na wieloaspektową weryfikację emulatora, obejmującą zarówno testy jednostkowe poszczególnych mechanizmów sprzętowych, jak i testy integracyjne polegające na uruchamianiu rzeczywistych programów przeznaczonych dla emulowanej platformy.
+
+\newpage
 \printbibliography
 \end{document}

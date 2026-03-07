@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2026.2.19)  6 MAR 2026 17:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2026.2.19)  7 MAR 2026 15:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -555,14 +555,7 @@ Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
 \@quotereset=\count416
 
 (./Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową ko
-nsoli Game Boy.aux
-
-LaTeX Warning: Label `fig:input_viewer' multiply defined.
-
-
-LaTeX Warning: Label `fig:input_viewer' multiply defined.
-
-)
+nsoli Game Boy.aux)
 \openout1 = `"Niskopoziomowa emulacja sprzętowa implementacja architekturę sy
 stemową konsoli Game Boy.aux"'.
 
@@ -692,42 +685,41 @@ nsoli Game Boy.toc [2
 \openout5 = `"Niskopoziomowa emulacja sprzętowa implementacja architekturę sy
 stemową konsoli Game Boy.toc"'.
 
- [3] [4
+ [3] [4] [5
 
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [5]
-<gbobtables.png, id=622, 1002.74625pt x 574.39594pt>
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [6]
+<gbobtables.png, id=636, 1002.74625pt x 574.39594pt>
 File: gbobtables.png Graphic file (type png)
 <use gbobtables.png>
 Package pdftex.def Info: gbobtables.png  used on input line 120.
 (pdftex.def)             Requested size: 426.79135pt x 244.47876pt.
-<gbobtables_cb.png, id=625, 1057.70157pt x 584.93532pt>
+<gbobtables_cb.png, id=639, 1057.70157pt x 584.93532pt>
 File: gbobtables_cb.png Graphic file (type png)
 <use gbobtables_cb.png>
 Package pdftex.def Info: gbobtables_cb.png  used on input line 127.
 (pdftex.def)             Requested size: 426.79135pt x 236.02281pt.
- [6] [7 <./gbobtables.png> <./gbobtables_cb.png>]
+ [7] [8 <./gbobtables.png> <./gbobtables_cb.png>]
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
 25.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2022/07/10 v2.5l Standard LaTeX font definitions
 )
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[8] [9] [10]
-<dmg_marked.png, id=670, 1124.2pt x 1033.8625pt>
+[9] [10] [11]
+<dmg_marked.png, id=684, 1124.2pt x 1033.8625pt>
 File: dmg_marked.png Graphic file (type png)
 <use dmg_marked.png>
 Package pdftex.def Info: dmg_marked.png  used on input line 330.
 (pdftex.def)             Requested size: 172.84813pt x 158.95345pt.
-<dmg_chart.png, id=673, 1266.7325pt x 1027.84pt>
+<dmg_chart.png, id=687, 1266.7325pt x 1027.84pt>
 File: dmg_chart.png Graphic file (type png)
 <use dmg_chart.png>
 Package pdftex.def Info: dmg_chart.png  used on input line 337.
 (pdftex.def)             Requested size: 172.84813pt x 140.24234pt.
- [11 <./dmg_marked.png> <./dmg_chart.png>] [12] [13] [14] [15]
-[16] [17] [18]
+ [12 <./dmg_marked.png> <./dmg_chart.png>] [13] [14] [15] [16]
+[17] [18] [19]
 Overfull \hbox (22.07349pt too wide) in paragraph at lines 692--693
 \T1/cmr/m/n/10 so-wa-nia ele-men-t�w gra-ficz-nych wy-ko-rzy-sty-wane s� funk-c
 je \T1/cmtt/m/n/10 DrawText()\T1/cmr/m/n/10 , \T1/cmtt/m/n/10 DrawRectangle()\T
@@ -753,20 +745,20 @@ o-ce-low� cz�-sto-tli-wo�� ge-ne-ro-wa-nia kla-tek, na-to-miast \T1/cmtt/m/n/10
  SetTraceLogLevel()
  []
 
-[19] [20]
+[20] [21]
 Overfull \hbox (12.24696pt too wide) in paragraph at lines 767--768
 \T1/cmr/m/n/10 pod wska-za-nym ad-re-sem pa-mi�ci kar-tri-d�a. Do-dat-kowo mo-d
 u� udo-st�p-nia funk-cj� \T1/cmtt/m/n/10 get_rom_header()\T1/cmr/m/n/10 ,
  []
 
-[21] [22] [23]
+[22] [23] [24]
 Overfull \hbox (43.15916pt too wide) in paragraph at lines 888--889
  []\T1/cmr/bx/n/10 Struktura re-je-str�w pro-ce-sora[] \T1/cmr/m/n/10 Stan ar-c
 hi-tek-to-niczny prze-cho-wy-wany jest w struk-tu-rze \T1/cmtt/m/n/10 cpu_regis
 ters\T1/cmr/m/n/10 ,
  []
 
-[24] [25] [26] [27]
+[25] [26] [27] [28]
 Overfull \hbox (22.2824pt too wide) in paragraph at lines 1159--1160
  []\T1/cmr/bx/n/10 Selekcja sprite'�w dla li-nii[] \T1/cmr/m/n/10 W try-bie \T1
 /cmtt/m/n/10 MODE_OAM \T1/cmr/m/n/10 wy-ko-ny-wana jest funk-cja \T1/cmtt/m/n/1
@@ -780,49 +772,59 @@ k-seli wy-ko-ny-wana jest funk-cja \T1/cmtt/m/n/10 fetch_sprite_pixels()\T1/cmr
 /m/n/10 ,
  []
 
-[28]
-<rayboy_ui.png, id=810, 735.49782pt x 746.03719pt>
+[29]
+<rayboy_ui.png, id=824, 735.49782pt x 746.03719pt>
 File: rayboy_ui.png Graphic file (type png)
 <use rayboy_ui.png>
 Package pdftex.def Info: rayboy_ui.png  used on input line 1236.
 (pdftex.def)             Requested size: 249.66888pt x 253.23947pt.
- [29]
+ [30]
 Overfull \hbox (26.6257pt too wide) in paragraph at lines 1289--1293
 \T1/cmr/m/n/10 Aktualizacja ob-razu wy-�wie-tla-nego przez emu-la-tor re-ali-zo
 -wana jest w me-to-dzie \T1/cmtt/m/n/10 updateScreenTexture()\T1/cmr/m/n/10 .
  []
 
-[30 <./rayboy_ui.png>]
-<screen.png, id=832, 396.7322pt x 339.51843pt>
+[31 <./rayboy_ui.png>]
+<screen.png, id=847, 396.7322pt x 339.51843pt>
 File: screen.png Graphic file (type png)
 <use screen.png>
 Package pdftex.def Info: screen.png  used on input line 1312.
 (pdftex.def)             Requested size: 249.66888pt x 213.66978pt.
-<input_viewer.png, id=833, 380.17032pt x 313.9228pt>
+<input_viewer.png, id=848, 380.17032pt x 313.9228pt>
 File: input_viewer.png Graphic file (type png)
 <use input_viewer.png>
-Package pdftex.def Info: input_viewer.png  used on input line 1335.
+Package pdftex.def Info: input_viewer.png  used on input line 1332.
 (pdftex.def)             Requested size: 249.66888pt x 206.16461pt.
- [31 <./screen.png> <./input_viewer.png>]
-<tile_viewer.png, id=843, 306.39468pt x 456.95718pt>
+ [32 <./screen.png> <./input_viewer.png>]
+<tile_viewer.png, id=857, 306.39468pt x 456.95718pt>
 File: tile_viewer.png Graphic file (type png)
 <use tile_viewer.png>
-Package pdftex.def Info: tile_viewer.png  used on input line 1363.
+Package pdftex.def Info: tile_viewer.png  used on input line 1360.
 (pdftex.def)             Requested size: 249.66888pt x 372.35754pt.
-<performance.png, id=844, 298.86656pt x 232.61906pt>
+<performance.png, id=858, 298.86656pt x 232.61906pt>
 File: performance.png Graphic file (type png)
 <use performance.png>
-Package pdftex.def Info: performance.png  used on input line 1387.
+Package pdftex.def Info: performance.png  used on input line 1384.
 (pdftex.def)             Requested size: 249.66888pt x 194.33028pt.
- [32 <./tile_viewer.png>] [33 <./performance.png>]
+ [33 <./tile_viewer.png>]
+<help_screen.png, id=865, 297.36093pt x 282.30469pt>
+File: help_screen.png Graphic file (type png)
+<use help_screen.png>
+Package pdftex.def Info: help_screen.png  used on input line 1411.
+(pdftex.def)             Requested size: 249.66888pt x 237.02661pt.
+ [34 <./performance.png> <./help_screen.png>] [35] [36]
 (./Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową ko
 nsoli Game Boy.aux)
 
-LaTeX Warning: There were multiply-defined labels.
+Package rerunfilecheck Warning: File `"Niskopoziomowa emulacja sprzętowa imple
+mentacja architekturę systemową konsoli Game Boy".out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
 
-Package rerunfilecheck Info: File `"Niskopoziomowa emulacja sprzętowa implemen
-tacja architekturę systemową konsoli Game Boy".out' has not changed.
-(rerunfilecheck)             Checksum: 6BC18952028692999F2BE0DDED9AA6BE;25034.
+Package rerunfilecheck Info: Checksums for `"Niskopoziomowa emulacja sprzętowa
+ implementacja architekturę systemową konsoli Game Boy".out':
+(rerunfilecheck)             Before: CDF6CC6D5577EADB73F6F725B2AB93CC;25340
+(rerunfilecheck)             After:  8ED9D17302C032EC1FD93245BE262DB8;25393.
 Package logreq Info: Writing requests to '"Niskopoziomowa emulacja sprzętowa i
 mplementacja architekturę systemową konsoli Game Boy".run.xml'.
 \openout1 = `"Niskopoziomowa emulacja sprzętowa implementacja architekturę sy
@@ -830,10 +832,10 @@ stemową konsoli Game Boy.run.xml"'.
 
  ) 
 Here is how much of TeX's memory you used:
- 18640 strings out of 476034
- 329005 string characters out of 5792864
- 1875388 words of memory out of 6000000
- 38650 multiletter control sequences out of 15000+600000
+ 18658 strings out of 476034
+ 329290 string characters out of 5792864
+ 1876388 words of memory out of 6000000
+ 38661 multiletter control sequences out of 15000+600000
  525089 words of font info for 59 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
  63i,8n,68p,844b,2110s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -852,10 +854,10 @@ usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/sha
 re/texlive/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
 Output written on "Niskopoziomowa emulacja sprzętowa implementacja architektur
-ę systemową konsoli Game Boy.pdf" (33 pages, 2576271 bytes).
+ę systemową konsoli Game Boy.pdf" (36 pages, 2585456 bytes).
 PDF statistics:
- 989 PDF objects out of 1000 (max. 8388607)
- 894 compressed objects within 9 object streams
- 235 named destinations out of 1000 (max. 500000)
- 966 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1016 PDF objects out of 1200 (max. 8388607)
+ 915 compressed objects within 10 object streams
+ 241 named destinations out of 1000 (max. 500000)
+ 987 words of extra memory for PDF output out of 10000 (max. 10000000)
 
