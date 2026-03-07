@@ -13,8 +13,8 @@
 cpu_context ctx = {0};
 uint8_t cpu_get_ie_register() { return ctx.ie_register; }
 
-size_t LOG_MAX = -1;
-size_t log_count = 0;
+bool debug = true;
+
 void cpu_request_interupts(interrupt_type i) { ctx.int_flags |= i; }
 
 void cpu_set_ie_register(uint8_t n) { ctx.ie_register = n; }
@@ -153,8 +153,10 @@ bool cpu_step() {
     emu_cycles(1);
     fetch_data();
 
-    dbg_update();
-    dbg_print();
+    if (debug) {
+      dbg_update();
+      dbg_print();
+    }
 
     execute();
     // log_count++;
