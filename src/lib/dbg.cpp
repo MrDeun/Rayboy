@@ -19,7 +19,6 @@ void dbg_update() {
 }
 
 void dbg_print() {
-  return;
   if (dbg_msg[0]) {
     fmt::println(stderr, "DEBUG: {}\n", dbg_msg);
   }

@@ -132,6 +132,36 @@
       \verb https://gbdev.io/pandocs/
       \endverb
     \endentry
+    \entry{2048.gb}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=d0445f267d57bc3683b6fe0e75be341e}{%
+           family={Sanqui},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{fullhash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{fullhashraw}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{bibnamehash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{authorbibnamehash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{authornamehash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{authorfullhash}{d0445f267d57bc3683b6fe0e75be341e}
+      \strng{authorfullhashraw}{d0445f267d57bc3683b6fe0e75be341e}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{2048-gb}
+      \field{urlday}{9}
+      \field{urlmonth}{3}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/Sanqui/2048-gb
+      \endverb
+      \verb{url}
+      \verb https://github.com/Sanqui/2048-gb
+      \endverb
+    \endentry
     \entry{raylib}{online}{}{}
       \name{author}{1}{}{%
         {{hash=8350db6a748619fbaf532016702f0dd4}{%

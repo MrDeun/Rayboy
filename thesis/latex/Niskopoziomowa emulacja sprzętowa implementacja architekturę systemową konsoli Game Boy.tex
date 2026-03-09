@@ -1467,19 +1467,104 @@ diagnostycznych. Zastosowanie biblioteki raylib pozwoliło na stosunkowo
 prostą implementację graficznego interfejsu użytkownika przy jednoczesnym 
 zachowaniu dobrej wydajności renderowania.
 
-\section{Weryfikacja implementacji emulatora}
+\subsection{Weryfikacja implementacji emulatora}
 
-Proces weryfikacji implementacji emulatora jest kluczowym etapem w procesie jego rozwoju. Ze względu na złożoność architektury konsoli oraz dużą liczbę szczegółowych zachowań sprzętowych, nawet niewielkie odstępstwa od specyfikacji mogą prowadzić do niepoprawnego działania programów. Celem weryfikacji jest zatem potwierdzenie zgodności implementacji z rzeczywistym zachowaniem sprzętu oraz wykrycie błędów w implementacji poszczególnych komponentów emulatora, takich jak procesor, system pamięci czy układ graficzny.
 
-W celu przeprowadzenia weryfikacji zastosowano zestaw powszechnie wykorzystywanych w społeczności emulatorów testów diagnostycznych. Podstawowym narzędziem były testy autorstwa \textit{blargg}, które służą do sprawdzania poprawności implementacji instrukcji procesora, obsługi przerwań, timerów oraz innych mechanizmów sprzętowych. Testy te uruchamiane są bezpośrednio w emulatorze, a ich wynik sygnalizowany jest poprzez komunikaty wyświetlane w pamięci wideo lub poprzez określony kod zakończenia programu. Poprawne przejście wszystkich testów stanowi silną przesłankę, że implementacja podstawowych elementów architektury jest zgodna ze specyfikacją.
+Weryfikacja implementacji emulatora ma na celu potwierdzenie poprawności odwzorowania zachowania oryginalnego sprzętu. Ze względu na złożoność architektury konsoli Game Boy oraz dużą liczbę zależności pomiędzy jej komponentami, nawet niewielkie odstępstwa od specyfikacji mogą prowadzić do niepoprawnego działania uruchamianych programów. W procesie weryfikacji zastosowano zestaw testów diagnostycznych oraz porównania z referencyjnymi implementacjami emulatorów.
 
-W przypadku niepowodzenia testów przeprowadzana jest dodatkowa analiza przy użyciu narzędzia \textit{gameboy-doctor}. Narzędzie to umożliwia generowanie szczegółowych logów zawierających stan rejestrów procesora oraz wykonywane instrukcje w kolejnych cyklach. Następnie logi te porównywane są z referencyjnymi logami generowanymi przez poprawną implementację. Pozwala to na precyzyjne zidentyfikowanie miejsca, w którym zachowanie emulatora zaczyna odbiegać od oczekiwanego, co znacząco ułatwia proces lokalizacji i usuwania błędów.
+\subsubsection{Metodyka weryfikacji}
 
-Dodatkowo przeprowadzono weryfikację poprawności działania układu graficznego przy użyciu testu \textit{dmg-acid2}. Jest to specjalnie przygotowany program testowy, którego celem jest sprawdzenie zgodności implementacji mechanizmów renderowania grafiki, takich jak obsługa sprite'ów, priorytetów warstw czy maskowania pikseli. Poprawna implementacja emulatora powinna wygenerować na ekranie obraz identyczny z referencyjnym wynikiem testu.
+Proces weryfikacji opiera się na trzech komplementarnych podejściach. Pierwszym z nich są automatyczne testy diagnostyczne sprawdzające poprawność implementacji podstawowych elementów architektury, takich jak zestaw instrukcji procesora, obsługa przerwań oraz działanie timerów. Drugim etapem jest analiza szczegółowych logów wykonywania programu w przypadku wykrycia niezgodności w działaniu emulatora. Trzecim elementem weryfikacji jest uruchamianie rzeczywistych programów przeznaczonych dla platformy Game Boy oraz porównanie ich działania z referencyjnym emulatorem.
 
-Ostatnim etapem weryfikacji było porównanie działania emulatora z dojrzałym, referencyjnym emulatorem. W tym celu wykorzystano emulator \textit{SameBoy}, który jest uznawany za jedną z najbardziej dokładnych implementacji emulatora konsoli Game Boy. Porównanie polegało na uruchomieniu tej samej aplikacji typu homebrew w obu emulatorach. Jako program testowy wykorzystano implementację gry \textit{2048}. Analizie poddano zarówno poprawność działania logiki gry, jak i zgodność wyświetlanej grafiki oraz reakcji na dane wejściowe użytkownika. Zgodność zachowania obu emulatorów stanowi dodatkowe potwierdzenie poprawności implementacji.
+Takie podejście pozwala na weryfikację zarówno niskopoziomowych mechanizmów sprzętowych, jak i poprawności działania emulatora z punktu widzenia użytkownika końcowego.
 
-Zastosowanie opisanych metod pozwoliło na wieloaspektową weryfikację emulatora, obejmującą zarówno testy jednostkowe poszczególnych mechanizmów sprzętowych, jak i testy integracyjne polegające na uruchamianiu rzeczywistych programów przeznaczonych dla emulowanej platformy.
+\subsubsection{Narzędzia testowe}
+
+Podstawowym zestawem testów wykorzystanym w procesie weryfikacji były testy autorstwa \textit{blargg}. Zestaw ten jest szeroko stosowany w społeczności twórców emulatorów i służy do sprawdzania poprawności implementacji procesora oraz wybranych elementów sprzętowych konsoli. Testy te weryfikują między innymi działanie instrukcji procesora, obsługę przerwań oraz funkcjonowanie timerów.
+
+
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{passed_test.png}
+		\caption{Wynik przechodzącego poprawnie testu \textit{01-special.gb}\cite{copetti}}
+		\label{fig:succesful_blaarg}
+	\end{minipage}
+\end{figure}
+
+
+W przypadku niepowodzenia testów przeprowadzana jest dodatkowa analiza przy użyciu narzędzia \textit{gameboy-doctor}. Emulator generuje plik zawierający szczegółowe logi wykonywania programu, obejmujące stan procesora dla każdego cyklu pracy, w tym wartości rejestrów oraz aktualnie wykonywaną instrukcję.
+\begin{figure}[htbp]
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{failed-blaarg.png}
+		\caption{Zrzut terminalu z źle zaimplementowanej instrukcji\cite{copetti}}
+		\label{fig:failed_blaarg}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{doctor-gameboy-diagnosis.png}
+		\caption{Przykład diagnozy w którym\cite{copetti}}
+		\label{fig:gameboy_doctor}
+	\end{minipage}
+\end{figure}
+
+ Wygenerowany plik jest następnie przekazywany do narzędzia \textit{gameboy-doctor}, które porównuje go z referencyjnymi logami uzyskanymi z poprawnie działającego emulatora. Narzędzie identyfikuje pierwszy moment, w którym stan procesora zaczyna odbiegać od wartości oczekiwanych, co umożliwia precyzyjne zlokalizowanie błędu w implementacji.
+
+\subsubsection{Testy porównawcze}
+
+Ostatnim etapem weryfikacji było porównanie działania emulatora z dojrzałą implementacją referencyjną. W tym celu wykorzystano emulator \textit{SameBoy}, który jest uznawany za jedną z najbardziej dokładnych implementacji emulatora konsoli Game Boy. 
+
+Porównanie polegało na uruchomieniu tej samej aplikacji typu homebrew w obu emulatorach. Jako program testowy wykorzystano implementację gry \textit{2048}\cite{2048.gb}. Analizie poddano poprawność działania logiki gry, sposób renderowania grafiki oraz reakcję programu na dane wejściowe użytkownika. Zgodność zachowania aplikacji w obu emulatorach stanowi dodatkowe potwierdzenie poprawności implementacji.
+\subsection{Problemy implementacyjne}
+Ze względu na bardzo specficzne implementację tabeli op-codów, nie wszytkie kompilatory C++ wspierają daną składnię - aktualnie tylko kompilator \cite{clang++} wspiera nieoznaczone inicjalizatory. 
+
+\section{Działanie programu}
+\subsection{Struktura Programu}
+
+\subsubsection{Struktura programu}
+
+Kompilacja projektu zwraca plik wykonywalny który należy uruchomić z poziomu terminalu - to uruchomienia pliku gry w emulatorze, należy dać jako argument ścieżke do ROMu \textit{np. ./Rayboy ./2048.gb}.
+
+\subsubsection{Sterowanie w trakcji działania emulatora}
+
+\begin{itemize}
+	\item Kontrola konsoli
+	\begin{itemize}
+		\item Góra - Strzałka w góre
+		\item Dół - Strzałka w dół
+		\item Lewo - Strzałka w lewo
+		\item Prawo - Strzałka w prawo
+		\item START - Enter
+		\item SELECT - Prawy Shift
+		\item B - B
+		\item A - A
+	\end{itemize}
+	\item Kontrola interfejsu emulatora
+	\begin{itemize}
+	\item Wszytrzymanie/Wznowienie emulacji - Spacja
+	\item Przełączenie widoku na kafelki - 	F1
+	\item  Przełączenie widoku statystyk emulatora - F2
+	\item Przełączenie ekranu pomocy - H
+	\end{itemize}
+\end{itemize}
+\newpage
+\section{Zakończenie}
+
+Celem niniejszej pracy było zaprojektowanie oraz implementacja emulatora konsoli Game Boy. Realizacja tego zadania pozwoliła na praktyczne poznanie wielu zagadnień związanych z architekturą systemów komputerowych, w szczególności z działaniem procesorów oraz sposobem wykonywania instrukcji na niskim poziomie abstrakcji. Implementacja jednostki centralnej emulatora wymagała dokładnego zrozumienia zestawu instrukcji procesora oraz mechanizmu ich interpretacji i wykonywania w środowisku programowym.
+
+Istotnym elementem projektu było również odtworzenie sposobu generowania obrazu przez oryginalny sprzęt. Implementacja części graficznej pozwoliła lepiej zrozumieć, w jaki sposób dane graficzne są przechowywane w pamięci oraz jak są interpretowane przez układ graficzny w celu wygenerowania obrazu na ekranie. Proces ten wymagał odwzorowania specyficznych mechanizmów działania sprzętu oraz odpowiedniej synchronizacji pomiędzy komponentami emulatora.
+
+W trakcie realizacji projektu szczególnie istotną rolę odegrało testowanie poprawności działania emulatora. Ze względu na złożoność emulowanego systemu konieczne było porównywanie zachowania implementacji z rezultatami uzyskiwanymi przez sprawdzone i poprawnie działające emulatory. Tego rodzaju weryfikacja pozwalała na identyfikację błędów oraz stopniowe zwiększanie zgodności implementacji z zachowaniem oryginalnego sprzętu.
+
+Obecna wersja emulatora obsługuje jedynie najprostszy typ kartridża, czyli ROM only. W przyszłości projekt wymaga rozszerzenia o obsługę innych typów kartridży wykorzystujących kontrolery banków pamięci (Memory Bank Controller). Implementacja tych mechanizmów umożliwiłaby uruchamianie znacznie większej liczby gier oraz zwiększyłaby funkcjonalność emulatora.
+
+Należy również zauważyć, że w obecnej wersji projektu kod zawiera elementy zarówno stylu programowania charakterystycznego dla języka C, jak i dla języka C++. Takie podejście nie jest optymalnym rozwiązaniem z punktu widzenia spójności projektu i w przyszłości powinno zostać zastąpione bardziej jednolitą koncepcją implementacyjną. Refaktoryzacja kodu w kierunku konsekwentnego wykorzystania jednego stylu programowania mogłaby poprawić czytelność, łatwość utrzymania oraz dalszy rozwój projektu.
+
+Podsumowując, realizacja emulatora Game Boy stanowiła wartościowe doświadczenie pozwalające na pogłębienie wiedzy z zakresu architektury komputerów, emulacji sprzętu oraz programowania niskopoziomowego. Jednocześnie projekt pozostawia przestrzeń do dalszego rozwoju, zarówno w zakresie rozszerzenia obsługi sprzętu, jak i poprawy jakości oraz struktury kodu.
 
 \newpage
 \printbibliography
