@@ -1,14 +1,14 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.blg'
-[54] biber:342> INFO - === Mon Mar  9, 2026, 14:25:25
-[66] Biber.pm:421> INFO - Reading 'Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bcf'
-[111] Biber.pm:1002> INFO - Found 8 citekeys in bib section 0
-[120] Biber.pm:4487> INFO - Processing section 0
-[126] Biber.pm:4678> INFO - Looking for bibtex file 'bibblo.bib' for section 0
-[127] bibtex.pm:1713> INFO - LaTeX decoding ...
-[130] bibtex.pm:1519> INFO - Found BibTeX data source 'bibblo.bib'
-[173] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[173] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'variable = shifted' with 'variable = non-ignorable'
-[173] Biber.pm:4307> INFO - Sorting list 'nty/global//global/global/global' of type 'entry' with template 'nty' and locale 'pl-PL'
-[181] bbl.pm:676> INFO - Writing 'Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bbl' with encoding 'UTF-8'
-[182] bbl.pm:779> INFO - Output to Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bbl
+[63] biber:342> INFO - === Tue Mar 17, 2026, 18:40:28
+[76] Biber.pm:421> INFO - Reading 'Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bcf'
+[131] Biber.pm:1002> INFO - Found 11 citekeys in bib section 0
+[141] Biber.pm:4487> INFO - Processing section 0
+[148] Biber.pm:4678> INFO - Looking for bibtex file 'bibblo.bib' for section 0
+[148] bibtex.pm:1713> INFO - LaTeX decoding ...
+[153] bibtex.pm:1519> INFO - Found BibTeX data source 'bibblo.bib'
+[208] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[208] UCollate.pm:68> INFO - Overriding locale 'pl-PL' defaults 'variable = shifted' with 'variable = non-ignorable'
+[208] Biber.pm:4307> INFO - Sorting list 'nty/global//global/global/global' of type 'entry' with template 'nty' and locale 'pl-PL'
+[217] bbl.pm:676> INFO - Writing 'Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bbl' with encoding 'UTF-8'
+[220] bbl.pm:779> INFO - Output to Niskopoziomowa emulacja sprzętowa implementacja architekturę systemową konsoli Game Boy.bbl

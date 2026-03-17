@@ -116,6 +116,102 @@
       \verb https://gekkio.fi/files/gb-docs/gbctr.pdf
       \endverb
     \endentry
+    \entry{blargg}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=20c853ee1b0341082044396bbc313f68}{%
+           family={Green},
+           familyi={G\bibinitperiod},
+           given={Shay},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{20c853ee1b0341082044396bbc313f68}
+      \strng{fullhash}{20c853ee1b0341082044396bbc313f68}
+      \strng{fullhashraw}{20c853ee1b0341082044396bbc313f68}
+      \strng{bibnamehash}{20c853ee1b0341082044396bbc313f68}
+      \strng{authorbibnamehash}{20c853ee1b0341082044396bbc313f68}
+      \strng{authornamehash}{20c853ee1b0341082044396bbc313f68}
+      \strng{authorfullhash}{20c853ee1b0341082044396bbc313f68}
+      \strng{authorfullhashraw}{20c853ee1b0341082044396bbc313f68}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Blargg's Game Boy Hardware Test ROMs}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://gbdev.gg8.se/files/roms/blargg-gb-tests/
+      \endverb
+      \verb{url}
+      \verb https://gbdev.gg8.se/files/roms/blargg-gb-tests/
+      \endverb
+    \endentry
+    \entry{sameboy}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=a95456b2fe99cd9c3fd80eda6aaff602}{%
+           family={Halphon},
+           familyi={H\bibinitperiod},
+           given={Lior},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{fullhash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{fullhashraw}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{bibnamehash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{authorbibnamehash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{authornamehash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{authorfullhash}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \strng{authorfullhashraw}{a95456b2fe99cd9c3fd80eda6aaff602}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Sameboy}
+      \field{urlday}{17}
+      \field{urlmonth}{3}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://sameboy.github.io
+      \endverb
+      \verb{url}
+      \verb https://sameboy.github.io
+      \endverb
+    \endentry
+    \entry{gameboy-doctor}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=8fea40005e600eac8a6813d5af313fbf}{%
+           family={Heaton},
+           familyi={H\bibinitperiod},
+           given={Robert},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{fullhash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{fullhashraw}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{bibnamehash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{authorbibnamehash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{authornamehash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{authorfullhash}{8fea40005e600eac8a6813d5af313fbf}
+      \strng{authorfullhashraw}{8fea40005e600eac8a6813d5af313fbf}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Gameboy Doctor}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://robertheaton.com/gameboy-doctor/
+      \endverb
+      \verb{url}
+      \verb https://robertheaton.com/gameboy-doctor/
+      \endverb
+    \endentry
     \entry{pandocs}{online}{}{}
       \field{sortinit}{P}
       \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}

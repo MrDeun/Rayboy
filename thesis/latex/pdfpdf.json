@@ -1,0 +1,305 @@
+[
+  {
+    "text": "zaprojektowało 8-bitową konsolę Game Boya.",
+    "page": 6,
+    "comment": "W pracy przydałoby się kilka, powiedzmy z 5-10 więcej cytowań. To jest jedno z miejsc gdzie może Pan takie cytoanie dodać",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Game Boya.",
+    "page": 6,
+    "comment": "konsloa jest forma żeńską i podmiotem. Proszę w całym akapicie poprawić końcówki",
+    "color": "#ffff00"
+  },
+  { "text": "Game", "page": 6, "color": "#ff1418" },
+  { "text": "Boya.", "page": 6, "color": "#ff1418" },
+  { "text": "kartridże", "page": 6, "comment": "y", "color": "#4bacc6" },
+  {
+    "text": "tanie i długotrwałe życie baterii [2].",
+    "page": 6,
+    "comment": "tanie życie baterii? \r\nProszę przebudować ten argument.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Gameboya był",
+    "page": 6,
+    "comment": "proszę zdecydować o zapisie czy razem czy osobno i zastosować poprawki w całej pracy",
+    "color": "#ffff00"
+  },
+  {
+    "text": "[4].",
+    "page": 6,
+    "comment": "1. cytowania przed kropką: to jest tekst który coś pokazuje [1] i jest uzupełniony o coś innego [2, 3], a w szczególności najważniejszey jest X [4].\r\n\r\n2. cytowania w pracy są w kolejności rosnącej. Mam wrażenie (ale może się mykę), że Pan ma [2], [4], [1]",
+    "color": "#ffff00"
+  },
+  {
+    "text": "mieszanką dwóch",
+    "page": 6,
+    "comment": "raczej wzorowany na",
+    "color": "#ffff00"
+  },
+  {
+    "text": "jest",
+    "page": 6,
+    "comment": "poprzednie zdania ma Pan w czasie przeszłym. Warto utrzymać ten sam styl",
+    "color": "#ffff00"
+  },
+  {
+    "text": "i łączyła się z innymi kompomentami jak ekran,",
+    "page": 6,
+    "comment": "styl - to ciężko się czyta.\r\nWszystkie akapity Pan przećwiczył LLMem?",
+    "color": "#ffff00"
+  },
+  {
+    "text": "i bankowanie",
+    "page": 10,
+    "comment": "może jakieś lepsze słowo?",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Priorytety przerwań",
+    "page": 12,
+    "comment": "z punktu widzenia elektroniki istotne jest czy przerwanie jest zgłaszane \"poziomem\" czy \"krawędzią\" (zmianą stanu).\r\nGdybym był recenzentem to takie pytanie bym zadał.\r\n",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Rysunek 3: Schemat płyty głównej konsoli GameBoy[1]",
+    "page": 12,
+    "comment": "1. ten rysunek jest za mały, proszę rozważyć powiększenie,\r\n\r\n2. na końcu podpisu kropka,\r\n\r\n3. między cytowaniem a tekstem spacja,\r\n\r\n4. proszę ujednolicić styl - poprzepdnio pisał Pan \"xxxx. Źródło [1]\".",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Ze względu skomplikowania, kompoment układu dźwiękowego nie będzie uwzględniany",
+    "page": 13,
+    "comment": "1. kropka,\r\n\r\n2. nie jest jasne gdzie \"nie będzie uwzględniany\".",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Generowanie",
+    "page": 18,
+    "comment": "Tu brkuje mi opisu jak wyglądają reżimy czasowe i czy dostęp do VRAM jest synchroniczny czy asynchroniczny z dostępem CPU, ",
+    "color": "#ffff00"
+  },
+  {
+    "text": "(PPU),",
+    "page": 18,
+    "comment": "proszę podać nazwę angielską",
+    "color": "#ffff00"
+  },
+  {
+    "text": "OAM (Rozdział",
+    "page": 18,
+    "comment": "proszę podać nazwę angielską (komentarz poniżej)\r\n\r\nSwoją drogą być może OAM pojawia się wcześniej?\r\n\r\nJeśli skrótów w pracy jest sporo to może Pan też rozważyć stronę z ich wyjaśnieniem - słowniczek",
+    "color": "#ffff00"
+  },
+  {
+    "text": "OAM (Object Attribute Memory) jest",
+    "page": 18,
+    "comment": "skrut pojawia się w rozdzale 3.4. Proszę tam przenieść rozwinięcie",
+    "color": "#ffff00"
+  },
+  {
+    "text": "magistrali pamięci,",
+    "page": 19,
+    "comment": "prosze być precyzyjnym - magistrali danych, adresowej?\r\nA może obu?\r\n\r\nPrzy okazji DMA - może jest ta nformacja poniżej ale skąd wiadomo, że transfer się zakończył i że procesor ma dostęp do danych, jak to jest rozwiązane w Game Boy?",
+    "color": "#ffff00"
+  },
+  {
+    "text": "język C++",
+    "page": 20,
+    "comment": "jest to doskonałe miejsce aby dodać cytowanie np na jakąś książkę",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Implementacja modułu obsługi kartridża",
+    "page": 21,
+    "color": "#ff1418"
+  },
+  {
+    "text": "Zgodnie ze specyfikacją formatu ROM, nagłówek znajduje się pod adresem 0x100",
+    "page": 21,
+    "comment": "Gdybym recenzował to zapytałbym jak rozwiązał Pan pakowanie bajtów w strukturach. \r\nPakowanie musi być (niestety nie pamiętam teraz odpowiedniej nazwy) typu BYTE. To pewnie należy ustawić w kompilatorze. Ma Pan to ogarnięte? Jeśli tak to warto o tym tez anpisać.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "entry[4] – kod startowy wykonywany po uruchomieniu programu,",
+    "page": 21,
+    "comment": "proponuję dodać informację (oczywistą) o rozmiarze bitowym.\r\ncoś w stylu\r\n1) unsigned char entry[4] -...\r\n\r\n2) entry[4] - typ: unsigned char, kod startowy ...\r\n\r\nlub jaiś podobny wariant. Proszę poprawić opisy wszystkich pól w strukturach, klasach etc.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "poprzez rzutowanie odpowiedniego fragmentu bufora pamięci na strukturę rom_header",
+    "page": 21,
+    "comment": "Zaproponował był odwrócenie tego opis - to raczej strukturza jest rzutowana na obszr pamięci\r\n\r\nW tym przypadku super ważne jest \"pakowanie\" struktur w pamięci o czym pisałem już wcześniej.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Moduł kartridża udostępnia funkcję get_rom_header()",
+    "page": 22,
+    "comment": "Rozumiem Pana Pomysł na ten opis. Prowadzi to jednak do sytuacji gdzie \"get_rom_header\" jest wspomniane tu oraz pół strony poniżej.\r\n\r\nPrzy metodach - to czego mi jeszcze brakuje to typ zwracany. To ma swoje niebezpieczeństwa ale i zalety. Zaleta - opis zyskuje na \"pełności\"  i ułatwia innym czytelnikom na wykorzystanie Pana kodu w przyszłości.\r\nWada, naraża się Pan na krytykę, bo jeśli tu zwraca Pan wskaźnik to pytanie - czemu nie stały wskaźnik lub stałą referencję.\r\n\r\nNie wiem jak wygląda opis poniżej ale na tu i teraz proponuję usunąć te trzy linijki bądź zmiienić opis na coś w stylu:\r\nDostęp odbywa się przez moduł kartridżą opisany bardziej szczegółowo w podrozdziale 4.2.X",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Interpretacja typu kartridża oraz kodu licencyjnego realizowana jest przy użyciu statycznych map odwzorowujących identyfikatory numeryczne na ich reprezentacje tekstowe.",
+    "page": 22,
+    "comment": "to est nie jasne. W poprzednim podrozdziale może Pan dodać krótki opis tych identyfikator ów z przykładami",
+    "color": "#ffff00"
+  },
+  {
+    "text": "sumy kontrolnej",
+    "page": 22,
+    "comment": "Tu również przydałoby sie slowo wyjaśnienia dotyczące algorytmu obliczanai sumy kontrolnej i jej rozmiaru bitowego",
+    "color": "#ffff00"
+  },
+  {
+    "text": "3.4",
+    "page": 22,
+    "comment": "wcześniej miał Pan hyperlink. prosze o konsystencję w obszarze całej pracy",
+    "color": "#ffff00"
+  },
+  {
+    "text": "zwraca wartość neutralną.",
+    "page": 23,
+    "comment": "???",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Zapis do pamięci ROM przekazywany jest do kontrolera kartridża, co umożliwia obsługę me- chanizmów bankowania pamięci.",
+    "page": 23,
+    "comment": "Wartu tu nadmienić, że dopuszczalny jest zapis do pamęci ROM, który w przypadku odpowiednich kartridży...\r\n\r\nLub prosze skasować - juz Pan pisał, że Pan tego nie obsługje - jednak informacja by się przydala",
+    "color": "#ffff00"
+  },
+  {
+    "text": "bus_read16(address) — odczyt dwóch kolejnych bajtów i ich złożenie w słowo 16-bitowe, • bus_write16(address, value)",
+    "page": 23,
+    "comment": "lepszy jest zapis jak powyżej czyli\r\n uint16_t address, uint8_t valu",
+    "color": "#ffff00"
+  },
+  { "text": "el", "page": 23, "comment": "?", "color": "#ffff00" },
+  {
+    "text": "struktury kontekstu",
+    "page": 23,
+    "comment": "?\r\nNie rozumiem",
+    "color": "#ffff00"
+  },
+  {
+    "text": "pamięć wysoką",
+    "page": 23,
+    "comment": "pisał Pn o tym wcześniej? Pamięć wysoka brzmi bardzo dziwnie.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Każda ope- racja",
+    "page": 23,
+    "comment": "brakuj określenia\r\nzapisu i odczytu pamięci",
+    "color": "#ffff00"
+  },
+  {
+    "text": "adresu bazowego segmentu.",
+    "page": 23,
+    "comment": "i w końcu  co to jest segment?\r\n\r\nJak Pan widisporo mam uwag do tego zdania. Proszę napisać bardziej klarownie!",
+    "color": "#ffff00"
+  },
+  {
+    "text": "dokonuje",
+    "page": 23,
+    "comment": "operacja dokonuje? czy skutkiem operacji jest?\r\nTo dziwnie brzmi",
+    "color": "#ffff00"
+  },
+  {
+    "text": "translacji adresu logicznego",
+    "page": 23,
+    "comment": "w GameBoy to chyba nie jest adres logiczny, zresztą nie podał Pan definicji tego określenia",
+    "color": "#ffff00"
+  },
+  {
+    "text": "indeks wewnętrznej tablicy",
+    "page": 23,
+    "comment": "to równiez jest niezrozumiałe - co to jest \"wewnętrzna tablica\"? w jakim jest wnętrzu?",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Próba dostępu poza dozwolony obszar skutkuje zgłoszeniem błędu i przerwaniem działania emulatora. Mechanizm ten zabezpiecza integralność modelu pamięci oraz ułatwia diagnostykę nieprawidłowych operacji.",
+    "page": 23,
+    "comment": "super, że Pan o to zadbał. Wydaje mi się jednak, że może lepiej byłoby opisać w osobnym podrozdziale kontrolę błędów jaką Pan wprowadził?",
+    "color": "#ffff00"
+  },
+  {
+    "text": "zarządzana przez rejestr wskaźnika stosu SP.",
+    "page": 24,
+    "comment": "Jeśli pracuje Pan na procesorze zgodnym z 8086 to Pana procesor ma również rejestr SP, ESP i może nawet RSP.\r\nTym samym to zdanie jest wieloznaczne ponieważ pisze Pan o rejestrze co od razu budzi u mnie skojarzenie z maszyną na której działa emulator.\r\n\r\nByć może umieszczenie opisu procesora, który jest w jednym z dalszych rozdziałów w miare na początku opisu mplementacyjnego pozwoliłoby czytelnikowi się zorientować jak ogranął Pan temat rejeestrów i oczym jest tu mowa. Zresztą moim zdaniem przorganizowanie miałoby sens - najpierw procesor, potem elementy z którymi proces wpółpracuje. \r\nProszę jeszcze przemyśleć jak mógłby Pan ułożyć ten podrozdział w logiczną całość. \r\n",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Implementacja systemowego licznika czasowego",
+    "page": 24,
+    "comment": "Ten cały podrozdział jest super trudny w odbirze. Dobrze by było gdyby go Pan rozwinął i dokładnie wyjaśnił jak realizuje Pan zegar w swoim emulatorze. ",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Reprezentacja i przechowywanie instrukcji",
+    "page": 24,
+    "comment": "to równiez jest niejasne. Proszę rozbudować popis podając chociażby przykład.\r\nJest to jeden z ważniejszych filarów Pana rozwiązania.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "centralnej strukturze kontekstu wykonania,",
+    "page": 25,
+    "comment": "nie rozumiem\r\n\r\nmoże wystarczy dodać w nawiasie (zobacz poniżej opis struktury)\r\n\r\nPozostaje jednak do wyjaśnienia słowo \"centralny\"",
+    "color": "#ffff00"
+  },
+  {
+    "text": "w strukturze cpu_context",
+    "page": 25,
+    "comment": "A może Panie Patryku lepszym rozwiązaniem będzie jeśli doda Pan listing kodu ze strukturą, krótki komentarz w kodzie powie czym są pola. \r\nWtedy taki tekst jak tu będzie bardziej przystępny. Proszę top rozważyć",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Dane operacyjne:",
+    "page": 25,
+    "comment": "Dane operacyjne a pola streujące\r\n\r\nMoją wątpliwość wzbudzają słowa Dane oraz Pola.\r\nW zasadzie w strukturach i klasach są Pola - czyli zmeinne. \r\nJednak u Pana taką cechę mają w tym opisie \"dane\" a \"Pola\" są czymś bliżej nieokreślonym.",
+    "color": "#ffff00"
+  },
+  {
+    "text": "cyklu wykonawczego",
+    "page": 25,
+    "comment": "nie zdefiniował Pan tego określenia. Można się domyślać, ale po co.\r\n\r\nPr",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Inicjalizacja",
+    "page": 25,
+    "comment": "przydałby się kawałek kodu, który pokazuje jak to wygląda.\r\nTak zwany Minimal Working Example\r\nJeśli się Pan zdecyduje to proszę ten kod omówić odnosząc się do poszczególnych lini kodu\r\n\r\nJeśli zdecyduje się Pan ten kod dodawać to - mile widzane koorowanie składni, ciemny motyw wygląda źle, warto wstawiać jako \"listing\" a nie rysunek, numery lini dobrze wyglądają ",
+    "color": "#ffff00"
+  },
+  {
+    "text": "lcdc",
+    "page": 28,
+    "comment": "Pół strony poniżej zapisauje Pan kapitalkami. Proszę ujednolicić.\r\n\r\nbrakuje mi opisu tych rejestrów i schematu działąnia LCD z ich wykorzystaniem. Może warto rozszerzyć opis w poprzednim rozdziale?\r\n(jeśli to ram jest, to prosze zignorować)",
+    "color": "#ffff00"
+  },
+  {
+    "text": "postaci klasy RayboyUI",
+    "page": 31,
+    "comment": "w oparciu o klasę?\r\n\r\nRayBoyUI - to Pana rozwiązanie?\r\nJeśli tak, to przydałby się krótki opis z MWE pokazjącym jak używać.\r\nJeśli nie Pana rozwiązanie to referencja + krótki opis gdzies na początku pracy",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Rysunek 4: Okno emulatora. Źródło: Własnoręczna implemen-",
+    "page": 31,
+    "comment": "proszę pamiętać, że każdy rysunek musi mieć odwołanie z treści pracy",
+    "color": "#ffff00"
+  },
+  {
+    "text": "SameBoy",
+    "page": 37,
+    "comment": "referencja\r\nPrzydałby się wcześniej w pracy opis kilku innych rozwiązań (z referencjami) dostępnych na rynku",
+    "color": "#ffff00"
+  },
+  {
+    "text": "Problemy",
+    "page": 37,
+    "comment": "poproszę o szerszy opis wyjaśniający powody",
+    "color": "#ffff00"
+  }
+]
