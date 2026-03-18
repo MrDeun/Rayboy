@@ -16,7 +16,40 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{rotating}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{lmodern}
+\usepackage{hyperref}
+
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{keyword}{RGB}{0,0,180}
+\definecolor{comment}{RGB}{80,130,80}
+\definecolor{string}{RGB}{160,32,32}
+\definecolor{number}{RGB}{180,100,0}
+\lstdefinestyle{cpp}{
+	language=C++,
+	backgroundcolor=\color{codebg},
+	frame=single,
+	rulecolor=\color{codeframe},
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{keyword}\bfseries,
+	commentstyle=\color{comment}\itshape,
+	stringstyle=\color{string},
+	numberstyle=\tiny\color{gray},
+	numbers=left,
+	numbersep=8pt,
+	tabsize=4,
+	showstringspaces=false,
+	breaklines=true,
+	breakatwhitespace=true,
+	captionpos=b,
+	morekeywords={std, thread, atomic, memory_order_release},
+}
 
 \begin{document}
 \begin{titlepage}
@@ -121,12 +154,50 @@ Poprawność działania systemu zostanie zweryfikowana poprzez porównanie wynik
 \subsection{Grupa docelowa}
 
 Odbiorcami opracowanego systemu są użytkownicy posiadający legalne kopie gier przeznaczonych na konsolę Game Boy, zainteresowani ich uruchamianiem na współczesnych komputerach osobistych. Emulator może stanowić również narzędzie edukacyjne dla osób zainteresowanych architekturą systemów wbudowanych oraz mechanizmami niskopoziomowego działania sprzętu.
+
+\subsection{Inne emulatory Game Boya}
+
+Na przestrzeni lat powstało wiele emulatorów Game Boya o różnym stopniu
+dokładności, przenośności i przeznaczeniu. Poniżej opisano najważniejsze
+projekty open source, które stanowią punkt odniesienia dla współczesnych
+implementacji.
+
+\paragraph{SameBoy}
+\texttt{SameBoy}~\cite{sameboy} jest jednym z najbardziej dokładnych
+dostępnych emulatorów Game Boya i Game Boya Color. Projekt jest
+wieloplatformowy -- obsługuje systemy macOS, Windows oraz platformy
+uniksopodobne. Oprócz wysokiej wierności emulacji sprzętu, \texttt{SameBoy}
+oferuje rozbudowane narzędzia diagnostyczne oraz emulację akcesoriów,
+takich jak Game Boy Camera i Game Boy Printer.
+
+\paragraph{mGBA}
+\texttt{mGBA}~\cite{mgba} to wieloplatformowy emulator Game Boya Advance,
+obsługujący również Game Boya i Game Boya Color. Projekt kładzie nacisk
+zarówno na szybkość działania, jak i na dokładność emulacji. Emulator
+dostępny jest na systemy Windows, macOS, Linux, a także jako homebrew na
+konsole Nintendo Switch, Wii oraz PlayStation Vita. \texttt{mGBA} wspiera
+skryptowanie w języku Lua, co czyni go popularnym narzędziem wśród
+twórców narzędzi pomocniczych i speedrunnerów.
+
+\paragraph{Gearboy}
+\texttt{Gearboy}~\cite{gearboy} to wieloplatformowy emulator Game Boya
+i Game Boya Color napisany w C++. Projekt wyróżnia się dokładną emulacją
+procesora i kontrolera LCD, przechodzi testy \texttt{cpu\_instrs.gb} oraz
+\texttt{instr\_timing.gb} autorstwa Blarrga. Emulator posiada rozbudowany
+debugger z deasemblerem, punktami przerwań oraz inspektorem pamięci VRAM.
+
+\paragraph{VisualBoyAdvance-M}
+\texttt{VisualBoyAdvance-M}~\cite{vba} jest następcą oryginalnego emulatora
+\texttt{VisualBoyAdvance} i obsługuje Game Boya, Game Boya Color oraz Game
+Boya Advance. Projekt dostępny jest na systemy Windows, macOS, Linux oraz
+Android. Emulator wspiera popularne systemy kodów cheat, takie jak
+GameShark i CodeBreaker.
 \newpage
 \section{Analiza architektury systemowej konsoli Game Boy}
 \subsection{Specyfikacja techniczna}
-Zespół \textit{Nintendo Research And Development 1}, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektowało 8-bitową konsolę Game Boya. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże \textit{GamePak}. Zasilana była przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, utrzymanie konsoli w jednym kolorze przyczyniło się do większonej żywotności i wymaganej liczbie baterii.  \cite{wikipedia-gameboy}. 
+Zespół \textit{Nintendo Research And Development 1}, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektował 8-bitową konsolę Game Boy. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże \textit{GamePak}. Zasilana była przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, utrzymanie konsoli w jednym kolorze przyczyniło się do większonej żywotności i wymaganej liczbie baterii.  \cite{wikipedia-gameboy}. 
 \subsection{Procesor i SoC}
-Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. \cite{gbctr}. Procesor był wzorowany na dwóch innych procesorach- 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 \cite{copetti}. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM) jak i łączyła się z innymi kompomentami jak ekran, głośnik czy kontroler. 
+Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. \cite{gbctr}. Procesor był wzorowany na dwóch innych procesorach- 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 \cite{copetti}. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM) . Płyta główna łączyła także inne kompomenty jak ekran, głośnik czy kontroler.
 
 Procesor zawiera osiem 8-bitowych rejestrów: A,B,C,D,E,F,H,L. Rejestry mogą łączyć się w 16-bitowe rejestry: AF, BC, DE, HL. Rejestr F jest używany jako flagi procesora w wypadku operacji arymetycznych:
 \begin{itemize}
@@ -720,7 +791,7 @@ Zastosowanie przerwań pozwala na efektywne zarządzanie współbieżnymi zdarze
 
 \subsection{Wykorzystane narzędzia i zasoby}
 
-Do implementacji emulatora zastosowano język C++ ze względu na jego niskopoziomową naturę, wraz z bibliotekami Raylib  w wersji 5.0 \cite{raylib} dla implementancji graficznej i sterowania oraz  fmt w wersji 10.2.1 \cite{fmt} dla łatwiejszego formatowanie tekstu.
+Do implementacji emulatora zastosowano język C++\cite{stroustrup2022tour} ze względu na jego niskopoziomową naturę, wraz z bibliotekami Raylib  w wersji 5.0 \cite{raylib} dla implementancji graficznej i sterowania oraz  fmt w wersji 10.2.1 \cite{fmt} dla łatwiejszego formatowania tekstu.
 
 \subsubsection{Funkcje biblioteki Raylib}
 
@@ -802,21 +873,23 @@ Informacje identyfikacyjne oraz parametry konfiguracyjne kartridża przechowywan
 
 Struktura \texttt{rom\_header} zawiera następujące pola:
 
-\begin{itemize}
-	\item \texttt{entry[4]} -- kod startowy wykonywany po uruchomieniu programu,
-	\item \texttt{nintendo\_logo[0x30]} -- dane graficzne logo producenta wykorzystywane w procesie weryfikacji kartridża,
-	\item \texttt{title[16]} -- nazwa programu zapisana w postaci tekstowej,
-	\item \texttt{license\_code} -- kod producenta oprogramowania,
-	\item \texttt{new\_license\_code} -- rozszerzony kod producenta,
-	\item \texttt{sgb\_flag} -- flaga zgodności z rozszerzeniem sprzętowym,
-	\item \texttt{type} -- typ kartridża oraz zastosowany kontroler pamięci,
-	\item \texttt{rom\_size} -- rozmiar pamięci ROM,
-	\item \texttt{ram\_size} -- rozmiar pamięci RAM kartridża,
-	\item \texttt{dest\_code} -- kod regionu dystrybucji,
-	\item \texttt{version} -- wersja programu,
-	\item \texttt{checksum} -- suma kontrolna nagłówka,
-	\item \texttt{global\_checksum} -- suma kontrolna całego obrazu ROM.
-\end{itemize}
+\begin{lstlisting}[style=cpp, label={lst:rom_header}, caption={Struktura \texttt{rom\_header}}]
+	struct rom_header {
+		uint8_t  entry[4];            // kod startowy
+		uint8_t  nintendo_logo[0x30]; // dane graficzne logo producenta
+		char     title[16];           // nazwa programu
+		uint8_t  license_code;        // kod producenta
+		uint8_t  new_license_code;    // rozszerzony kod producenta
+		uint8_t  sgb_flag;            // flaga zgodnosci ze sprzetem
+		uint8_t  type;                // typ kartridza i kontroler pamieci
+		uint8_t  rom_size;            // rozmiar pamieci ROM
+		uint8_t  ram_size;            // rozmiar pamieci RAM kartridza
+		uint8_t  dest_code;           // kod regionu dystrybucji
+		uint8_t  version;             // wersja programu
+		uint8_t  checksum;            // suma kontrolna naglowka
+		uint16_t global_checksum;     // suma kontrolna calego obrazu ROM
+	};
+\end{lstlisting}
 
 Nagłówek znajduje się w pamięci ROM pod stałym adresem \texttt{0x100}. W implementacji dostęp do niego realizowany jest poprzez rzutowanie odpowiedniego fragmentu bufora pamięci na strukturę \texttt{rom\_header}. Takie podejście umożliwia bezpośredni odczyt pól nagłówka bez konieczności ręcznej interpretacji poszczególnych bajtów.
 
@@ -902,7 +975,28 @@ Pamięć operacyjna systemu została odwzorowana w postaci struktury kontekstu z
 
 Pamięć WRAM obejmuje zakres adresów od \texttt{0xC000} do \texttt{0xDFFF} i posiada rozmiar 8\,KB. Z kolei HRAM zajmuje obszar od \texttt{0xFF80} do \texttt{0xFFFF} z efektywnym rozmiarem 128\,B. Funkcja inicjalizacyjna ustawia wszystkie komórki obu obszarów na wartość początkową \texttt{0xFF}, co odpowiada stanowi pamięci po resecie systemu.
 
-Dostęp do pamięci realizowany jest przez wyspecjalizowane funkcje odczytu i zapisu. Każda operacja dokonuje translacji adresu logicznego na indeks wewnętrznej tablicy poprzez odjęcie adresu bazowego segmentu. W celu zapewnienia poprawności działania systemu implementacja zawiera kontrolę zakresu adresów. Próba dostępu poza dozwolony obszar skutkuje zgłoszeniem błędu i przerwaniem działania emulatora. Mechanizm ten zabezpiecza integralność modelu pamięci oraz ułatwia diagnostykę nieprawidłowych operacji.
+Dostęp do pamięci realizowany jest przez wyspecjalizowane funkcje odczytu i zapisu. Każda funkcja wykonuje translację adresu logicznego magistrali na indeks wewnętrznej tablicy poprzez odjęcie adresu bazowego segmentu (\textit{Listing \ref{lst:ram})}. W celu zapewnienia poprawności działania systemu implementacja zawiera kontrolę zakresu adresów. Próba dostępu poza dozwolony obszar skutkuje zgłoszeniem błędu i przerwaniem działania emulatora. Mechanizm ten zabezpiecza integralność modelu pamięci oraz ułatwia diagnostykę nieprawidłowych operacji.
+
+\begin{lstlisting}[style=cpp,caption={Fragment implementacji pamięci operacyjnej},label={lst:ram}]
+
+struct ram_context {
+	std::array<uint8_t, 0x2000> wram;
+	std::array<uint8_t, 0x80> hram;
+};
+
+static ram_context ctx;
+
+uint8_t wram_read(uint16_t address) {
+	auto err = fmt::format("ERROR: Invalid wram read address 0x{:X}", address); // Wiadomosc o blednym adresie
+	address -= 0xC000; // Odjecie adresu bazowego segmentu dla wram, dajac nam indeks tablicy ctx.wram
+	if (address >= 0x2000) { // Jesli  indeks wychodzi poza zakres tablicy, dajemy komunikat o bledzie i konczymy prace programu
+		fmt::println(err);
+		exit(-1);
+	}
+	return ctx.wram.at(address);
+}
+\end{lstlisting}
+
 
 \subsection{Implementacja stosu procesora}
 
@@ -951,15 +1045,60 @@ Każda instrukcja reprezentowana jest przez strukturę danych zawierającą:
 	\item parametr dodatkowy.
 \end{itemize}
 
+\begin{lstlisting}[style=cpp, caption={Struktura instrukcji}]
+	struct instruction {
+		in_type type{IN_NONE}; // Typ operacji
+		addr_mode mode{AM_IMP}; // Tryb adresowania
+		reg_type reg1{RT_NONE}; // Rejestry zrodlowy
+		reg_type reg2{RT_NONE}; // Rejestr docelowy
+		cond_type cond{CT_NONE}; // warunek wykonania
+		uint8_t param{0}; // Parametr dodatkowy
+	};
+\end{lstlisting}
+
+
+
 Struktury te przechowywane są w tablicy indeksowanej bezpośrednio kodem operacji. Proces dekodowania sprowadza się do odczytu odpowiedniej struktury na podstawie wartości \texttt{opcode}, natomiast wykonanie delegowane jest do wyspecjalizowanej procedury przypisanej do typu instrukcji.
 
 Takie rozwiązanie zapewnia wyraźną separację odpowiedzialności, upraszcza rozszerzanie zestawu rozkazów oraz ułatwia implementację mechanizmów debugowania i trybów adresowania.
+
+
+\begin{lstlisting}[style=cpp, caption={Fragment tablicy instrukcji indeksowanej kodem operacji}]
+constexpr instruction instructions[0x100] = {
+	// 0x0X
+	
+	[0x00] = {.type = IN_NOP, .mode = AM_IMP},
+	[0x01] = {.type = IN_LD, .mode = AM_R_D16, .reg1 = RT_BC},
+	[0x02] = {.type = IN_LD, .mode = AM_MR_R, .reg1 = RT_BC, .reg2 = RT_A},
+	[0x03] = {.type = IN_INC, .mode = AM_R, .reg1 = RT_BC},
+	[0x04] = {.type = IN_INC, .mode = AM_R, .reg1 = RT_B},
+	[0x05] = {.type = IN_DEC, .mode = AM_R, .reg1 = RT_B},
+	[0x06] = {.type = IN_LD, .mode = AM_R_D8, .reg1=RT_B},
+	
+	// Pozostale instrukcje...
+}
+\end{lstlisting}
 
 \subsubsection{Struktura procesora i organizacja cyklu wykonawczego}
 
 Implementacja CPU opiera się na centralnej strukturze kontekstu wykonania, przechowującej pełny stan procesora oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji.
 
-\paragraph{Struktura rejestrów procesora}
+
+\begin{lstlisting}[style=cpp,caption={Kontekst wykonania procesora}]
+	struct cpu_registers {
+    	uint8_t A;
+		uint8_t F;
+		uint8_t B;
+		uint8_t C;
+		uint8_t D;
+		uint8_t E;
+		uint8_t H;
+		uint8_t L;
+		uint16_t PC;
+		uint16_t SP;
+	};
+\end{lstlisting}
+
 
 Stan architektoniczny przechowywany jest w strukturze \texttt{cpu\_registers}, zawierającej:
 
@@ -982,9 +1121,31 @@ Rejestr \texttt{F} pełni funkcję rejestru flag i zawiera bity statusowe:
 	\item C --- flaga przeniesienia.
 \end{itemize}
 
-\paragraph{Kontekst wykonania procesora}
-
+\begin{lstlisting}[style=cpp,caption={Kontekst wykonania procesora}]
+	struct cpu_context {
+		cpu_registers regs;
+		uint32_t ticks; // Liczniki taktow procesora
+		
+		uint16_t fetch_data; // Pobrany operand
+		uint16_t mem_destination; // adres docelowy zapisu
+		bool dest_is_mem; // flaga zapisu do pamirci
+		uint8_t op_code; // aktualny kod operacji
+		instruction const* cur_instruction;  //wskaznik na strukture instrukcji
+		
+		
+		bool int_master_enabled; // Globalne zezwolenie na przerwanie
+		bool enabling_ime; // Flaga aktywacji przerwan
+		bool halted; // 
+		bool paused; // Stan zatrzymania procesora
+		bool running; //
+		
+		uint8_t int_flags;
+		uint8_t ie_register; // rejestr zgloszen
+	};
+\end{lstlisting}
 Pełny stan wykonawczy przechowywany jest w strukturze \texttt{cpu\_context}, która oprócz rejestrów zawiera:
+
+
 
 \textbf{Dane operacyjne:}
 \begin{itemize}
@@ -1302,6 +1463,88 @@ Warstwa graficzna została zrealizowana z wykorzystaniem biblioteki raylib, któ
 umożliwia tworzenie aplikacji graficznych 2D oraz obsługę urządzeń wejścia takich 
 jak klawiatura.
 
+\subsubsection{Opis klasy}
+
+\texttt{RayboyUI} zarządza interfejsem graficznym emulatora. Odpowiada za pętlę renderowania, obsługę okna oraz synchronizację z wątkiem CPU za pośrednictwem współdzielonego stanu (\texttt{EmulatorShared}).
+
+% ----------------------------------------------------------------
+\subsubsection{Interfejs publiczny}
+
+\begin{center}
+	\begin{tabular}{ll}
+		\toprule
+		\textbf{Metoda} & \textbf{Opis} \\
+		\midrule
+		\texttt{setup(EmulatorShared*)} & Inicjalizuje UI; przyjmuje wskaźnik na współdzielony stan \\
+		\texttt{shouldExit()} & Zwraca \texttt{true}, gdy użytkownik zamknął okno \\
+		\texttt{update()} & Obsługuje eventy wejściowe i logikę UI \\
+		\texttt{draw()} & Renderuje aktualną klatkę \\
+		\texttt{shutdown()} & Zwalnia zasoby UI \\
+		\bottomrule
+	\end{tabular}
+\end{center}
+
+% ----------------------------------------------------------------
+\subsubsection{Przykład działania korzystania z klasy RayboyUI}
+
+\begin{lstlisting}[style=cpp, caption={Minimalny przykład użycia klasy \texttt{RayboyUI}}]
+	#include "RayboyUI.h"
+	#include "EmulatorShared.h"
+	#include <thread>
+	
+	// Globalny wskaznik -- UI i watek CPU komunikuja sie przez EmulatorShared
+	EmulatorShared* g_shared;
+	
+	int main(int argc, char** argv) {
+		// 1. Zaladuj ROM (warunek wstepny)
+		if (argc < 2 || !cart_load(argv[1]))
+		return 1;
+		
+		// 2. Utworz wspoldzielony stan i UI
+		EmulatorShared shared;
+		RayboyUI ui;
+		g_shared = &shared;
+		
+		// 3. Zainicjalizuj UI ze wspoldzielonym stanem
+		ui.setup(g_shared);
+		
+		// 4. Uruchom watek CPU w tle
+		std::thread cpu_thread(cpu_run_threaded, g_shared);
+		
+		// 5. Petla glowna -- UI zyje w watku glownym
+		while (!ui.shouldExit()) {
+			ui.update(); // eventy, input
+			ui.draw();   // renderowanie
+		}
+		
+		// 6. Sygnalizuj watkowi CPU zakonczenie i poczekaj na niego
+		shared.should_exit.store(true, std::memory_order_release);
+		if (cpu_thread.joinable())
+		cpu_thread.join();
+		
+		// 7. Wyczysc zasoby UI
+		g_shared = nullptr;
+		ui.shutdown();
+		
+		return 0;
+	}
+\end{lstlisting}
+
+% ----------------------------------------------------------------
+\subsubsection{Kluczowe założenia projektowe}
+
+\begin{description}
+	\item[UI w wątku głównym.]
+	Klasa \texttt{RayboyUI} musi działać w wątku głównym --- jest to wymaganie większości bibliotek graficznych (np.\ raylib, SDL).
+	
+	\item[CPU w osobnym wątku.]
+	Emulacja procesora przebiega równolegle; komunikacja z UI odbywa się przez strukturę \texttt{EmulatorShared} z atomowym polem \texttt{should\_exit}.
+	
+	\item[Kolejność zamykania.]
+	Prawidłowa sekwencja shutdown to: sygnał do wątku CPU $\to$ \texttt{join()} $\to$ \texttt{shutdown()} UI. Zapobiega to sytuacji, w której wątek CPU odwołuje się do zwolnionego wskaźnika \texttt{g\_shared}.
+\end{description}
+
+
 \subsubsection{Struktura klasy}
 
 
@@ -1521,7 +1764,7 @@ Podstawowym zestawem testów wykorzystanym w procesie weryfikacji były testy au
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{passed_test.png}
-		\caption{Wynik przechodzącego poprawnie testu \textit{01-special.gb}\cite{copetti}}
+		\caption{Wynik przechodzącego poprawnie testu \textit{01-special.gb}. Własnoręczny zrzut ekranu}
 		\label{fig:succesful_blaarg}
 	\end{minipage}
 \end{figure}
@@ -1533,14 +1776,14 @@ W przypadku niepowodzenia testów przeprowadzana jest dodatkowa analiza przy uż
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{failed-blaarg.png}
-		\caption{Zrzut terminalu z źle zaimplementowanej instrukcji\cite{copetti}}
+		\caption{Zrzut terminalu z źle zaimplementowanej instrukcji. Własnoręczny zrzut ekranu}
 		\label{fig:failed_blaarg}
 	\end{minipage}
 	\hfill
 	\begin{minipage}{0.45\textwidth}
 		\centering
 		\includegraphics[width=0.9\linewidth]{doctor-gameboy-diagnosis.png}
-		\caption{Przykład diagnozy w którym\cite{copetti}}
+		\caption{Przykład diagnozy w którym gameboy-doctor wykazał niezgodność procesora. Własnoręczny zrzut ekranu}
 		\label{fig:gameboy_doctor}
 	\end{minipage}
 \end{figure}
@@ -1553,7 +1796,39 @@ Ostatnim etapem weryfikacji było porównanie działania emulatora z dojrzałą 
 
 Porównanie polegało na uruchomieniu tej samej aplikacji typu homebrew w obu emulatorach. Jako program testowy wykorzystano implementację gry \textit{2048}\cite{2048.gb}. Analizie poddano poprawność działania logiki gry, sposób renderowania grafiki oraz reakcję programu na dane wejściowe użytkownika. Zgodność zachowania aplikacji w obu emulatorach stanowi dodatkowe potwierdzenie poprawności implementacji.
 \subsection{Problemy implementacyjne}
-Ze względu na bardzo specficzne implementację tabeli op-codów, nie wszytkie kompilatory C++ wspierają daną składnię - aktualnie tylko kompilator \textit{clang++} wspiera nieoznaczone inicjalizatory. 
+
+Przedstawiona implementacja tablicy instrukcji wykorzystuje dwie niestandardowe konstrukcje językowe,
+które nie są powszechnie wspierane przez kompilatory C++.
+
+Pierwszą z nich są \textit{designated initializers} (oznaczone inicjalizatory pól struktury),
+wprowadzone oficjalnie w standardzie C++20~\cite{cpp20standard}:
+
+\begin{lstlisting}[style=cpp, caption={Oznaczone inicjalizatory pól struktury}]
+	vec2 v = {.x = 12.0, .y = 0.3};
+\end{lstlisting}
+
+Drugą konstrukcją są \textit{designated initializers} dla tablic, zaczerpnięte z języka C99,
+lecz nieuwzględnione w żadnym standardzie C++:
+
+\begin{lstlisting}[style=cpp, caption={Nieoznaczone inicjalizatory tablic -- rozszerzenie niestandardowe}]
+	vec2 res[5] = {
+		[2] = {.x = 12.0, .y = 0.3},
+	};
+\end{lstlisting}
+
+O ile oznaczone inicjalizatory pól są obsługiwane przez większość nowoczesnych kompilatorów
+zgodnych z C++20, o tyle inicjalizatory indeksowane dla tablic stanowią rozszerzenie
+niestandardowe. Aktualnie jedynym kompilatorem C++ obsługującym tę składnię jest
+\texttt{clang++}. Kompilatory \texttt{g++} oraz \texttt{MSVC} odrzucają ten kod nawet
+przy włączonym standardzie C++23.
+
+Konsekwencją powyższego jest ograniczona przenośność kodu -- projekt można zbudować
+wyłącznie przy użyciu \texttt{clang++}, co należy jawnie zaznaczyć w systemie budowania,
+na przykład wymuszając wybór kompilatora w pliku \texttt{CMakeLists.txt}:
+
+\begin{lstlisting}[style=cpp, caption={Wymuszenie kompilatora \texttt{clang++} w CMake}]
+	set(CMAKE_CXX_COMPILER "clang++" CACHE STRING "" FORCE)
+\end{lstlisting}
 \newpage
 \section{Działanie programu}
 \subsection{Struktura Programu}

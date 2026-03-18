@@ -4,13 +4,18 @@
 \contentsline {subsection}{\numberline {1.2}Emulatory}{4}{subsection.1.2}%
 \contentsline {subsection}{\numberline {1.3}Założenia i cel pracy}{4}{subsection.1.3}%
 \contentsline {subsection}{\numberline {1.4}Grupa docelowa}{5}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}Inne emulatory Game Boya}{5}{subsection.1.5}%
+\contentsline {paragraph}{SameBoy}{5}{section*.2}%
+\contentsline {paragraph}{mGBA}{5}{section*.3}%
+\contentsline {paragraph}{Gearboy}{5}{section*.4}%
+\contentsline {paragraph}{VisualBoyAdvance-M}{5}{section*.5}%
 \contentsline {section}{\numberline {2}Analiza architektury systemowej konsoli Game Boy}{6}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Specyfikacja techniczna}{6}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Procesor i SoC}{6}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Model czasowy systemu}{6}{subsubsection.2.2.1}%
-\contentsline {paragraph}{Cykle maszynowe procesora}{6}{section*.2}%
-\contentsline {paragraph}{Synchronizacja z układem graficznym}{6}{section*.3}%
-\contentsline {paragraph}{System timerów sprzętowych}{6}{section*.4}%
+\contentsline {paragraph}{Cykle maszynowe procesora}{6}{section*.6}%
+\contentsline {paragraph}{Synchronizacja z układem graficznym}{6}{section*.7}%
+\contentsline {paragraph}{System timerów sprzętowych}{6}{section*.8}%
 \contentsline {subsection}{\numberline {2.3}Zestaw Instrukcji}{7}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Instrukcje transferu danych}{7}{subsubsection.2.3.1}%
 \contentsline {subsubsection}{\numberline {2.3.2}Instrukcje arytmetyczne}{7}{subsubsection.2.3.2}%
@@ -85,72 +90,74 @@
 \contentsline {subsubsection}{\numberline {4.1.3}Funkcje biblioteki fmt}{23}{subsubsection.4.1.3}%
 \contentsline {subsection}{\numberline {4.2}Implementacja modułu obsługi kartridża}{23}{subsection.4.2}%
 \contentsline {subsubsection}{\numberline {4.2.1}Struktura nagłówka ROM}{23}{subsubsection.4.2.1}%
-\contentsline {paragraph}{Interfejs dostępu}{23}{section*.10}%
-\contentsline {subsubsection}{\numberline {4.2.2}Proces ładowania obrazu ROM}{24}{subsubsection.4.2.2}%
+\contentsline {paragraph}{Interfejs dostępu}{23}{section*.14}%
+\contentsline {subsubsection}{\numberline {4.2.2}Proces ładowania obrazu ROM}{23}{subsubsection.4.2.2}%
 \contentsline {subsubsection}{\numberline {4.2.3}Dostęp do danych kartridża}{24}{subsubsection.4.2.3}%
 \contentsline {subsubsection}{\numberline {4.2.4}Weryfikacja poprawności nagłówka}{24}{subsubsection.4.2.4}%
 \contentsline {subsubsection}{\numberline {4.2.5}Ograniczenia implementacji}{24}{subsubsection.4.2.5}%
 \contentsline {subsection}{\numberline {4.3}Implementacja magistrali systemowej}{24}{subsection.4.3}%
 \contentsline {subsubsection}{\numberline {4.3.1}Operacje odczytu z magistrali}{24}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Operacje zapisu do magistrali}{25}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.2}Operacje zapisu do magistrali}{24}{subsubsection.4.3.2}%
 \contentsline {subsubsection}{\numberline {4.3.3}Operacje na słowach 16-bitowych}{25}{subsubsection.4.3.3}%
 \contentsline {subsubsection}{\numberline {4.3.4}Znaczenie architektoniczne magistrali}{25}{subsubsection.4.3.4}%
 \contentsline {subsection}{\numberline {4.4}Implementacja pamięci operacyjnej RAM}{25}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Implementacja stosu procesora}{25}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.5}Implementacja stosu procesora}{26}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Implementacja systemowego licznika czasowego}{26}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}Implementacja procesora}{26}{subsection.4.7}%
 \contentsline {subsubsection}{\numberline {4.7.1}Reprezentacja i przechowywanie instrukcji}{26}{subsubsection.4.7.1}%
 \contentsline {subsubsection}{\numberline {4.7.2}Struktura procesora i organizacja cyklu wykonawczego}{27}{subsubsection.4.7.2}%
-\contentsline {paragraph}{Struktura rejestrów procesora}{27}{section*.11}%
-\contentsline {paragraph}{Kontekst wykonania procesora}{27}{section*.12}%
-\contentsline {subsubsection}{\numberline {4.7.3}Organizacja cyklu wykonawczego}{27}{subsubsection.4.7.3}%
-\contentsline {paragraph}{Inicjalizacja}{27}{section*.13}%
-\contentsline {paragraph}{Pobieranie i dekodowanie instrukcji}{27}{section*.14}%
-\contentsline {paragraph}{Pobieranie operandów}{28}{section*.15}%
-\contentsline {paragraph}{Wykonanie instrukcji}{28}{section*.16}%
-\contentsline {paragraph}{Klasy procedur wykonawczych}{28}{section*.17}%
-\contentsline {paragraph}{Symulacja cykli zegarowych}{28}{section*.18}%
-\contentsline {paragraph}{Główny krok procesora}{28}{section*.19}%
-\contentsline {subsubsection}{\numberline {4.7.4}Warstwa dostępu do rejestrów}{29}{subsubsection.4.7.4}%
-\contentsline {paragraph}{Odczyt rejestrów}{29}{section*.20}%
-\contentsline {paragraph}{Zapis rejestrów}{29}{section*.21}%
-\contentsline {paragraph}{Zarządzanie flagami}{29}{section*.22}%
-\contentsline {subsubsection}{\numberline {4.7.5}Wykonanie w środowisku wielowątkowym}{29}{subsubsection.4.7.5}%
-\contentsline {subsection}{\numberline {4.8}Implementacja przetwarzania grafiki}{29}{subsection.4.8}%
-\contentsline {subsubsection}{\numberline {4.8.1}Reprezentacja rejestrów LCD i obsługa palet}{29}{subsubsection.4.8.1}%
-\contentsline {paragraph}{Makra dostępu do bitów sterujących}{30}{section*.23}%
-\contentsline {paragraph}{Inicjalizacja kontekstu LCD}{30}{section*.24}%
-\contentsline {paragraph}{Aktualizacja palet kolorów}{30}{section*.25}%
-\contentsline {paragraph}{Obsługa odczytu i zapisu rejestrów}{30}{section*.26}%
-\contentsline {subsubsection}{\numberline {4.8.2}Renderowanie tła oraz obiektów OAM}{30}{subsubsection.4.8.2}%
-\contentsline {paragraph}{Renderowanie tła}{31}{section*.27}%
-\contentsline {paragraph}{Renderowanie obiektów OAM}{31}{section*.28}%
-\contentsline {subparagraph}{Selekcja sprite'ów dla linii}{31}{section*.29}%
-\contentsline {subparagraph}{Łączenie warstw}{31}{section*.30}%
-\contentsline {subsubsection}{\numberline {4.8.3}Maszyna stanów kontrolera LCD}{32}{subsubsection.4.8.3}%
-\contentsline {paragraph}{Tryb OAM}{32}{section*.31}%
-\contentsline {paragraph}{Tryb transferu pikseli}{32}{section*.32}%
-\contentsline {paragraph}{Tryb HBLANK}{32}{section*.33}%
-\contentsline {paragraph}{Tryb VBLANK}{32}{section*.34}%
-\contentsline {paragraph}{Synchronizacja z rejestrem LYC}{32}{section*.35}%
-\contentsline {paragraph}{Podsumowanie}{32}{section*.36}%
-\contentsline {subsection}{\numberline {4.9}Implementacja interfejsu graficznego emulatora}{32}{subsection.4.9}%
-\contentsline {subsubsection}{\numberline {4.9.1}Struktura klasy}{32}{subsubsection.4.9.1}%
-\contentsline {subsubsection}{\numberline {4.9.2}Główna pętla interfejsu}{33}{subsubsection.4.9.2}%
-\contentsline {subsubsection}{\numberline {4.9.3}Inicjalizacja interfejsu}{33}{subsubsection.4.9.3}%
-\contentsline {subsubsection}{\numberline {4.9.4}Aktualizacja obrazu ekranu}{33}{subsubsection.4.9.4}%
-\contentsline {subsubsection}{\numberline {4.9.5}Renderowanie obrazu emulatora}{34}{subsubsection.4.9.5}%
-\contentsline {subsubsection}{\numberline {4.9.6}Obsługa wejścia użytkownika}{34}{subsubsection.4.9.6}%
-\contentsline {subsubsection}{\numberline {4.9.7}Podgląd kafelków graficznych}{35}{subsubsection.4.9.7}%
-\contentsline {subsubsection}{\numberline {4.9.8}Panel statystyk}{35}{subsubsection.4.9.8}%
-\contentsline {subsubsection}{\numberline {4.9.9}Ekran Pomocy}{36}{subsubsection.4.9.9}%
-\contentsline {subsubsection}{\numberline {4.9.10}Podsumowanie}{36}{subsubsection.4.9.10}%
-\contentsline {subsection}{\numberline {4.10}Weryfikacja implementacji emulatora}{37}{subsection.4.10}%
-\contentsline {subsubsection}{\numberline {4.10.1}Metodyka weryfikacji}{37}{subsubsection.4.10.1}%
-\contentsline {subsubsection}{\numberline {4.10.2}Narzędzia testowe}{37}{subsubsection.4.10.2}%
-\contentsline {subsubsection}{\numberline {4.10.3}Testy porównawcze}{38}{subsubsection.4.10.3}%
-\contentsline {subsection}{\numberline {4.11}Problemy implementacyjne}{38}{subsection.4.11}%
-\contentsline {section}{\numberline {5}Działanie programu}{39}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Struktura Programu}{39}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Sterowanie w trakcji działania emulatora}{39}{subsection.5.2}%
-\contentsline {section}{\numberline {6}Zakończenie}{40}{section.6}%
+\contentsline {subsubsection}{\numberline {4.7.3}Organizacja cyklu wykonawczego}{29}{subsubsection.4.7.3}%
+\contentsline {paragraph}{Inicjalizacja}{29}{section*.15}%
+\contentsline {paragraph}{Pobieranie i dekodowanie instrukcji}{29}{section*.16}%
+\contentsline {paragraph}{Pobieranie operandów}{29}{section*.17}%
+\contentsline {paragraph}{Wykonanie instrukcji}{29}{section*.18}%
+\contentsline {paragraph}{Klasy procedur wykonawczych}{29}{section*.19}%
+\contentsline {paragraph}{Symulacja cykli zegarowych}{29}{section*.20}%
+\contentsline {paragraph}{Główny krok procesora}{30}{section*.21}%
+\contentsline {subsubsection}{\numberline {4.7.4}Warstwa dostępu do rejestrów}{30}{subsubsection.4.7.4}%
+\contentsline {paragraph}{Odczyt rejestrów}{30}{section*.22}%
+\contentsline {paragraph}{Zapis rejestrów}{30}{section*.23}%
+\contentsline {paragraph}{Zarządzanie flagami}{30}{section*.24}%
+\contentsline {subsubsection}{\numberline {4.7.5}Wykonanie w środowisku wielowątkowym}{30}{subsubsection.4.7.5}%
+\contentsline {subsection}{\numberline {4.8}Implementacja przetwarzania grafiki}{30}{subsection.4.8}%
+\contentsline {subsubsection}{\numberline {4.8.1}Reprezentacja rejestrów LCD i obsługa palet}{30}{subsubsection.4.8.1}%
+\contentsline {paragraph}{Makra dostępu do bitów sterujących}{31}{section*.25}%
+\contentsline {paragraph}{Inicjalizacja kontekstu LCD}{31}{section*.26}%
+\contentsline {paragraph}{Aktualizacja palet kolorów}{31}{section*.27}%
+\contentsline {paragraph}{Obsługa odczytu i zapisu rejestrów}{31}{section*.28}%
+\contentsline {subsubsection}{\numberline {4.8.2}Renderowanie tła oraz obiektów OAM}{32}{subsubsection.4.8.2}%
+\contentsline {paragraph}{Renderowanie tła}{32}{section*.29}%
+\contentsline {paragraph}{Renderowanie obiektów OAM}{32}{section*.30}%
+\contentsline {subparagraph}{Selekcja sprite'ów dla linii}{32}{section*.31}%
+\contentsline {subparagraph}{Łączenie warstw}{32}{section*.32}%
+\contentsline {subsubsection}{\numberline {4.8.3}Maszyna stanów kontrolera LCD}{33}{subsubsection.4.8.3}%
+\contentsline {paragraph}{Tryb OAM}{33}{section*.33}%
+\contentsline {paragraph}{Tryb transferu pikseli}{33}{section*.34}%
+\contentsline {paragraph}{Tryb HBLANK}{33}{section*.35}%
+\contentsline {paragraph}{Tryb VBLANK}{33}{section*.36}%
+\contentsline {paragraph}{Synchronizacja z rejestrem LYC}{33}{section*.37}%
+\contentsline {paragraph}{Podsumowanie}{33}{section*.38}%
+\contentsline {subsection}{\numberline {4.9}Implementacja interfejsu graficznego emulatora}{33}{subsection.4.9}%
+\contentsline {subsubsection}{\numberline {4.9.1}Opis klasy}{33}{subsubsection.4.9.1}%
+\contentsline {subsubsection}{\numberline {4.9.2}Interfejs publiczny}{34}{subsubsection.4.9.2}%
+\contentsline {subsubsection}{\numberline {4.9.3}Przykład działania korzystania z klasy RayboyUI}{34}{subsubsection.4.9.3}%
+\contentsline {subsubsection}{\numberline {4.9.4}Kluczowe założenia projektowe}{34}{subsubsection.4.9.4}%
+\contentsline {subsubsection}{\numberline {4.9.5}Struktura klasy}{35}{subsubsection.4.9.5}%
+\contentsline {subsubsection}{\numberline {4.9.6}Główna pętla interfejsu}{35}{subsubsection.4.9.6}%
+\contentsline {subsubsection}{\numberline {4.9.7}Inicjalizacja interfejsu}{35}{subsubsection.4.9.7}%
+\contentsline {subsubsection}{\numberline {4.9.8}Aktualizacja obrazu ekranu}{36}{subsubsection.4.9.8}%
+\contentsline {subsubsection}{\numberline {4.9.9}Renderowanie obrazu emulatora}{37}{subsubsection.4.9.9}%
+\contentsline {subsubsection}{\numberline {4.9.10}Obsługa wejścia użytkownika}{37}{subsubsection.4.9.10}%
+\contentsline {subsubsection}{\numberline {4.9.11}Podgląd kafelków graficznych}{38}{subsubsection.4.9.11}%
+\contentsline {subsubsection}{\numberline {4.9.12}Panel statystyk}{38}{subsubsection.4.9.12}%
+\contentsline {subsubsection}{\numberline {4.9.13}Ekran Pomocy}{39}{subsubsection.4.9.13}%
+\contentsline {subsubsection}{\numberline {4.9.14}Podsumowanie}{39}{subsubsection.4.9.14}%
+\contentsline {subsection}{\numberline {4.10}Weryfikacja implementacji emulatora}{40}{subsection.4.10}%
+\contentsline {subsubsection}{\numberline {4.10.1}Metodyka weryfikacji}{40}{subsubsection.4.10.1}%
+\contentsline {subsubsection}{\numberline {4.10.2}Narzędzia testowe}{40}{subsubsection.4.10.2}%
+\contentsline {subsubsection}{\numberline {4.10.3}Testy porównawcze}{40}{subsubsection.4.10.3}%
+\contentsline {subsection}{\numberline {4.11}Problemy implementacyjne}{41}{subsection.4.11}%
+\contentsline {section}{\numberline {5}Działanie programu}{42}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Struktura Programu}{42}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Sterowanie w trakcji działania emulatora}{42}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Zakończenie}{43}{section.6}%

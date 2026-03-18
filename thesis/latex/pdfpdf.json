@@ -13,23 +13,12 @@
   },
   { "text": "Game", "page": 6, "color": "#ff1418" },
   { "text": "Boya.", "page": 6, "color": "#ff1418" },
-  { "text": "kartridże", "page": 6, "comment": "y", "color": "#4bacc6" },
-  {
-    "text": "tanie i długotrwałe życie baterii [2].",
-    "page": 6,
-    "comment": "tanie życie baterii? \r\nProszę przebudować ten argument.",
-    "color": "#ffff00"
-  },
-  {
-    "text": "Gameboya był",
-    "page": 6,
-    "comment": "proszę zdecydować o zapisie czy razem czy osobno i zastosować poprawki w całej pracy",
-    "color": "#ffff00"
-  },
   {
     "text": "[4].",
     "page": 6,
-    "comment": "1. cytowania przed kropką: to jest tekst który coś pokazuje [1] i jest uzupełniony o coś innego [2, 3], a w szczególności najważniejszey jest X [4].\r\n\r\n2. cytowania w pracy są w kolejności rosnącej. Mam wrażenie (ale może się mykę), że Pan ma [2], [4], [1]",
+    "comment": "1. cytowania przed kropką: to jest tekst który coś pokazuje [1] i jest uzupełniony o coś innego [2, 3], a w szczególności najważniejszey jest X [4]."
+    "\r\n\r\n"
+    2. cytowania w pracy są w kolejności rosnącej. Mam wrażenie (ale może się mykę), że Pan ma [2], [4], [1]",
     "color": "#ffff00"
   },
   {
@@ -189,69 +178,9 @@
     "color": "#ffff00"
   },
   {
-    "text": "Każda ope- racja",
-    "page": 23,
-    "comment": "brakuj określenia\r\nzapisu i odczytu pamięci",
-    "color": "#ffff00"
-  },
-  {
-    "text": "adresu bazowego segmentu.",
-    "page": 23,
-    "comment": "i w końcu  co to jest segment?\r\n\r\nJak Pan widisporo mam uwag do tego zdania. Proszę napisać bardziej klarownie!",
-    "color": "#ffff00"
-  },
-  {
-    "text": "dokonuje",
-    "page": 23,
-    "comment": "operacja dokonuje? czy skutkiem operacji jest?\r\nTo dziwnie brzmi",
-    "color": "#ffff00"
-  },
-  {
-    "text": "translacji adresu logicznego",
-    "page": 23,
-    "comment": "w GameBoy to chyba nie jest adres logiczny, zresztą nie podał Pan definicji tego określenia",
-    "color": "#ffff00"
-  },
-  {
-    "text": "indeks wewnętrznej tablicy",
-    "page": 23,
-    "comment": "to równiez jest niezrozumiałe - co to jest \"wewnętrzna tablica\"? w jakim jest wnętrzu?",
-    "color": "#ffff00"
-  },
-  {
-    "text": "Próba dostępu poza dozwolony obszar skutkuje zgłoszeniem błędu i przerwaniem działania emulatora. Mechanizm ten zabezpiecza integralność modelu pamięci oraz ułatwia diagnostykę nieprawidłowych operacji.",
-    "page": 23,
-    "comment": "super, że Pan o to zadbał. Wydaje mi się jednak, że może lepiej byłoby opisać w osobnym podrozdziale kontrolę błędów jaką Pan wprowadził?",
-    "color": "#ffff00"
-  },
-  {
-    "text": "zarządzana przez rejestr wskaźnika stosu SP.",
-    "page": 24,
-    "comment": "Jeśli pracuje Pan na procesorze zgodnym z 8086 to Pana procesor ma również rejestr SP, ESP i może nawet RSP.\r\nTym samym to zdanie jest wieloznaczne ponieważ pisze Pan o rejestrze co od razu budzi u mnie skojarzenie z maszyną na której działa emulator.\r\n\r\nByć może umieszczenie opisu procesora, który jest w jednym z dalszych rozdziałów w miare na początku opisu mplementacyjnego pozwoliłoby czytelnikowi się zorientować jak ogranął Pan temat rejeestrów i oczym jest tu mowa. Zresztą moim zdaniem przorganizowanie miałoby sens - najpierw procesor, potem elementy z którymi proces wpółpracuje. \r\nProszę jeszcze przemyśleć jak mógłby Pan ułożyć ten podrozdział w logiczną całość. \r\n",
-    "color": "#ffff00"
-  },
-  {
-    "text": "Implementacja systemowego licznika czasowego",
-    "page": 24,
-    "comment": "Ten cały podrozdział jest super trudny w odbirze. Dobrze by było gdyby go Pan rozwinął i dokładnie wyjaśnił jak realizuje Pan zegar w swoim emulatorze. ",
-    "color": "#ffff00"
-  },
-  {
-    "text": "Reprezentacja i przechowywanie instrukcji",
-    "page": 24,
-    "comment": "to równiez jest niejasne. Proszę rozbudować popis podając chociażby przykład.\r\nJest to jeden z ważniejszych filarów Pana rozwiązania.",
-    "color": "#ffff00"
-  },
-  {
     "text": "centralnej strukturze kontekstu wykonania,",
     "page": 25,
     "comment": "nie rozumiem\r\n\r\nmoże wystarczy dodać w nawiasie (zobacz poniżej opis struktury)\r\n\r\nPozostaje jednak do wyjaśnienia słowo \"centralny\"",
-    "color": "#ffff00"
-  },
-  {
-    "text": "w strukturze cpu_context",
-    "page": 25,
-    "comment": "A może Panie Patryku lepszym rozwiązaniem będzie jeśli doda Pan listing kodu ze strukturą, krótki komentarz w kodzie powie czym są pola. \r\nWtedy taki tekst jak tu będzie bardziej przystępny. Proszę top rozważyć",
     "color": "#ffff00"
   },
   {
@@ -267,39 +196,9 @@
     "color": "#ffff00"
   },
   {
-    "text": "Inicjalizacja",
-    "page": 25,
-    "comment": "przydałby się kawałek kodu, który pokazuje jak to wygląda.\r\nTak zwany Minimal Working Example\r\nJeśli się Pan zdecyduje to proszę ten kod omówić odnosząc się do poszczególnych lini kodu\r\n\r\nJeśli zdecyduje się Pan ten kod dodawać to - mile widzane koorowanie składni, ciemny motyw wygląda źle, warto wstawiać jako \"listing\" a nie rysunek, numery lini dobrze wyglądają ",
-    "color": "#ffff00"
-  },
-  {
-    "text": "lcdc",
-    "page": 28,
-    "comment": "Pół strony poniżej zapisauje Pan kapitalkami. Proszę ujednolicić.\r\n\r\nbrakuje mi opisu tych rejestrów i schematu działąnia LCD z ich wykorzystaniem. Może warto rozszerzyć opis w poprzednim rozdziale?\r\n(jeśli to ram jest, to prosze zignorować)",
-    "color": "#ffff00"
-  },
-  {
-    "text": "postaci klasy RayboyUI",
-    "page": 31,
-    "comment": "w oparciu o klasę?\r\n\r\nRayBoyUI - to Pana rozwiązanie?\r\nJeśli tak, to przydałby się krótki opis z MWE pokazjącym jak używać.\r\nJeśli nie Pana rozwiązanie to referencja + krótki opis gdzies na początku pracy",
-    "color": "#ffff00"
-  },
-  {
     "text": "Rysunek 4: Okno emulatora. Źródło: Własnoręczna implemen-",
     "page": 31,
     "comment": "proszę pamiętać, że każdy rysunek musi mieć odwołanie z treści pracy",
-    "color": "#ffff00"
-  },
-  {
-    "text": "SameBoy",
-    "page": 37,
-    "comment": "referencja\r\nPrzydałby się wcześniej w pracy opis kilku innych rozwiązań (z referencjami) dostępnych na rynku",
-    "color": "#ffff00"
-  },
-  {
-    "text": "Problemy",
-    "page": 37,
-    "comment": "poproszę o szerszy opis wyjaśniający powody",
     "color": "#ffff00"
   }
 ]
