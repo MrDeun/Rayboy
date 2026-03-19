@@ -20,10 +20,9 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{booktabs}
-\usepackage{hyperref}
 \usepackage{parskip}
 \usepackage{lmodern}
-\usepackage{hyperref}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
 
 \definecolor{codebg}{RGB}{245,245,245}
 \definecolor{codeframe}{RGB}{200,200,200}
@@ -197,7 +196,7 @@ GameShark i CodeBreaker.
 \subsection{Specyfikacja techniczna}
 Zespół \textit{Nintendo Research And Development 1}, pod przewodnictwem Gunpei Yokoi i Satoru Okady, zaprojektował 8-bitową konsolę Game Boy. Charakteryzuje się wyświetlaczem matrycowym o rozdzielczości 160x144 pikseli, D-padem, czterema przyciskami gry i jednym głośnikiem. Używa stworzonych na potrzebe konsoli kartridże \textit{GamePak}. Zasilana była przez 4 baterie AA. Gracze mogli korzystać z kabla Game Link Cable do połączenia dwóch Game Boyów dla rozgrywki wieloosobowej bądź transferu danych dla wspierających gier. Chociaż wyświetlacz monochromatyczny był gorszy niż u konkurencji, utrzymanie konsoli w jednym kolorze przyczyniło się do większonej żywotności i wymaganej liczbie baterii.  \cite{wikipedia-gameboy}. 
 \subsection{Procesor i SoC}
-Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. \cite{gbctr}. Procesor był wzorowany na dwóch innych procesorach- 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka jest określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 \cite{copetti}. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM) . Płyta główna łączyła także inne kompomenty jak ekran, głośnik czy kontroler.
+Procesorem Gameboya był specjalnie wytworzyny na potrzeby konsoli  8-bitowy procesor SM83 firmy Sharp. \cite{gbctr}. Procesor był wzorowany na dwóch innych procesorach- 8080 firmy Intel i Z80 firmy Zilog. Procesor znajdował się na płytce wraz innymi komponentami takimi jak pamięć RAM i ROM. Cała płytka była określana jako SoC (System on Chip) i oryginalny Game Boy zawierał DMG-CPU znany także jako Sharp LR35902 \cite{copetti}. SoC był wpinany do płyty głównej, która zawierała dodatkową pamięć RAM i Video RAM (VRAM) . Płyta główna łączyła także inne kompomenty jak ekran, głośnik czy kontroler.
 
 Procesor zawiera osiem 8-bitowych rejestrów: A,B,C,D,E,F,H,L. Rejestry mogą łączyć się w 16-bitowe rejestry: AF, BC, DE, HL. Rejestr F jest używany jako flagi procesora w wypadku operacji arymetycznych:
 \begin{itemize}
@@ -357,7 +356,7 @@ Przestrzeń adresowa Game Boya podzielona jest na segmenty o ustalonej funkcji s
 	\label{tab:gb_memory_map}
 \end{table}
 
-\subsubsection{Pamięć programu i bankowanie ROM}
+\subsubsection{Pamięć programu i przełączanie banków ROM}
 
 Dolne 32~KB przestrzeni adresowej przeznaczone jest na pamięć tylko do odczytu (ROM) zawartą w kartridżu. Pierwsze 16~KB (\texttt{0000--3FFF}) stanowi bank stały, natomiast zakres \texttt{4000--7FFF} obsługuje mechanizm przełączania banków pamięci, realizowany przez kontroler MBC (Memory Bank Controller). Dzięki temu możliwe jest adresowanie programów o rozmiarze znacznie przekraczającym 64~KB.
 
@@ -691,7 +690,19 @@ Architektura pamięci stanowi podstawę wymiany informacji pomiędzy wszystkimi 
 Jednolita przestrzeń adresowa oraz deterministyczny model dostępu do pamięci umożliwiają przewidywalne działanie systemu w czasie rzeczywistym. Właściwości te mają istotne znaczenie zarówno dla analizy architektury sprzętowej, jak i dla implementacji oprogramowania odwzorowującego działanie systemu.
 \subsection{Generowanie klatki obrazu}
 
-Generowanie obrazu w konsoli Game Boy jest realizowane przez układ graficzny (PPU), który współpracuje z pamięcią wideo oraz pamięcią atrybutów obiektów. Proces ten przebiega cyklicznie i jest ściśle zsynchronizowany z zegarem systemowym oraz działaniem procesora. Obraz powstaje poprzez sekwencyjne renderowanie tła, a następnie nakładanie obiektów ruchomych zapisanych w pamięci OAM (Rozdział \ref{oam}).
+Generowanie obrazu w konsoli Game Boy jest realizowane przez układ graficzny (PPU - pixel processing unit), który współpracuje z pamięcią wideo oraz pamięcią atrybutów obiektów. Proces ten przebiega cyklicznie i jest ściśle zsynchronizowany z zegarem systemowym oraz działaniem procesora. Obraz powstaje poprzez sekwencyjne renderowanie tła, a następnie nakładanie obiektów ruchomych zapisanych w pamięci OAM (Rozdział \ref{oam}).
+
+Dostęp CPU do pamięci VRAM oraz OAM jest \textbf{synchroniczny z trybem pracy PPU}
+-- nie jest możliwe swobodne odczytywanie i zapisywanie tych obszarów pamięci
+w dowolnym momencie. W trybie~3 (Drawing) PPU aktywnie odczytuje dane z VRAM
+w celu generowania pikseli, dlatego równoległy dostęp CPU do tej pamięci jest
+blokowany przez sprzęt. Próba odczytu VRAM przez CPU w tym czasie zwraca wartość
+\texttt{0xFF}, natomiast zapis jest ignorowany.
+
+Prawidłowy zapis danych graficznych powinien odbywać się wyłącznie w trybach
+dopuszczających dostęp CPU, to znaczy w okresach HBlank (tryb~0) lub VBlank
+(tryb~1). Jest to szczególnie istotne przy implementacji procedur aktualizacji
+tilesetu lub mapy tła w czasie rzeczywistym.
 
 \subsubsection{Format zapisu grafiki w pamięci VRAM}
 
@@ -733,7 +744,7 @@ W celu usprawnienia transferu danych do pamięci OAM system wykorzystuje mechani
 
 Transfer DMA polega na automatycznym odczycie kolejnych bajtów ze źródłowego obszaru pamięci oraz ich zapisie do kolejnych komórek pamięci OAM. W trakcie operacji DMA procesor ma ograniczony dostęp do magistrali pamięci, co zapewnia spójność przesyłanych danych.
 
-Zastosowanie mechanizmu bezpośredniego transferu bajtów umożliwia szybkie aktualizowanie danych obiektów, co jest szczególnie istotne w systemach czasu rzeczywistego, gdzie konieczna jest synchronizacja zmian graficznych z generowaniem kolejnych klatek obrazu.
+Zastosowanie mechanizmu bezpośredniego transferu bajtów umożliwia szybkie aktualizowanie danych obiektów, co jest szczególnie istotne w systemach czasu rzeczywistego, gdzie konieczna jest synchronizacja zmian graficznych z generowaniem kolejnych klatek obrazu. Po pobraniu 160 bajtów, operacja DMA się zamyka i można znowu korzystać obszaru pamięci
 
 \subsection{System przerwań}
 
@@ -880,7 +891,7 @@ Struktura \texttt{rom\_header} zawiera następujące pola:
 		char     title[16];           // nazwa programu
 		uint8_t  license_code;        // kod producenta
 		uint8_t  new_license_code;    // rozszerzony kod producenta
-		uint8_t  sgb_flag;            // flaga zgodnosci ze sprzetem
+		uint8_t  sgb_flag;            // flaga zgodnosci ze dodatkiem Super Game Boy
 		uint8_t  type;                // typ kartridza i kontroler pamieci
 		uint8_t  rom_size;            // rozmiar pamieci ROM
 		uint8_t  ram_size;            // rozmiar pamieci RAM kartridza
@@ -891,8 +902,34 @@ Struktura \texttt{rom\_header} zawiera następujące pola:
 	};
 \end{lstlisting}
 
-Nagłówek znajduje się w pamięci ROM pod stałym adresem \texttt{0x100}. W implementacji dostęp do niego realizowany jest poprzez rzutowanie odpowiedniego fragmentu bufora pamięci na strukturę \texttt{rom\_header}. Takie podejście umożliwia bezpośredni odczyt pól nagłówka bez konieczności ręcznej interpretacji poszczególnych bajtów.
+Nagłówek znajduje się w pamięci ROM pod stałym adresem \texttt{0x100}. W implementacji dostęp do niego realizowany jest poprzez rzutowanie odpowiedniego fragmentu bufora pamięci na strukturę \texttt{rom\_header}. Takie podejście umożliwia bezpośredni odczyt pól nagłówka bez konieczności ręcznej interpretacji poszczególnych bajtów. Ze względu na jednorazowe użycie struktury nie musimy przejmować się pakowaniem obiektów.
 
+\paragraph{Kod regionu (\texttt{dest\_code})}
+Pole \texttt{dest\_code} wskazuje region dystrybucji kartridża. Wartość \texttt{0x00}
+oznacza rynek japoński, natomiast \texttt{0x01} -- rynki poza Japonią (Europa,
+Ameryka Północna). Pole to nie wpływa na działanie emulatora, lecz jest
+weryfikowane przez oryginalny firmware konsoli.
+
+\paragraph{Suma kontrolna nagłówka (\texttt{checksum})}
+Pole \texttt{checksum} przechowuje sumę kontrolną bajtów nagłówka w zakresie
+adresów \texttt{0x134}--\texttt{0x14C}. Oryginalny boot ROM konsoli weryfikuje
+tę wartość przed uruchomieniem programu -- niezgodność sumy kontrolnej skutkuje
+zatrzymaniem wykonania. Algorytm obliczania sumy kontrolnej przedstawia
+listing~\ref{lst:checksum}.
+
+\begin{lstlisting}[style=cpp, label={lst:checksum},
+	caption={Weryfikacja sumy kontrolnej nagłówka}]
+	uint8_t compute_checksum(const uint8_t* rom) {
+		uint8_t checksum = 0;
+		for (uint16_t addr = 0x134; addr <= 0x14C; addr++)
+		checksum = checksum - rom[addr] - 1;
+		return checksum;
+	}
+	
+	bool verify_checksum(const uint8_t* rom) {
+		return compute_checksum(rom) == rom[0x14D];
+	}
+\end{lstlisting}
 \paragraph{Interfejs dostępu}
 
 Moduł kartridża udostępnia funkcję \texttt{get\_rom\_header()}, która zwraca wskaźnik na strukturę nagłówka. Pozwala to pozostałym komponentom emulatora na odczyt parametrów kartridża bez konieczności bezpośredniego dostępu do bufora pamięci ROM.
@@ -915,13 +952,12 @@ Interpretacja typu kartridża oraz kodu licencyjnego realizowana jest przy użyc
 
 \subsubsection{Dostęp do danych kartridża}
 
-Moduł udostępnia interfejs umożliwiający dostęp do danych pamięci ROM przez pozostałe komponenty emulatora. Funkcja \texttt{cart\_read(uint16\_t address)} zwraca wartość bajtu znajdującego się pod wskazanym adresem pamięci kartridża. Dodatkowo moduł udostępnia funkcję \texttt{get\_rom\_header()}, umożliwiającą odczyt informacji nagłówkowych przez inne podsystemy emulatora.
-
+Moduł udostępnia interfejs umożliwiający dostęp do danych pamięci ROM przez pozostałe komponenty emulatora. Funkcja \texttt{cart\_read(uint16\_t address)} zwraca wartość bajtu znajdującego się pod wskazanym adresem pamięci kartridża. Dodatkowo moduł udostępnia funkcję \texttt{get\_rom\_header()}, która zwraca adres nagłówka, umożliwiającą odczyt informacji nagłówkowych przez inne podsystemy emulatora.
 Aktualna implementacja obsługuje wyłącznie kartridże typu \texttt{ROM ONLY}, bez mechanizmu bankowania pamięci.
 
 \subsubsection{Weryfikacja poprawności nagłówka}
 
-Poprawność nagłówka weryfikowana jest poprzez obliczenie sumy kontrolnej na podstawie danych znajdujących się w zakresie adresów \texttt{0x0134--0x014C}. Obliczona wartość porównywana jest z sumą kontrolną zapisaną w nagłówku ROM. Wynik weryfikacji prezentowany jest w postaci komunikatu diagnostycznego podczas inicjalizacji kartridża.
+Poprawność nagłówka weryfikowana jest poprzez obliczenie sumy kontrolnej na podstawie danych znajdujących się w zakresie adresów \texttt{0x0134--0x014C}. Suma kontrolna daje nam pewność że operujemy na prawidłowym ROMie gry. Obliczona wartość porównywana jest z sumą kontrolną zapisaną w nagłówku ROM. Wynik weryfikacji prezentowany jest w postaci komunikatu diagnostycznego podczas inicjalizacji kartridża.
 
 \subsubsection{Ograniczenia implementacji}
 
@@ -935,15 +971,13 @@ Magistrala systemowa stanowi warstwę pośrednią pomiędzy procesorem a kompone
 
 Podstawową funkcją magistrali jest procedura \texttt{bus\_read(uint16\_t address)}, która realizuje odczyt pojedynczego bajtu z przestrzeni adresowej. Funkcja analizuje wartość adresu i na tej podstawie deleguje operację do odpowiedniego komponentu emulatora.
 
-Mapowanie przestrzeni adresowej jest opisana wcześniej w rozdziale 3.4
+Mapowanie przestrzeni adresowej jest opisana wcześniej w tabeli \ref{tab:gb_memory_map}
 
-W przypadku trwającego transferu DMA dostęp do pamięci OAM jest blokowany, a magistrala zwraca wartość neutralną. Takie zachowanie odwzorowuje ograniczenia sprzętowe rzeczywistego systemu.
+W przypadku trwającego transferu DMA dostęp do pamięci OAM jest blokowany, a magistrala zwraca 0xFF. Takie zachowanie odwzorowuje ograniczenia sprzętowe rzeczywistego systemu.
 
 \subsubsection{Operacje zapisu do magistrali}
 
 Procedura \texttt{bus\_write(uint16\_t address, uint8\_t value)} realizuje zapis danych do przestrzeni adresowej. Mechanizm działania jest analogiczny do operacji odczytu — adres determinuje komponent docelowy operacji zapisu.
-
-Zapis do pamięci ROM przekazywany jest do kontrolera kartridża, co umożliwia obsługę mechanizmów bankowania pamięci. Operacje zapisu do pamięci wideo oraz pamięci roboczej przekierowywane są do odpowiednich modułów pamięciowych. W obszarach zarezerwowanych lub nieużywanych operacja zapisu jest ignorowana.
 
 Szczególnym przypadkiem jest zapis do adresu \texttt{0xFFFF}, który modyfikuje rejestr maski przerwań procesora. Mechanizm ten pozwala na dynamiczne sterowanie systemem przerwań w trakcie działania programu.
 
@@ -951,8 +985,8 @@ Szczególnym przypadkiem jest zapis do adresu \texttt{0xFFFF}, który modyfikuje
 
 Magistrala udostępnia również funkcje operujące na danych 16-bitowych:
 \begin{itemize}
-	\item \texttt{bus\_read16(address)} — odczyt dwóch kolejnych bajtów i ich złożenie w słowo 16-bitowe,
-	\item \texttt{bus\_write16(address, value)} — zapis wartości 16-bitowej w postaci dwóch bajtów.
+	\item \texttt{bus\_read16(uint16\_t address)} — odczyt dwóch kolejnych bajtów i ich złożenie w słowo 16-bitowe,
+	\item \texttt{bus\_write16(uint16\_t address, uint16\_t value)} — zapis wartości 16-bitowej w postaci dwóch bajtów.
 \end{itemize}
 
 Operacje te wykorzystują konwencję zapisu w porządku little-endian, w której młodszy bajt przechowywany jest pod niższym adresem pamięci.
@@ -971,7 +1005,7 @@ Zastosowanie scentralizowanej warstwy magistrali zapewnia:
 Magistrala stanowi zatem kluczowy element architektury emulatora, integrujący wszystkie moduły systemu w jednolitą strukturę komunikacyjną oraz zapewniający deterministyczne odwzorowanie zachowania sprzętu.
 \subsection{Implementacja pamięci operacyjnej RAM}
 
-Pamięć operacyjna systemu została odwzorowana w postaci struktury kontekstu zawierającej dwa fizycznie odrębne obszary pamięci: roboczą pamięć wewnętrzną WRAM oraz szybką pamięć wysoką HRAM. Oba segmenty reprezentowane są jako statyczne tablice bajtowe o stałym rozmiarze, co zapewnia deterministyczne odwzorowanie przestrzeni adresowej systemu.
+Pamięć operacyjna systemu została odwzorowana w postaci struktury kontekstu Ram \texttt{struct ram\_context} zawierającej dwa fizycznie odrębne obszary pamięci: roboczą pamięć wewnętrzną WRAM oraz szybką pamięć wysoką HRAM. Oba segmenty reprezentowane są jako statyczne tablice bajtowe o stałym rozmiarze, co zapewnia deterministyczne odwzorowanie przestrzeni adresowej systemu.
 
 Pamięć WRAM obejmuje zakres adresów od \texttt{0xC000} do \texttt{0xDFFF} i posiada rozmiar 8\,KB. Z kolei HRAM zajmuje obszar od \texttt{0xFF80} do \texttt{0xFFFF} z efektywnym rozmiarem 128\,B. Funkcja inicjalizacyjna ustawia wszystkie komórki obu obszarów na wartość początkową \texttt{0xFF}, co odpowiada stanowi pamięci po resecie systemu.
 
@@ -1081,7 +1115,18 @@ constexpr instruction instructions[0x100] = {
 
 \subsubsection{Struktura procesora i organizacja cyklu wykonawczego}
 
-Implementacja CPU opiera się na centralnej strukturze kontekstu wykonania, przechowującej pełny stan procesora oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji.
+Podstawową jednostką działania procesora jest \textbf{cykl wykonawczy} (ang.
+\textit{fetch-decode-execute cycle}) -- sekwencja trzech kroków realizowanych
+przez CPU dla każdej instrukcji. W pierwszym kroku (\textit{fetch}) procesor
+pobiera kod instrukcji spod adresu wskazywanego przez licznik rozkazów
+\texttt{PC}. Następnie w kroku \textit{decode} jednostka sterująca rozpoznaje
+rodzaj operacji i określa jej operandy. W ostatnim kroku (\textit{execute})
+instrukcja jest wykonywana, a licznik \texttt{PC} zostaje zaktualizowany.
+W procesorze Sharp SM83 zastosowanym w Game Boyu czas trwania cyklu wykonawczego
+wyrażany jest w \textbf{maszynowych cyklach zegarowych} (ang. \textit{machine
+	cycles}), gdzie jeden cykl maszynowy odpowiada 4~taktom zegara systemowego.
+
+Implementacja CPU opiera się na  strukturze kontekstu procesora (listing \ref{lst:cpu_context}), przechowującej pełny stan procesora oraz dane pomocnicze wykorzystywane podczas dekodowania i realizacji instrukcji.
 
 
 \begin{lstlisting}[style=cpp,caption={Kontekst wykonania procesora}]
@@ -1121,7 +1166,7 @@ Rejestr \texttt{F} pełni funkcję rejestru flag i zawiera bity statusowe:
 	\item C --- flaga przeniesienia.
 \end{itemize}
 
-\begin{lstlisting}[style=cpp,caption={Kontekst wykonania procesora}]
+\begin{lstlisting}[style=cpp,caption={Kontekst wykonania procesora},label={lst:cpu_context}]
 	struct cpu_context {
 		cpu_registers regs;
 		uint32_t ticks; // Liczniki taktow procesora
@@ -1147,7 +1192,7 @@ Pełny stan wykonawczy przechowywany jest w strukturze \texttt{cpu\_context}, kt
 
 
 
-\textbf{Dane operacyjne:}
+\textbf{Pola operacyjne:}
 \begin{itemize}
 	\item \texttt{ticks} --- licznik taktów procesora,
 	\item \texttt{fetch\_data} --- pobrany operand,
@@ -1559,7 +1604,7 @@ jak klawiatura.
 \end{figure}
 
 
-Klasa \texttt{RayboyUI} zarządza wszystkimi elementami graficznymi interfejsu użytkownika. 
+Klasa \texttt{RayboyUI} zarządza wszystkimi elementami graficznymi interfejsu użytkownika (rysunek \ref{fig:rayboy_ui}). 
 Przechowuje ona wskaźnik do struktury współdzielonej \texttt{EmulatorShared}, która 
 umożliwia wymianę danych pomiędzy rdzeniem emulatora a warstwą graficzną. 
 Struktura ta zawiera między innymi:
@@ -1835,7 +1880,7 @@ na przykład wymuszając wybór kompilatora w pliku \texttt{CMakeLists.txt}:
 
 Kompilacja projektu zwraca plik wykonywalny który należy uruchomić z poziomu terminalu - to uruchomienia pliku gry w emulatorze, należy dać jako argument ścieżke do ROMu \textit{np. ./Rayboy ./2048.gb}.
 
-\subsection{Sterowanie w trakcji działania emulatora}
+\subsection{Sterowanie w trakcji działania emulatora}\label{controls}
 
 \begin{itemize}
 	\item Kontrola konsoli
@@ -1857,6 +1902,43 @@ Kompilacja projektu zwraca plik wykonywalny który należy uruchomić z poziomu 
 	\item Przełączenie ekranu pomocy - H
 	\end{itemize}
 \end{itemize}
+
+\subsection{Działanie emulatora}
+
+Po uruchomieniu programu emulator inicjalizuje kolejno podsystemy: wczytuje obraz
+ROM z podanej ścieżki, weryfikuje sumę kontrolną nagłówka, a następnie uruchamia
+wątek CPU oraz interfejs graficzny. Od tego momentu emulacja przebiega w czasie
+rzeczywistym -- wątek CPU wykonuje instrukcje procesora SM83 z częstotliwością
+odpowiadającą oryginalnej konsoli, natomiast wątek główny odpowiada za renderowanie
+obrazu i obsługę wejścia użytkownika.
+
+\paragraph{Ekran główny}
+Podstawowy widok emulatora przedstawia obraz generowany przez PPU w rozdzielczości
+160$\times$144~piksele, przeskalowany do rozmiarów okna. W prawym górnym rogu
+wyświetlane są podstawowe informacje diagnostyczne: aktualny tryb pracy PPU oraz
+liczba klatek na sekundę (FPS).
+
+\paragraph{Widok kafelków (F1)}
+Naciśnięcie klawisza \texttt{F1} przełącza widok na podgląd pamięci kafelków
+(ang. \textit{tileset viewer}). Wyświetlana jest zawartość obszaru VRAM
+zawierającego dane graficzne aktualnie załadowanych kafelków tła i obiektów.
+Widok ten jest przydatny podczas debugowania -- umożliwia weryfikację poprawności
+wczytanych danych graficznych bez konieczności uruchamiania zewnętrznych narzędzi.
+
+\paragraph{Widok statystyk (F2)}
+Klawisz \texttt{F2} przełącza nakładkę ze statystykami emulatora, która
+prezentuje szczegółowe informacje o stanie wewnętrznym systemu: wartości rejestrów
+procesora (\texttt{AF}, \texttt{BC}, \texttt{DE}, \texttt{HL}, \texttt{PC},
+\texttt{SP}), aktualny tryb pracy PPU, stan flag procesora oraz liczbę
+wykonanych cykli maszynowych.
+
+\paragraph{Wstrzymanie emulacji (Spacja)}
+Naciśnięcie klawisza \texttt{Spacja} wstrzymuje lub wznawia wykonanie wątku CPU.
+W trybie wstrzymania interfejs graficzny pozostaje aktywny -- możliwe jest
+przeglądanie widoków diagnostycznych bez wpływu na stan emulatora. 
+\paragraph{Ekran pomocy (H)}
+Klawisz \texttt{H} wyświetla nakładkę z podglądem dostępnych skrótów klawiszowych,
+opisanych w sekcji~\ref{controls}.
 \newpage
 \section{Zakończenie}
 

@@ -24,7 +24,7 @@
 \contentsline {subsubsection}{\numberline {2.3.5}Instrukcje sterowania przepływem programu}{10}{subsubsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.4}Mapowanie pamięci w konsoli Game Boy}{10}{subsection.2.4}%
 \contentsline {subsubsection}{\numberline {2.4.1}Ogólny układ przestrzeni adresowej}{10}{subsubsection.2.4.1}%
-\contentsline {subsubsection}{\numberline {2.4.2}Pamięć programu i bankowanie ROM}{11}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.2}Pamięć programu i przełączanie banków ROM}{11}{subsubsection.2.4.2}%
 \contentsline {subsubsection}{\numberline {2.4.3}Pamięć wideo}{11}{subsubsection.2.4.3}%
 \contentsline {subsubsection}{\numberline {2.4.4}Pamięć robocza i obszar echo}{11}{subsubsection.2.4.4}%
 \contentsline {subsubsection}{\numberline {2.4.5}Mapowanie urządzeń wejścia/wyjścia}{11}{subsubsection.2.4.5}%
@@ -75,7 +75,7 @@
 \contentsline {subsubsection}{\numberline {3.4.1}Format zapisu grafiki w pamięci VRAM}{19}{subsubsection.3.4.1}%
 \contentsline {subsubsection}{\numberline {3.4.2}Renderowanie tła}{19}{subsubsection.3.4.2}%
 \contentsline {subsubsection}{\numberline {3.4.3}Pamięć OAM i reprezentacja obiektów}{19}{subsubsection.3.4.3}%
-\contentsline {subsubsection}{\numberline {3.4.4}Renderowanie obiektów}{19}{subsubsection.3.4.4}%
+\contentsline {subsubsection}{\numberline {3.4.4}Renderowanie obiektów}{20}{subsubsection.3.4.4}%
 \contentsline {subsubsection}{\numberline {3.4.5}DMA i bezpośredni transfer danych do OAM}{20}{subsubsection.3.4.5}%
 \contentsline {subsection}{\numberline {3.5}System przerwań}{20}{subsection.3.5}%
 \contentsline {subsubsection}{\numberline {3.5.1}Warunki występowania przerwań}{20}{subsubsection.3.5.1}%
@@ -90,61 +90,63 @@
 \contentsline {subsubsection}{\numberline {4.1.3}Funkcje biblioteki fmt}{23}{subsubsection.4.1.3}%
 \contentsline {subsection}{\numberline {4.2}Implementacja modułu obsługi kartridża}{23}{subsection.4.2}%
 \contentsline {subsubsection}{\numberline {4.2.1}Struktura nagłówka ROM}{23}{subsubsection.4.2.1}%
-\contentsline {paragraph}{Interfejs dostępu}{23}{section*.14}%
-\contentsline {subsubsection}{\numberline {4.2.2}Proces ładowania obrazu ROM}{23}{subsubsection.4.2.2}%
+\contentsline {paragraph}{Kod regionu (\texttt {dest\_code})}{23}{section*.14}%
+\contentsline {paragraph}{Suma kontrolna nagłówka (\texttt {checksum})}{23}{section*.15}%
+\contentsline {paragraph}{Interfejs dostępu}{24}{section*.16}%
+\contentsline {subsubsection}{\numberline {4.2.2}Proces ładowania obrazu ROM}{24}{subsubsection.4.2.2}%
 \contentsline {subsubsection}{\numberline {4.2.3}Dostęp do danych kartridża}{24}{subsubsection.4.2.3}%
 \contentsline {subsubsection}{\numberline {4.2.4}Weryfikacja poprawności nagłówka}{24}{subsubsection.4.2.4}%
 \contentsline {subsubsection}{\numberline {4.2.5}Ograniczenia implementacji}{24}{subsubsection.4.2.5}%
-\contentsline {subsection}{\numberline {4.3}Implementacja magistrali systemowej}{24}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Operacje odczytu z magistrali}{24}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Operacje zapisu do magistrali}{24}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3}Implementacja magistrali systemowej}{25}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Operacje odczytu z magistrali}{25}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Operacje zapisu do magistrali}{25}{subsubsection.4.3.2}%
 \contentsline {subsubsection}{\numberline {4.3.3}Operacje na słowach 16-bitowych}{25}{subsubsection.4.3.3}%
 \contentsline {subsubsection}{\numberline {4.3.4}Znaczenie architektoniczne magistrali}{25}{subsubsection.4.3.4}%
 \contentsline {subsection}{\numberline {4.4}Implementacja pamięci operacyjnej RAM}{25}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Implementacja stosu procesora}{26}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Implementacja systemowego licznika czasowego}{26}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Implementacja procesora}{26}{subsection.4.7}%
-\contentsline {subsubsection}{\numberline {4.7.1}Reprezentacja i przechowywanie instrukcji}{26}{subsubsection.4.7.1}%
-\contentsline {subsubsection}{\numberline {4.7.2}Struktura procesora i organizacja cyklu wykonawczego}{27}{subsubsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7}Implementacja procesora}{27}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {4.7.1}Reprezentacja i przechowywanie instrukcji}{27}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {4.7.2}Struktura procesora i organizacja cyklu wykonawczego}{28}{subsubsection.4.7.2}%
 \contentsline {subsubsection}{\numberline {4.7.3}Organizacja cyklu wykonawczego}{29}{subsubsection.4.7.3}%
-\contentsline {paragraph}{Inicjalizacja}{29}{section*.15}%
-\contentsline {paragraph}{Pobieranie i dekodowanie instrukcji}{29}{section*.16}%
-\contentsline {paragraph}{Pobieranie operandów}{29}{section*.17}%
-\contentsline {paragraph}{Wykonanie instrukcji}{29}{section*.18}%
-\contentsline {paragraph}{Klasy procedur wykonawczych}{29}{section*.19}%
-\contentsline {paragraph}{Symulacja cykli zegarowych}{29}{section*.20}%
-\contentsline {paragraph}{Główny krok procesora}{30}{section*.21}%
+\contentsline {paragraph}{Inicjalizacja}{29}{section*.17}%
+\contentsline {paragraph}{Pobieranie i dekodowanie instrukcji}{29}{section*.18}%
+\contentsline {paragraph}{Pobieranie operandów}{29}{section*.19}%
+\contentsline {paragraph}{Wykonanie instrukcji}{29}{section*.20}%
+\contentsline {paragraph}{Klasy procedur wykonawczych}{30}{section*.21}%
+\contentsline {paragraph}{Symulacja cykli zegarowych}{30}{section*.22}%
+\contentsline {paragraph}{Główny krok procesora}{30}{section*.23}%
 \contentsline {subsubsection}{\numberline {4.7.4}Warstwa dostępu do rejestrów}{30}{subsubsection.4.7.4}%
-\contentsline {paragraph}{Odczyt rejestrów}{30}{section*.22}%
-\contentsline {paragraph}{Zapis rejestrów}{30}{section*.23}%
-\contentsline {paragraph}{Zarządzanie flagami}{30}{section*.24}%
-\contentsline {subsubsection}{\numberline {4.7.5}Wykonanie w środowisku wielowątkowym}{30}{subsubsection.4.7.5}%
-\contentsline {subsection}{\numberline {4.8}Implementacja przetwarzania grafiki}{30}{subsection.4.8}%
-\contentsline {subsubsection}{\numberline {4.8.1}Reprezentacja rejestrów LCD i obsługa palet}{30}{subsubsection.4.8.1}%
-\contentsline {paragraph}{Makra dostępu do bitów sterujących}{31}{section*.25}%
-\contentsline {paragraph}{Inicjalizacja kontekstu LCD}{31}{section*.26}%
-\contentsline {paragraph}{Aktualizacja palet kolorów}{31}{section*.27}%
-\contentsline {paragraph}{Obsługa odczytu i zapisu rejestrów}{31}{section*.28}%
+\contentsline {paragraph}{Odczyt rejestrów}{30}{section*.24}%
+\contentsline {paragraph}{Zapis rejestrów}{31}{section*.25}%
+\contentsline {paragraph}{Zarządzanie flagami}{31}{section*.26}%
+\contentsline {subsubsection}{\numberline {4.7.5}Wykonanie w środowisku wielowątkowym}{31}{subsubsection.4.7.5}%
+\contentsline {subsection}{\numberline {4.8}Implementacja przetwarzania grafiki}{31}{subsection.4.8}%
+\contentsline {subsubsection}{\numberline {4.8.1}Reprezentacja rejestrów LCD i obsługa palet}{31}{subsubsection.4.8.1}%
+\contentsline {paragraph}{Makra dostępu do bitów sterujących}{31}{section*.27}%
+\contentsline {paragraph}{Inicjalizacja kontekstu LCD}{32}{section*.28}%
+\contentsline {paragraph}{Aktualizacja palet kolorów}{32}{section*.29}%
+\contentsline {paragraph}{Obsługa odczytu i zapisu rejestrów}{32}{section*.30}%
 \contentsline {subsubsection}{\numberline {4.8.2}Renderowanie tła oraz obiektów OAM}{32}{subsubsection.4.8.2}%
-\contentsline {paragraph}{Renderowanie tła}{32}{section*.29}%
-\contentsline {paragraph}{Renderowanie obiektów OAM}{32}{section*.30}%
-\contentsline {subparagraph}{Selekcja sprite'ów dla linii}{32}{section*.31}%
-\contentsline {subparagraph}{Łączenie warstw}{32}{section*.32}%
+\contentsline {paragraph}{Renderowanie tła}{32}{section*.31}%
+\contentsline {paragraph}{Renderowanie obiektów OAM}{33}{section*.32}%
+\contentsline {subparagraph}{Selekcja sprite'ów dla linii}{33}{section*.33}%
+\contentsline {subparagraph}{Łączenie warstw}{33}{section*.34}%
 \contentsline {subsubsection}{\numberline {4.8.3}Maszyna stanów kontrolera LCD}{33}{subsubsection.4.8.3}%
-\contentsline {paragraph}{Tryb OAM}{33}{section*.33}%
-\contentsline {paragraph}{Tryb transferu pikseli}{33}{section*.34}%
-\contentsline {paragraph}{Tryb HBLANK}{33}{section*.35}%
-\contentsline {paragraph}{Tryb VBLANK}{33}{section*.36}%
-\contentsline {paragraph}{Synchronizacja z rejestrem LYC}{33}{section*.37}%
-\contentsline {paragraph}{Podsumowanie}{33}{section*.38}%
-\contentsline {subsection}{\numberline {4.9}Implementacja interfejsu graficznego emulatora}{33}{subsection.4.9}%
-\contentsline {subsubsection}{\numberline {4.9.1}Opis klasy}{33}{subsubsection.4.9.1}%
+\contentsline {paragraph}{Tryb OAM}{33}{section*.35}%
+\contentsline {paragraph}{Tryb transferu pikseli}{33}{section*.36}%
+\contentsline {paragraph}{Tryb HBLANK}{33}{section*.37}%
+\contentsline {paragraph}{Tryb VBLANK}{34}{section*.38}%
+\contentsline {paragraph}{Synchronizacja z rejestrem LYC}{34}{section*.39}%
+\contentsline {paragraph}{Podsumowanie}{34}{section*.40}%
+\contentsline {subsection}{\numberline {4.9}Implementacja interfejsu graficznego emulatora}{34}{subsection.4.9}%
+\contentsline {subsubsection}{\numberline {4.9.1}Opis klasy}{34}{subsubsection.4.9.1}%
 \contentsline {subsubsection}{\numberline {4.9.2}Interfejs publiczny}{34}{subsubsection.4.9.2}%
 \contentsline {subsubsection}{\numberline {4.9.3}Przykład działania korzystania z klasy RayboyUI}{34}{subsubsection.4.9.3}%
-\contentsline {subsubsection}{\numberline {4.9.4}Kluczowe założenia projektowe}{34}{subsubsection.4.9.4}%
+\contentsline {subsubsection}{\numberline {4.9.4}Kluczowe założenia projektowe}{35}{subsubsection.4.9.4}%
 \contentsline {subsubsection}{\numberline {4.9.5}Struktura klasy}{35}{subsubsection.4.9.5}%
-\contentsline {subsubsection}{\numberline {4.9.6}Główna pętla interfejsu}{35}{subsubsection.4.9.6}%
-\contentsline {subsubsection}{\numberline {4.9.7}Inicjalizacja interfejsu}{35}{subsubsection.4.9.7}%
+\contentsline {subsubsection}{\numberline {4.9.6}Główna pętla interfejsu}{36}{subsubsection.4.9.6}%
+\contentsline {subsubsection}{\numberline {4.9.7}Inicjalizacja interfejsu}{36}{subsubsection.4.9.7}%
 \contentsline {subsubsection}{\numberline {4.9.8}Aktualizacja obrazu ekranu}{36}{subsubsection.4.9.8}%
 \contentsline {subsubsection}{\numberline {4.9.9}Renderowanie obrazu emulatora}{37}{subsubsection.4.9.9}%
 \contentsline {subsubsection}{\numberline {4.9.10}Obsługa wejścia użytkownika}{37}{subsubsection.4.9.10}%
@@ -160,4 +162,10 @@
 \contentsline {section}{\numberline {5}Działanie programu}{42}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Struktura Programu}{42}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Sterowanie w trakcji działania emulatora}{42}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Działanie emulatora}{42}{subsection.5.3}%
+\contentsline {paragraph}{Ekran główny}{42}{section*.49}%
+\contentsline {paragraph}{Widok kafelków (F1)}{42}{section*.50}%
+\contentsline {paragraph}{Widok statystyk (F2)}{42}{section*.51}%
+\contentsline {paragraph}{Wstrzymanie emulacji (Spacja)}{42}{section*.52}%
+\contentsline {paragraph}{Ekran pomocy (H)}{42}{section*.53}%
 \contentsline {section}{\numberline {6}Zakończenie}{43}{section.6}%
